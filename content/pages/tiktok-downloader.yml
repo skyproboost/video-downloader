@@ -1,0 +1,111 @@
+slug: tiktok-downloader
+platform: tiktok
+source_lang: ru
+meta:
+  title: Скачать тикток
+  description: Бесплатно скачать тикток
+  keywords: тикток
+pageContent:
+  how_to:
+    title: Как скачать видео ТИКТОК
+    steps:
+      - title: Включить компуктер
+        description: Желательно в розетку
+        image: /images/image_2025-10-26_23-18-53.png
+  features:
+    title: Преимущества сервиса при скачивании ТИКТОК видео
+    items:
+      - title: Бесплатно
+        description: ОЧЕНЬ БЕСПЛТАНО
+  h1: Скачать ТИКТОК видео
+  subtitle: быстро и бесплатно
+  intro: и без регистрации
+  faq:
+    - question: У вас бесплатное скачивание?)
+      answer: Базарю, к бабке не ходи
+translations:
+  en:
+    meta:
+      title: Download tiktok
+      description: Free download tiktok
+      keywords: tiktok
+    pageContent:
+      how_to:
+        title: How to download TIKTOK video
+        steps:
+          - title: Turn on the computer
+            description: Preferably in a power outlet
+            image: /images/image_2025-10-26_23-18-53.png
+      features:
+        title: Advantages of the service when downloading TIKTOK videos
+        items:
+          - title: For free
+            description: VERY FREE
+      h1: Download TIKTOK video
+      subtitle: fast and free
+      intro: and without registration
+      faq:
+        - question: Do you have a free download?)
+          answer: Bazaar, don't go to grandma's
+  de:
+    meta:
+      title: Laden Sie Tiktok herunter
+      description: Kostenloser Tiktok-Download
+      keywords: Tiktok
+    pageContent:
+      how_to:
+        title: So laden Sie ein TIKTOK-Video herunter
+        steps:
+          - title: Schalten Sie den Computer ein
+            description: Am besten in einer Steckdose
+            image: /images/image_2025-10-26_23-18-53.png
+      features:
+        title: Vorteile des Dienstes beim Herunterladen von TIKTOK-Videos
+        items:
+          - title: Kostenlos
+            description: SEHR KOSTENLOS
+      h1: Laden Sie das TIKTOK-Video herunter
+      subtitle: schnell und kostenlos
+      intro: und ohne Anmeldung
+      faq:
+        - question: Gibt es einen kostenlosen Download?)
+          answer: Basar, geh nicht zu Oma
+  ru:
+    meta:
+      title: Скачать тикток
+      description: Бесплатно скачать тикток
+      keywords: тикток
+    pageContent:
+      how_to:
+        title: Как скачать видео ТИКТОК
+        steps:
+          - title: Включить компуктер
+            description: Желательно в розетку
+            image: /images/image_2025-10-26_23-18-53.png
+      features:
+        title: Преимущества сервиса при скачивании ТИКТОК видео
+        items:
+          - title: Бесплатно
+            description: ОЧЕНЬ БЕСПЛТАНО
+      h1: Скачать ТИКТОК видео
+      subtitle: быстро и бесплатно
+      intro: и без регистрации
+      faq:
+        - question: У вас бесплатное скачивание?)
+          answer: Базарю, к бабке не ходи
+_hashes:
+  meta.title: 9ff73ab0
+  meta.description: d028bfd8
+  meta.keywords: b7fa138e
+  pageContent.how_to.title: 7f55cf1c
+  pageContent.how_to.steps[0].title: ed9ce534
+  pageContent.how_to.steps[0].description: a8114a66
+  pageContent.how_to.steps[0].image: 1042929f
+  pageContent.features.title: 21af8fd9
+  pageContent.features.items[0].title: 6d96fd66
+  pageContent.features.items[0].description: 9808e18c
+  pageContent.h1: be85afa4
+  pageContent.subtitle: d8835a62
+  pageContent.intro: ec6486be
+  pageContent.faq[0].question: 73f2f778
+  pageContent.faq[0].answer: 967654b7

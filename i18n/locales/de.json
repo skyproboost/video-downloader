@@ -1,0 +1,28 @@
+{
+  "home": {
+    "title": "Kostenloser Video-Downloader",
+    "subtitle": "Videos von YouTube, Instagram, TikTok und mehr herunterladen",
+    "meta": {
+      "title": "Kostenloser Video-Downloader - YouTube, Instagram, TikTok",
+      "description": "Laden Sie Videos von YouTube, Instagram, TikTok, Facebook kostenlos herunter. Keine Registrierung. Schnell und einfach!"
+    }
+  },
+  "form": {
+    "placeholder": "Video-URL hier einfügen...",
+    "download": "Herunterladen",
+    "supported": "Unterstützte Formate",
+    "success": "Video zum Download bereit!"
+  },
+  "faq": {
+    "title": "Häufig gestellte Fragen"
+  },
+  "footer": {
+    "description": "Kostenloses Online-Tool zum Herunterladen von Videos.",
+    "tools": "Werkzeuge",
+    "rights": "Alle Rechte vorbehalten."
+  },
+  "errors": {
+    "pageNotFound": "Seite nicht gefunden",
+    "backHome": "Zur Startseite"
+  }
+}

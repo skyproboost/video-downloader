@@ -1,0 +1,28 @@
+{
+  "home": {
+    "title": "Free Video Downloader",
+    "subtitle": "Download videos from YouTube, Instagram, TikTok and more",
+    "meta": {
+      "title": "Free Video Downloader - YouTube, Instagram, TikTok",
+      "description": "Download videos from YouTube, Instagram, TikTok, Facebook for free. No registration. Fast and easy!"
+    }
+  },
+  "form": {
+    "placeholder": "Paste video URL here...",
+    "download": "Download",
+    "supported": "Supported formats",
+    "success": "Video ready for download!"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions"
+  },
+  "footer": {
+    "description": "Free online tool to download videos.",
+    "tools": "Tools",
+    "rights": "All rights reserved."
+  },
+  "errors": {
+    "pageNotFound": "Page Not Found",
+    "backHome": "Back to Home"
+  }
+}
