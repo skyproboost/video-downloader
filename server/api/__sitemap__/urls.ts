@@ -91,7 +91,7 @@ export default defineEventHandler(async () => {
                 // Картинки из переводов
                 if (page.translations) {
                     Object.entries(page.translations).forEach(([lang, trans]: [string, any]) => {
-                        if (lang === 'manual_edit' || lang === 'source_hash') return
+                        if (!languageCodes.includes(lang)) return
                         if (trans?.meta?.ogImage) {
                             const url = trans.meta.ogImage.startsWith('/')
                                 ? `${baseUrl}${trans.meta.ogImage}`

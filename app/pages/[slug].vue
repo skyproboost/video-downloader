@@ -4,7 +4,7 @@
             <div class="container">
                 <h1>{{ translation.pageContent?.h1 }}</h1>
                 <p class="subtitle">{{ translation.pageContent?.subtitle }}</p>
-                <ToolDownloadForm :platform="page.platform" />
+                <ToolDownloadForm />
             </div>
         </section>
 
@@ -13,6 +13,11 @@
                 <div class="intro-text">{{ translation.pageContent.intro }}</div>
             </div>
         </section>
+
+        <ToolPlatformsGrid
+            v-if="page.platform"
+            :platform-id="page.platform"
+        />
 
         <ToolHowToSteps
             v-if="translation.pageContent?.how_to?.steps?.length"
@@ -128,15 +133,20 @@ useHead({
     ],
     link: () => {
         const links: any[] = [{ rel: 'canonical', href: pageUrl.value }]
+
         if (page.value?.translations) {
-            Object.keys(page.value.translations).forEach((lang) => {
-                if (lang === 'manual_edit' || lang === 'source_hash') return
-                links.push({
-                    rel: 'alternate',
-                    hreflang: lang,
-                    href: `${siteUrl.value}${lang === 'en' ? '' : '/' + lang}/${slug}`,
+            const validLangs = ['en', 'ru', 'de']
+
+            Object.keys(page.value.translations)
+                .filter(lang => validLangs.includes(lang))
+                .forEach((lang) => {
+                    links.push({
+                        rel: 'alternate',
+                        hreflang: lang,
+                        href: `${siteUrl.value}${lang === 'en' ? '' : '/' + lang}/${slug}`,
+                    })
                 })
-            })
+
             links.push({
                 rel: 'alternate',
                 hreflang: 'x-default',

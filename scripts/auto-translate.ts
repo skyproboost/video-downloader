@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import crypto from 'crypto'
 import { parse, stringify } from 'yaml'
-import { languages, languageCodes } from '../config/languages'
+import { languageCodes } from '../config/languages'
 
 const LINGVA_INSTANCES = [
     'https://lingva.ml',
@@ -10,81 +10,171 @@ const LINGVA_INSTANCES = [
     'https://translate.plausibility.cloud',
 ]
 
-// Поля которые НЕ переводятся (пути к файлам)
-const SKIP_KEYS = ['image', 'ogImage', 'src', 'url', 'href']
+// Поля которые НЕ переводятся
+const SKIP_KEYS = ['image', 'ogImage', 'src', 'url', 'href', 'icon', 'platform']
 
 const STATUS_FILE = path.resolve(process.cwd(), 'public/admin/status.json')
+const QUEUE_FILE = path.resolve(process.cwd(), 'public/admin/queue.json')
 
 // ═══════════════════════════════════════════════════════════════
-// СТАТУС
+// ОЧЕРЕДЬ
 // ═══════════════════════════════════════════════════════════════
 
-function setStatus(status: 'idle' | 'translating' | 'error', message: string) {
+interface QueueItem {
+    file: string
+    slug: string
+    force: boolean
+    addedAt: string
+    status: 'pending' | 'processing' | 'done' | 'error'
+    error?: string
+}
+
+interface QueueState {
+    items: QueueItem[]
+    processing: boolean
+    currentFile: string | null
+}
+
+function loadQueue(): QueueState {
+    try {
+        if (fs.existsSync(QUEUE_FILE)) {
+            return JSON.parse(fs.readFileSync(QUEUE_FILE, 'utf-8'))
+        }
+    } catch {}
+    return { items: [], processing: false, currentFile: null }
+}
+
+function saveQueue(queue: QueueState) {
+    fs.mkdirSync(path.dirname(QUEUE_FILE), { recursive: true })
+    fs.writeFileSync(QUEUE_FILE, JSON.stringify(queue, null, 2))
+    updateStatus(queue)
+}
+
+function addToQueue(file: string, force = false): QueueState {
+    const queue = loadQueue()
+    const slug = path.basename(file, '.yml')
+
+    const existing = queue.items.find(i => i.file === file && i.status === 'pending')
+    if (existing) {
+        existing.force = existing.force || force
+        existing.addedAt = new Date().toISOString()
+        console.log(`  ⏫ Updated in queue: ${slug}`)
+    } else {
+        queue.items.push({
+            file,
+            slug,
+            force,
+            addedAt: new Date().toISOString(),
+            status: 'pending'
+        })
+        console.log(`  ➕ Added to queue: ${slug}`)
+    }
+
+    saveQueue(queue)
+    return queue
+}
+
+function updateStatus(queue: QueueState) {
+    const pending = queue.items.filter(i => i.status === 'pending').length
+    const processing = queue.items.find(i => i.status === 'processing')
+    const done = queue.items.filter(i => i.status === 'done').length
+    const errors = queue.items.filter(i => i.status === 'error')
+    const total = queue.items.length
+
+    let status: 'idle' | 'translating' | 'error' = 'idle'
+    let message = 'Ожидание изменений'
+
+    if (processing) {
+        const processed = done + 1
+        status = 'translating'
+        message = `Перевод ${processed}/${total}: ${processing.slug}`
+        if (pending > 0) {
+            message += ` (ещё ${pending} в очереди)`
+        }
+    } else if (pending > 0) {
+        status = 'translating'
+        message = `В очереди: ${pending} файл(ов)`
+    }
+
+    if (errors.length > 0) {
+        status = 'error'
+        message = `Ошибки: ${errors.map(e => e.slug).join(', ')}`
+    }
+
     fs.mkdirSync(path.dirname(STATUS_FILE), { recursive: true })
     fs.writeFileSync(STATUS_FILE, JSON.stringify({
-        status, message, updatedAt: new Date().toISOString()
+        status,
+        message,
+        queue: { pending, processing: processing?.slug || null, done, errors: errors.length, total },
+        updatedAt: new Date().toISOString()
     }, null, 2))
 }
 
+function cleanOldItems(queue: QueueState): QueueState {
+    const fiveMinAgo = Date.now() - 5 * 60 * 1000
+    queue.items = queue.items.filter(item => {
+        // pending и processing всегда оставляем
+        if (item.status === 'pending' || item.status === 'processing') return true
+        // done удаляем сразу
+        if (item.status === 'done') return false
+        // error оставляем на 5 минут
+        const addedAt = new Date(item.addedAt).getTime()
+        return addedAt > fiveMinAgo
+    })
+    return queue
+}
+
 // ═══════════════════════════════════════════════════════════════
-// FLATTEN / UNFLATTEN — работа с путями полей
+// FLATTEN / UNFLATTEN
 // ═══════════════════════════════════════════════════════════════
 
 function flatten(obj: any, prefix = ''): Record<string, any> {
     const result: Record<string, any> = {}
-
     for (const [key, value] of Object.entries(obj)) {
-        const path = prefix ? `${prefix}.${key}` : key
-
+        const p = prefix ? `${prefix}.${key}` : key
         if (Array.isArray(value)) {
             value.forEach((item, i) => {
                 if (typeof item === 'object' && item !== null) {
-                    Object.assign(result, flatten(item, `${path}[${i}]`))
+                    Object.assign(result, flatten(item, `${p}[${i}]`))
                 } else {
-                    result[`${path}[${i}]`] = item
+                    result[`${p}[${i}]`] = item
                 }
             })
         } else if (typeof value === 'object' && value !== null) {
-            Object.assign(result, flatten(value, path))
+            Object.assign(result, flatten(value, p))
         } else {
-            result[path] = value
+            result[p] = value
         }
     }
-
     return result
 }
 
 function setByPath(obj: any, pathStr: string, value: any) {
     const parts = pathStr.split(/\.|\[(\d+)\]/).filter(Boolean)
     let current = obj
-
     for (let i = 0; i < parts.length - 1; i++) {
         const part = parts[i]
         const next = parts[i + 1]
-
         if (!(part in current)) {
             current[part] = /^\d+$/.test(next) ? [] : {}
         }
         current = current[part]
     }
-
     current[parts[parts.length - 1]] = value
 }
 
 function getByPath(obj: any, pathStr: string): any {
     const parts = pathStr.split(/\.|\[(\d+)\]/).filter(Boolean)
     let current = obj
-
     for (const part of parts) {
         if (current === undefined || current === null) return undefined
         current = current[part]
     }
-
     return current
 }
 
 // ═══════════════════════════════════════════════════════════════
-// ХЭШИ ПОЛЕЙ
+// ХЭШИ И ИЗМЕНЕНИЯ
 // ═══════════════════════════════════════════════════════════════
 
 function hashValue(value: any): string {
@@ -94,19 +184,13 @@ function hashValue(value: any): string {
 function getFieldHashes(data: any): Record<string, string> {
     const flat = flatten(data)
     const hashes: Record<string, string> = {}
-
     for (const [path, value] of Object.entries(flat)) {
         if (value !== undefined && value !== null && value !== '') {
             hashes[path] = hashValue(value)
         }
     }
-
     return hashes
 }
-
-// ═══════════════════════════════════════════════════════════════
-// ОПРЕДЕЛЕНИЕ ИЗМЕНЕНИЙ
-// ═══════════════════════════════════════════════════════════════
 
 interface Change {
     path: string
@@ -116,21 +200,13 @@ interface Change {
 
 function detectChanges(currentHashes: Record<string, string>, savedHashes: Record<string, string>, data: any): Change[] {
     const changes: Change[] = []
-
     for (const [path, hash] of Object.entries(currentHashes)) {
         if (savedHashes[path] !== hash) {
-            // Определяем нужен ли перевод по последнему ключу в пути
             const lastKey = path.split(/\.|\[/).pop()?.replace(']', '') || ''
             const needsTranslation = !SKIP_KEYS.includes(lastKey)
-
-            changes.push({
-                path,
-                value: getByPath(data, path),
-                needsTranslation
-            })
+            changes.push({ path, value: getByPath(data, path), needsTranslation })
         }
     }
-
     return changes
 }
 
@@ -194,19 +270,13 @@ async function processFile(filePath: string, force = false): Promise<boolean> {
         const targets = languageCodes.filter(l => l !== src)
         const data = { meta: page.meta, pageContent: page.pageContent }
 
-        // Проверяем есть ли переводы
         const hasTranslations = targets.every(l => page.translations?.[l]?.meta?.title)
-
-        // Получаем хэши
         const currentHashes = getFieldHashes(data)
         const savedHashes = page._hashes || {}
 
-        // ═══════════════════════════════════════════════════════
-        // ПОЛНЫЙ ПЕРЕВОД (первый раз или --force)
-        // ═══════════════════════════════════════════════════════
+        // ПОЛНЫЙ ПЕРЕВОД
         if (force || !hasTranslations) {
             console.log(force ? '  🔄 Full translation' : '  🆕 First translation')
-            setStatus('translating', `Перевод: ${slug}`)
 
             if (!page.translations) page.translations = {}
 
@@ -226,19 +296,15 @@ async function processFile(filePath: string, force = false): Promise<boolean> {
 
             page._hashes = currentHashes
             fs.writeFileSync(filePath, stringify(page))
-            setStatus('idle', 'Всё переведено')
             console.log('  ✅ Saved!')
             return true
         }
 
-        // ═══════════════════════════════════════════════════════
         // ЧАСТИЧНОЕ ОБНОВЛЕНИЕ
-        // ═══════════════════════════════════════════════════════
         const changes = detectChanges(currentHashes, savedHashes, data)
 
         if (changes.length === 0) {
             console.log('  ⏭️ No changes')
-            setStatus('idle', 'Всё переведено')
             return false
         }
 
@@ -246,9 +312,7 @@ async function processFile(filePath: string, force = false): Promise<boolean> {
         const toSync = changes.filter(c => !c.needsTranslation)
 
         console.log(`  📝 ${toTranslate.length} text, ${toSync.length} media`)
-        setStatus('translating', `Обновление: ${slug}`)
 
-        // Переводим текстовые поля
         if (toTranslate.length > 0) {
             for (const lang of targets) {
                 process.stdout.write(`  → ${lang}...`)
@@ -259,13 +323,11 @@ async function processFile(filePath: string, force = false): Promise<boolean> {
                 }
                 process.stdout.write(' ✓\n')
             }
-            // Оригинал
             for (const change of toTranslate) {
                 setByPath(page.translations[src], change.path, change.value)
             }
         }
 
-        // Синхронизируем медиа (без перевода)
         if (toSync.length > 0) {
             for (const change of toSync) {
                 for (const lang of languageCodes) {
@@ -277,14 +339,91 @@ async function processFile(filePath: string, force = false): Promise<boolean> {
 
         page._hashes = currentHashes
         fs.writeFileSync(filePath, stringify(page))
-        setStatus('idle', 'Всё переведено')
         console.log('  ✅ Saved!')
         return true
 
     } catch (e) {
         console.error(`  ❌ Error: ${e}`)
-        setStatus('error', `Ошибка: ${slug}`)
-        return false
+        throw e
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ПРОЦЕССОР ОЧЕРЕДИ
+// ═══════════════════════════════════════════════════════════════
+
+let isProcessing = false
+
+async function processQueue() {
+    if (isProcessing) return
+    isProcessing = true
+
+    const startTime = Date.now()
+    let processed = 0
+    let errors = 0
+
+    try {
+        while (true) {
+            let queue = loadQueue()
+            queue = cleanOldItems(queue)
+
+            const next = queue.items.find(i => i.status === 'pending')
+            if (!next) {
+                queue.processing = false
+                queue.currentFile = null
+                saveQueue(queue)
+                break
+            }
+
+            // Помечаем как processing
+            next.status = 'processing'
+            queue.processing = true
+            queue.currentFile = next.file
+            saveQueue(queue)
+
+            const pending = queue.items.filter(i => i.status === 'pending').length
+            console.log(`\n🔄 [${processed + 1}/${processed + pending + 1}] Processing: ${next.slug}`)
+
+            try {
+                await processFile(next.file, next.force)
+                next.status = 'done'
+                processed++
+            } catch (e) {
+                next.status = 'error'
+                next.error = String(e)
+                errors++
+            }
+
+            // Обновляем статус в очереди
+            queue = loadQueue()
+            const item = queue.items.find(i => i.file === next.file && i.status === 'processing')
+            if (item) {
+                item.status = next.status
+                item.error = next.error
+            }
+            saveQueue(queue)
+        }
+    } finally {
+        isProcessing = false
+
+        // Очищаем завершённые записи
+        let queue = loadQueue()
+        queue = cleanOldItems(queue)
+        saveQueue(queue)
+
+        // Итоговый отчёт
+        const duration = ((Date.now() - startTime) / 1000).toFixed(1)
+
+        if (processed > 0 || errors > 0) {
+            console.log('\n' + '═'.repeat(50))
+            console.log('📊 ИТОГО:')
+            console.log(`   ✅ Обработано: ${processed} страниц(ы)`)
+            if (errors > 0) {
+                console.log(`   ❌ Ошибок: ${errors}`)
+            }
+            console.log(`   ⏱️ Время: ${duration} сек`)
+            console.log('═'.repeat(50))
+        }
     }
 }
 
@@ -296,15 +435,18 @@ async function processAll(force = false) {
     const dir = path.resolve(process.cwd(), 'content/pages')
     const files = fs.readdirSync(dir).filter(f => f.endsWith('.yml'))
 
-    console.log(`\n🔄 Processing ${files.length} files${force ? ' (force)' : ''}`)
-    setStatus('translating', `Обработка ${files.length} страниц`)
+    console.log('\n' + '═'.repeat(50))
+    console.log(`📁 Найдено файлов: ${files.length}`)
+    console.log(`🔧 Режим: ${force ? 'принудительный перевод' : 'только изменения'}`)
+    console.log('═'.repeat(50))
 
     for (const f of files) {
-        await processFile(path.join(dir, f), force)
+        addToQueue(path.join(dir, f), force)
     }
 
-    setStatus('idle', 'Всё переведено')
-    console.log('\n✅ All done!')
+    await processQueue()
+
+    console.log('\n🎉 Все переводы завершены!\n')
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -314,44 +456,49 @@ async function processAll(force = false) {
 function watch() {
     const dir = path.resolve(process.cwd(), 'content/pages')
 
-    console.log('👀 Watching for changes...')
-    console.log(`   Path: ${dir}`)
-    console.log(`   Languages: ${languageCodes.join(', ')}`)
-    console.log('   Press Ctrl+C to stop\n')
+    console.log('\n' + '═'.repeat(50))
+    console.log('👀 РЕЖИМ НАБЛЮДЕНИЯ')
+    console.log('═'.repeat(50))
+    console.log(`📁 Папка: ${dir}`)
+    console.log(`🌍 Языки: ${languageCodes.join(', ')}`)
+    console.log('⌨️ Нажмите Ctrl+C для выхода')
+    console.log('═'.repeat(50) + '\n')
 
-    setStatus('idle', 'Ожидание изменений')
+    // Очищаем очередь при старте
+    saveQueue({ items: [], processing: false, currentFile: null })
 
-    let busy = false
-    let timer: NodeJS.Timeout | null = null
-    let lastSaved: string | null = null
-    let lastSaveTime = 0
+    let timers: Map<string, NodeJS.Timeout> = new Map()
+    let lastSaved: Map<string, number> = new Map()
 
     fs.watch(dir, (event, file) => {
         if (!file?.endsWith('.yml')) return
 
         const now = Date.now()
-        if (file === lastSaved && (now - lastSaveTime) < 5000) return
+        const lastSaveTime = lastSaved.get(file) || 0
 
-        if (timer) clearTimeout(timer)
+        if ((now - lastSaveTime) < 5000) return
 
-        timer = setTimeout(async () => {
+        const existing = timers.get(file)
+        if (existing) clearTimeout(existing)
+
+        const timer = setTimeout(async () => {
+            timers.delete(file)
             const fp = path.join(dir, file)
             if (!fs.existsSync(fp)) return
 
-            if (busy) return
+            console.log(`\n📝 Обнаружено изменение: ${file}`)
+            addToQueue(fp, false)
 
-            busy = true
-            console.log(`\n📝 Change detected: ${file}`)
+            lastSaved.set(file, Date.now())
 
-            const saved = await processFile(fp, false)
+            await processQueue()
 
-            if (saved) {
-                lastSaved = file
-                lastSaveTime = Date.now()
-            }
+            lastSaved.set(file, Date.now())
 
-            busy = false
+            console.log('\n👀 Ожидание изменений...')
         }, 2000)
+
+        timers.set(file, timer)
     })
 }
 
@@ -365,18 +512,35 @@ if (args.includes('--watch')) {
     watch()
 } else if (args.includes('--all')) {
     processAll(args.includes('--force'))
+} else if (args.includes('--status')) {
+    const queue = loadQueue()
+    console.log('\n📊 Статус очереди:')
+    console.log(`   Обработка: ${queue.processing ? 'Да' : 'Нет'}`)
+    console.log(`   Текущий: ${queue.currentFile || '-'}`)
+    console.log(`   Всего: ${queue.items.length}`)
+    if (queue.items.length > 0) {
+        console.log('\n   Файлы:')
+        queue.items.forEach(item => {
+            const icon = { pending: '⏳', processing: '🔄', done: '✅', error: '❌' }[item.status]
+            console.log(`   ${icon} ${item.slug} (${item.status})`)
+        })
+    }
 } else {
     const slug = args.find(a => !a.startsWith('--'))
     if (!slug) {
-        console.log('Usage: npx tsx scripts/auto-translate.ts <--watch|--all|slug> [--force]')
+        console.log('\n📖 Использование:')
+        console.log('   npx tsx scripts/auto-translate.ts --watch        # Режим наблюдения')
+        console.log('   npx tsx scripts/auto-translate.ts --all          # Перевести все')
+        console.log('   npx tsx scripts/auto-translate.ts --all --force  # Перевести все принудительно')
+        console.log('   npx tsx scripts/auto-translate.ts --status       # Статус очереди')
+        console.log('   npx tsx scripts/auto-translate.ts <slug>         # Перевести один файл')
         process.exit(1)
     }
     const fp = path.resolve(`content/pages/${slug}.yml`)
     if (!fs.existsSync(fp)) {
-        console.error('❌ File not found')
+        console.error('❌ Файл не найден:', fp)
         process.exit(1)
     }
-    processFile(fp, args.includes('--force')).then(() => {
-        setStatus('idle', 'Готово')
-    })
+    addToQueue(fp, args.includes('--force'))
+    processQueue()
 }

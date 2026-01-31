@@ -26,8 +26,6 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{ platform: string }>()
-
 const url = ref('')
 const isLoading = ref(false)
 const result = ref(false)

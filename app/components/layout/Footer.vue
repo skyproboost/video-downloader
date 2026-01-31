@@ -2,75 +2,187 @@
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
+                <!-- Левая часть: бренд -->
                 <div class="footer-brand">
-                    <span class="logo">📥 VideoDownloader</span>
-                    <p>{{ $t('footer.description') }}</p>
+                    <div class="logo">
+                        <span class="logo-icon">📥</span>
+                        <span class="logo-text">Video Downloader</span>
+                    </div>
+                    <p class="copyright">© {{ new Date().getFullYear() }} Video Downloader. {{ $t('footer.rights') }}</p>
                 </div>
 
-                <div class="footer-links">
-                    <h4>{{ $t('footer.tools') }}</h4>
-                    <NuxtLink :to="localePath('/youtube-downloader')">YouTube Downloader</NuxtLink>
+                <!-- Правая часть: ссылки по платформам -->
+                <div v-if="footerLinks?.length" class="footer-links">
+                    <div
+                        v-for="group in footerLinks"
+                        :key="group.platformId"
+                        class="link-group"
+                    >
+                        <h4 class="group-title">{{ group.platformName }}</h4>
+                        <ul class="group-links">
+                            <li v-for="link in group.links" :key="link.slug">
+                                <NuxtLink :to="localePath(`/${link.slug}`)">
+                                    {{ link.text }}
+                                </NuxtLink>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-
-            <div class="footer-bottom">
-                <p>© {{ new Date().getFullYear() }} VideoDownloader. {{ $t('footer.rights') }}</p>
             </div>
         </div>
     </footer>
 </template>
 
 <script setup lang="ts">
+const { locale } = useI18n()
 const localePath = useLocalePath()
+
+const { data: footerLinks } = await useFetch('/api/footer-links', {
+    query: { locale },
+})
 </script>
 
 <style scoped>
 .footer {
-    background: #1a202c;
-    color: white;
-    padding: 3rem 0 1.5rem;
-    margin-top: auto; /* Толкает футер вниз */
+    background: var(--color-bg-dark);
+    color: var(--color-text-inverse);
+    padding: var(--space-8) 0 var(--space-6);
+    margin-top: auto;
 }
 
 .footer-content {
     display: flex;
     justify-content: space-between;
-    gap: 2rem;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--space-8);
 }
 
-.footer-brand .logo {
-    font-size: 1.25rem;
+/* Бренд */
+.footer-brand {
+    flex-shrink: 0;
+    max-width: 16rem;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+}
+
+.logo-icon {
+    font-size: var(--text-xl);
+}
+
+.logo-text {
+    font-size: var(--text-lg);
     font-weight: 700;
+    color: var(--color-primary);
 }
 
-.footer-brand p {
-    margin-top: 0.5rem;
-    color: #a0aec0;
-    font-size: 0.9rem;
+.description {
+    color: var(--color-text-lighter);
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    margin-bottom: var(--space-2);
 }
 
-.footer-links h4 {
-    margin-bottom: 1rem;
+.copyright {
+    color: var(--color-text-light);
+    font-size: var(--text-xs);
 }
 
-.footer-links a {
-    display: block;
-    color: #a0aec0;
-    text-decoration: none;
-    margin-bottom: 0.5rem;
+/* Ссылки */
+.footer-links {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+    justify-content: flex-end;
 }
 
-.footer-links a:hover {
-    color: white;
+.link-group {
+    min-width: 6rem;
 }
 
-.footer-bottom {
-    border-top: 1px solid #2d3748;
-    padding-top: 1.5rem;
-    text-align: center;
-    color: #718096;
-    font-size: 0.875rem;
+.group-title {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-inverse);
+    margin-bottom: var(--space-2);
+    padding-bottom: var(--space-2);
+    border-bottom: 2px solid var(--color-primary);
+}
+
+.group-links {
+    list-style: none;
+}
+
+.group-links li {
+    margin-bottom: var(--space-1);
+}
+
+.group-links li:last-child {
+    margin-bottom: 0;
+}
+
+.group-links a {
+    color: var(--color-text-lighter);
+    font-size: var(--text-sm);
+    transition: color var(--transition-fast);
+}
+
+.group-links a:hover {
+    color: var(--color-primary);
+}
+
+/* Tablet & Mobile */
+@media (max-width: 768px) {
+    .footer {
+        padding: var(--space-6) 0;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: var(--space-6);
+    }
+
+    .footer-brand {
+        max-width: 100%;
+        order: 2;
+    }
+
+    .footer-links {
+        order: 1;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-5) var(--space-6);
+        width: 100%;
+        max-width: 20rem;
+    }
+
+    .link-group {
+        min-width: unset;
+        text-align: center;
+    }
+
+    .group-title {
+        text-align: center;
+    }
+
+    .logo {
+        justify-content: center;
+    }
+}
+
+/* Mobile small */
+@media (max-width: 320px) {
+    .footer-links {
+        grid-template-columns: 1fr;
+        gap: var(--space-5);
+        max-width: 12rem;
+    }
 }
 </style>

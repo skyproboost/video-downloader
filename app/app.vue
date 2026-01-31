@@ -9,6 +9,9 @@
 </template>
 
 <style>
+/* ═══════════════════════════════════════════
+   APP LAYOUT
+   ═══════════════════════════════════════════ */
 html, body, #__nuxt {
     height: 100%;
 }
@@ -40,14 +43,16 @@ html, body, #__nuxt {
    CSS VARIABLES
    ═══════════════════════════════════════════ */
 :root {
-    /* Fonts - System Stack (максимальная производительность) */
+    /* Fonts */
     --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif;
-    --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+    --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
 
-    /* Colors */
+    /* Primary */
     --color-primary: #667eea;
     --color-primary-dark: #764ba2;
     --color-primary-rgb: 102, 126, 234;
+
+    /* Status */
     --color-success: #48bb78;
     --color-error: #e53e3e;
     --color-warning: #ecc94b;
@@ -56,24 +61,22 @@ html, body, #__nuxt {
     --color-text: #1a202c;
     --color-text-muted: #4a5568;
     --color-text-light: #718096;
+    --color-text-lighter: #a0aec0;
     --color-text-inverse: #ffffff;
 
     /* Backgrounds */
     --color-bg: #f7fafc;
     --color-bg-white: #ffffff;
     --color-bg-dark: #1a202c;
-    --color-bg-elevated: #ffffff;
 
     /* Borders */
     --color-border: #e2e8f0;
     --color-border-dark: #2d3748;
 
     /* Shadows */
-    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
-    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
     --shadow-primary: 0 4px 14px rgba(var(--color-primary-rgb), 0.4);
 
     /* Radius */
@@ -93,18 +96,28 @@ html, body, #__nuxt {
     --space-8: 2rem;
     --space-10: 2.5rem;
     --space-12: 3rem;
-    --space-16: 4rem;
+
+    /* Font sizes */
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
 
     /* Transitions */
-    --transition-fast: 0.15s ease;
-    --transition-base: 0.2s ease;
-    --transition-slow: 0.3s ease;
+    --transition-fast: 150ms ease;
+    --transition-base: 200ms ease;
 
     /* Z-index */
     --z-dropdown: 50;
     --z-sticky: 100;
     --z-modal: 200;
     --z-toast: 300;
+
+    /* Container */
+    --container-max: 70rem; /* 1100px */
+    --container-padding: var(--space-6);
 }
 
 /* ═══════════════════════════════════════════
@@ -112,21 +125,18 @@ html, body, #__nuxt {
    ═══════════════════════════════════════════ */
 html {
     font-family: var(--font-sans);
-    font-size: 16px;
+    font-size: 100%; /* 16px base */
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
     scroll-behavior: smooth;
-    text-size-adjust: 100%;
-    tab-size: 4;
 }
 
 body {
     background: var(--color-bg);
     color: var(--color-text);
     min-height: 100vh;
-    min-height: 100dvh; /* Dynamic viewport height for mobile */
+    min-height: 100dvh;
 }
 
 /* ═══════════════════════════════════════════
@@ -147,14 +157,6 @@ a {
     text-decoration: none;
 }
 
-strong, b {
-    font-weight: 600;
-}
-
-small {
-    font-size: 0.875em;
-}
-
 code, kbd, samp, pre {
     font-family: var(--font-mono);
     font-size: 0.9em;
@@ -165,9 +167,9 @@ code, kbd, samp, pre {
    ═══════════════════════════════════════════ */
 .container {
     width: 100%;
-    max-width: 1100px;
+    max-width: var(--container-max);
     margin-inline: auto;
-    padding-inline: var(--space-6);
+    padding-inline: var(--container-padding);
 }
 
 /* ═══════════════════════════════════════════
@@ -177,10 +179,6 @@ img, picture, video, canvas, svg {
     display: block;
     max-width: 100%;
     height: auto;
-}
-
-img {
-    content-visibility: auto;
 }
 
 /* ═══════════════════════════════════════════
@@ -222,23 +220,6 @@ button:disabled {
     outline-offset: 2px;
 }
 
-/* Skip link */
-.skip-link {
-    position: absolute;
-    top: -100%;
-    left: var(--space-4);
-    z-index: var(--z-toast);
-    padding: var(--space-3) var(--space-4);
-    background: var(--color-bg-dark);
-    color: var(--color-text-inverse);
-    border-radius: var(--radius-md);
-    transition: top var(--transition-fast);
-}
-
-.skip-link:focus {
-    top: var(--space-4);
-}
-
 /* ═══════════════════════════════════════════
    REDUCED MOTION
    ═══════════════════════════════════════════ */
@@ -262,11 +243,11 @@ button:disabled {
 }
 
 /* ═══════════════════════════════════════════
-   SCROLLBAR (optional, webkit only)
+   SCROLLBAR
    ═══════════════════════════════════════════ */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 0.5rem;
+    height: 0.5rem;
 }
 
 ::-webkit-scrollbar-track {
@@ -286,20 +267,13 @@ button:disabled {
    PRINT
    ═══════════════════════════════════════════ */
 @media print {
-    .no-print,
-    header,
-    footer,
-    nav {
+    .no-print, header, footer, nav {
         display: none !important;
     }
 
     body {
         background: white;
         color: black;
-    }
-
-    a[href]::after {
-        content: ' (' attr(href) ')';
     }
 }
 </style>

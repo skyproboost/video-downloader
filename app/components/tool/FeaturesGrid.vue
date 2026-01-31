@@ -14,7 +14,7 @@
                             quality="80"
                             width="48"
                             height="48"
-                            loading="lazy"
+                            loading="eager"
                             densities="x1 x2"
                         />
                     </div>

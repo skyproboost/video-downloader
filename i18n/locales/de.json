@@ -1,28 +1,32 @@
 {
   "home": {
     "title": "Kostenloser Video-Downloader",
-    "subtitle": "Videos von YouTube, Instagram, TikTok und mehr herunterladen",
+    "subtitle": "Laden Sie Videos von YouTube, Instagram, TikTok und mehr herunter",
     "meta": {
-      "title": "Kostenloser Video-Downloader - YouTube, Instagram, TikTok",
-      "description": "Laden Sie Videos von YouTube, Instagram, TikTok, Facebook kostenlos herunter. Keine Registrierung. Schnell und einfach!"
+      "title": "Kostenloser Video-Downloader - Von YouTube, TikTok, Instagram herunterladen",
+      "description": "Kostenloses Online-Tool zum Herunterladen von Videos von YouTube, TikTok, Instagram und anderen Plattformen in HD-Qualität"
+    },
+    "about": {
+      "title": "Videos von jeder Plattform herunterladen",
+      "text1": "Unser kostenloser Video-Downloader ermöglicht es Ihnen, Videos von beliebten Plattformen wie YouTube, TikTok, Instagram und vielen mehr zu speichern. Keine Registrierung erforderlich, keine Software zu installieren.",
+      "text2": "Fügen Sie einfach die Video-URL ein, wählen Sie Ihre bevorzugte Qualität und laden Sie herunter. So einfach ist das!"
+    },
+    "features": {
+      "fast": {
+        "title": "Blitzschnell",
+        "text": "Laden Sie Videos in Sekunden mit unseren optimierten Servern herunter"
+      },
+      "safe": {
+        "title": "Sicher & Geschützt",
+        "text": "Keine Datenerfassung, keine Registrierung, völlig anonym"
+      },
+      "free": {
+        "title": "100% Kostenlos",
+        "text": "Alle Funktionen ohne Zahlung oder Limits verfügbar"
+      }
     }
   },
-  "form": {
-    "placeholder": "Video-URL hier einfügen...",
-    "download": "Herunterladen",
-    "supported": "Unterstützte Formate",
-    "success": "Video zum Download bereit!"
-  },
-  "faq": {
-    "title": "Häufig gestellte Fragen"
-  },
   "footer": {
-    "description": "Kostenloses Online-Tool zum Herunterladen von Videos.",
-    "tools": "Werkzeuge",
     "rights": "Alle Rechte vorbehalten."
-  },
-  "errors": {
-    "pageNotFound": "Seite nicht gefunden",
-    "backHome": "Zur Startseite"
   }
 }

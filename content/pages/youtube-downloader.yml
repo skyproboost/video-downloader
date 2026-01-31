@@ -1,63 +1,11 @@
-slug: youtube-downloader
-platform: youtube
-source_lang: en
-meta:
-  title: YouTube Video Downloader - Download HD Videos Free 1
-  description: Download YouTube videos in HD, Full HD, 4K. Free online tool, no
-    registration. Fast and easy!
-  keywords: youtube downloader", "download youtube video", "youtube to mp4
-  ogImage: /images/image_2025-10-26_23-18-53.png
-  ogImageAlt: TEST IMAGE
-pageContent:
-  h1: Free YouTube Video Downloader 1
-  subtitle: Download any YouTube video in HD quality 2
-  intro: Our YouTube downloader allows you to save videos in multiple formats and
-    qualities. No software needed — just paste the link and download!
-  how_to:
-    title: How to Download YouTube Videos Test 111 2222
-    steps:
-      - title: Copy the URL
-        description: Open YouTube, find your video, copy the URL from address bar
-        image: /images/image_2025-10-26_23-18-53.png
-        imageAlt: TEST IMAGE
-      - title: Paste the link
-        description: Paste the copied URL into the input field above
-      - title: Download
-        description: Click Download and choose your preferred format
-  features:
-    title: Why Choose Us?
-    items:
-      - icon: 🎬
-        title: HD & 4K Quality
-        description: Download in 720p, 1080p, or 4K resolution
-        image: /images/image_2025-10-26_23-18-53.png
-      - icon: ⚡
-        title: Lightning Fast
-        description: Our servers process videos in seconds
-        image: /images/image_2025-10-26_23-18-53.png
-      - icon: 🔓
-        title: No Registration
-        description: Start downloading immediately
-        image: /images/image_2025-10-26_23-18-53.png
-      - icon: 📱
-        title: Any Device
-        description: Works on desktop, tablet, mobile
-  faq:
-    - question: Is it free?
-      answer: Yes, completely free with no hidden charges.
-    - question: What formats are supported?
-      answer: MP4, WebM for video. MP3 for audio.
-    - question: Can I download in 4K?
-      answer: Yes, if the original video is available in 4K.
-    - question: Do I need to install anything?
-      answer: No, it works entirely in your browser.
+footerLinkText: YouTube
 translations:
   en:
     meta:
-      title: YouTube Video Downloader - Download HD Videos Free 1
+      title: YouTube Video Downloader - Download HD Videos Free 12111123
       description: Download YouTube videos in HD, Full HD, 4K. Free online tool, no
         registration. Fast and easy!
-      keywords: youtube downloader", "download youtube video", "youtube to mp4
+      keywords: youtube downloader, download youtube video, youtube to mp4
       ogImage: /images/image_2025-10-26_23-18-53.png
       ogImageAlt: TEST IMAGE
     pageContent:
@@ -103,12 +51,15 @@ translations:
           answer: Yes, if the original video is available in 4K.
         - question: Do I need to install anything?
           answer: No, it works entirely in your browser.
+      platforms:
+        title: "11"
+      footerLinkText: YouTube
   ru:
     meta:
-      title: Загрузчик видео с YouTube - Скачать HD-видео бесплатно 1
+      title: Загрузчик видео с YouTube — скачать HD-видео бесплатно 12111123
       description: Скачивайте видео с YouTube в форматах HD, Full HD, 4K. Бесплатный
         онлайн-инструмент, без регистрации. Быстро и легко!
-      keywords: загрузчик YouTube", "загрузить видео с YouTube", "с YouTube в mp4
+      keywords: загрузчик YouTube, скачать видео с YouTube, YouTube в mp4
       ogImage: /images/image_2025-10-26_23-18-53.png
       ogImageAlt: ТЕСТОВОЕ ИЗОБРАЖЕНИЕ
     pageContent:
@@ -156,12 +107,15 @@ translations:
           answer: Да, если оригинальное видео доступно в формате 4K.
         - question: Нужно ли мне что-нибудь устанавливать?
           answer: Нет, это работает полностью в вашем браузере.
+      platforms:
+        title: "11"
+      footerLinkText: Ютуб
   de:
     meta:
-      title: YouTube-Video-Downloader – HD-Videos kostenlos herunterladen 1
+      title: YouTube-Video-Downloader – HD-Videos kostenlos herunterladen 12111123
       description: Laden Sie YouTube-Videos in HD, Full HD und 4K herunter.
         Kostenloses Online-Tool, keine Registrierung. Schnell und einfach!
-      keywords: YouTube-Downloader“, „YouTube-Video herunterladen“, „YouTube in MP4
+      keywords: YouTube-Downloader, YouTube-Video herunterladen, YouTube auf mp4
       ogImage: /images/image_2025-10-26_23-18-53.png
       ogImageAlt: TESTBILD
     pageContent:
@@ -210,87 +164,148 @@ translations:
           answer: Ja, wenn das Originalvideo in 4K verfügbar ist.
         - question: Muss ich etwas installieren?
           answer: Nein, es funktioniert vollständig in Ihrem Browser.
+      platforms:
+        title: "11"
+      footerLinkText: YouTube
   source_hash: a7451273
   manual_edit: false
   text_hash: 223afe3d
   media_hash: 93a0e14a
-_hashes:
-  meta.title: 8c85e009
-  meta.description: 680f9a6e
-  meta.keywords: 21c8d515
-  meta.ogImage: 1042929f
-  meta.ogImageAlt: 6c57ba4e
-  pageContent.h1: "353489e5"
-  pageContent.subtitle: 1d20ce03
-  pageContent.intro: fd85b7ab
-  pageContent.how_to.title: fcb9c845
-  pageContent.how_to.steps[0].title: 754958b9
-  pageContent.how_to.steps[0].description: 4114cbee
-  pageContent.how_to.steps[0].image: 1042929f
-  pageContent.how_to.steps[0].imageAlt: 6c57ba4e
-  pageContent.how_to.steps[1].title: b5401ef0
-  pageContent.how_to.steps[1].description: 418fdd6c
-  pageContent.how_to.steps[2].title: 801ab246
-  pageContent.how_to.steps[2].description: dd89cdad
-  pageContent.features.title: 000f7f69
-  pageContent.features.items[0].icon: ca8ebb47
-  pageContent.features.items[0].title: e28224d3
-  pageContent.features.items[0].description: 4f73ed02
-  pageContent.features.items[0].image: 1042929f
-  pageContent.features.items[1].icon: e421f266
-  pageContent.features.items[1].title: ae0b86f0
-  pageContent.features.items[1].description: 16d7b722
-  pageContent.features.items[1].image: 1042929f
-  pageContent.features.items[2].icon: 93c5b642
-  pageContent.features.items[2].title: ee602adb
-  pageContent.features.items[2].description: 237b905f
-  pageContent.features.items[2].image: 1042929f
-  pageContent.features.items[3].icon: 4490aeea
-  pageContent.features.items[3].title: 08a005cb
-  pageContent.features.items[3].description: 8b3927c3
-  pageContent.faq[0].question: c1b1d482
-  pageContent.faq[0].answer: b3b9b186
-  pageContent.faq[1].question: 07e4c10f
-  pageContent.faq[1].answer: 045bb1a8
-  pageContent.faq[2].question: 3c4b29c0
-  pageContent.faq[2].answer: c6a6778c
-  pageContent.faq[3].question: e7dbb08d
-  pageContent.faq[3].answer: ebb506cd
+slug: youtube-downloader
+platform: youtube
+source_lang: en
+meta:
+  title: YouTube Video Downloader - Download HD Videos Free 12111123
+  description: Download YouTube videos in HD, Full HD, 4K. Free online tool, no
+    registration. Fast and easy!
+  keywords: youtube downloader, download youtube video, youtube to mp4
+  ogImage: /images/image_2025-10-26_23-18-53.png
+  ogImageAlt: TEST IMAGE
+pageContent:
+  h1: Free YouTube Video Downloader 1
+  subtitle: Download any YouTube video in HD quality 2
+  intro: Our YouTube downloader allows you to save videos in multiple formats and
+    qualities. No software needed — just paste the link and download!
+  how_to:
+    title: How to Download YouTube Videos Test 111 2222
+    steps:
+      - title: Copy the URL
+        description: Open YouTube, find your video, copy the URL from address bar
+        image: /images/image_2025-10-26_23-18-53.png
+        imageAlt: TEST IMAGE
+      - title: Paste the link
+        description: Paste the copied URL into the input field above
+      - title: Download
+        description: Click Download and choose your preferred format
+  features:
+    title: Why Choose Us?
+    items:
+      - icon: 🎬
+        title: HD & 4K Quality
+        description: Download in 720p, 1080p, or 4K resolution
+        image: /images/image_2025-10-26_23-18-53.png
+      - icon: ⚡
+        title: Lightning Fast
+        description: Our servers process videos in seconds
+        image: /images/image_2025-10-26_23-18-53.png
+      - icon: 🔓
+        title: No Registration
+        description: Start downloading immediately
+        image: /images/image_2025-10-26_23-18-53.png
+      - icon: 📱
+        title: Any Device
+        description: Works on desktop, tablet, mobile
+  faq:
+    - question: Is it free?
+      answer: Yes, completely free with no hidden charges.
+    - question: What formats are supported?
+      answer: MP4, WebM for video. MP3 for audio.
+    - question: Can I download in 4K?
+      answer: Yes, if the original video is available in 4K.
+    - question: Do I need to install anything?
+      answer: No, it works entirely in your browser.
+  platforms:
+    title: "11"
+  footerLinkText: YouTube
 _fieldHashes:
-  pageContent.features.items[2].image: 1042929f
-  pageContent.features.items[3].description: 8b3927c3
-  pageContent.faq[2].question: 3c4b29c0
-  pageContent.faq[3].question: e7dbb08d
-  pageContent.features.items[2].description: 237b905f
-  pageContent.features.items[1].image: 1042929f
-  pageContent.features.items[1].description: 16d7b722
-  pageContent.features.items[0].image: 1042929f
-  pageContent.features.items[0].description: 4f73ed02
+  "pageContent.features.items[2].image": 1042929f
+  "pageContent.features.items[3].description": 8b3927c3
+  "pageContent.faq[2].question": 3c4b29c0
+  "pageContent.faq[3].question": e7dbb08d
+  "pageContent.features.items[2].description": 237b905f
+  "pageContent.features.items[1].image": 1042929f
+  "pageContent.features.items[1].description": 16d7b722
+  "pageContent.features.items[0].image": 1042929f
+  "pageContent.features.items[0].description": 4f73ed02
   pageContent.intro: fd85b7ab
-  pageContent.how_to.steps[2].title: 801ab246
-  pageContent.how_to.steps[1].title: b5401ef0
+  "pageContent.how_to.steps[2].title": 801ab246
+  "pageContent.how_to.steps[1].title": b5401ef0
   pageContent.features.title: 000f7f69
-  pageContent.how_to.steps[0].title: 754958b9
-  pageContent.how_to.steps[2].description: dd89cdad
+  "pageContent.how_to.steps[0].title": 754958b9
+  "pageContent.how_to.steps[2].description": dd89cdad
   pageContent.h1: 30cec22b
-  pageContent.how_to.steps[1].description: 418fdd6c
+  "pageContent.how_to.steps[1].description": 418fdd6c
   meta.title: 8c85e009
-  pageContent.how_to.steps[0].description: 4114cbee
-  pageContent.features.items[0].icon: ca8ebb47
-  pageContent.features.items[1].icon: e421f266
+  "pageContent.how_to.steps[0].description": 4114cbee
+  "pageContent.features.items[0].icon": ca8ebb47
+  "pageContent.features.items[1].icon": e421f266
   meta.keywords: 21c8d515
   meta.description: 680f9a6e
-  pageContent.features.items[2].icon: 93c5b642
-  pageContent.features.items[3].icon: 4490aeea
-  pageContent.faq[0].answer: b3b9b186
-  pageContent.faq[1].answer: 045bb1a8
+  "pageContent.features.items[2].icon": 93c5b642
+  "pageContent.features.items[3].icon": 4490aeea
+  "pageContent.faq[0].answer": b3b9b186
+  "pageContent.faq[1].answer": 045bb1a8
   pageContent.how_to.title: 77d8839e
-  pageContent.faq[2].answer: c6a6778c
-  pageContent.faq[3].answer: ebb506cd
-  pageContent.features.items[3].title: 08a005cb
+  "pageContent.faq[2].answer": c6a6778c
+  "pageContent.faq[3].answer": ebb506cd
+  "pageContent.features.items[3].title": 08a005cb
   pageContent.subtitle: 836e3c37
-  pageContent.features.items[2].title: ee602adb
-  pageContent.features.items[1].title: ae0b86f0
-  pageContent.faq[0].question: c1b1d482
-  pageContent.faq[1].question: 07e4c10f
-  pageContent.features.items[0].title: e28224d3
+  "pageContent.features.items[2].title": ee602adb
+  "pageContent.features.items[1].title": ae0b86f0
+  "pageContent.faq[0].question": c1b1d482
+  "pageContent.faq[1].question": 07e4c10f
+  "pageContent.features.items[0].title": e28224d3
+_hashes:
+  "pageContent.features.items[2].image": 1042929f
+  "pageContent.features.items[3].description": 8b3927c3
+  "pageContent.faq[2].question": 3c4b29c0
+  "pageContent.faq[3].question": e7dbb08d
+  "pageContent.features.items[2].description": 237b905f
+  "pageContent.features.items[1].image": 1042929f
+  "pageContent.features.items[1].description": 16d7b722
+  "pageContent.features.items[0].image": 1042929f
+  "pageContent.features.items[0].description": 4f73ed02
+  pageContent.platforms.title: 6512bd43
+  pageContent.footerLinkText: 8dd1bae8
+  pageContent.intro: fd85b7ab
+  "pageContent.how_to.steps[2].title": 801ab246
+  "pageContent.how_to.steps[1].title": b5401ef0
+  pageContent.features.title: 000f7f69
+  "pageContent.how_to.steps[0].title": 754958b9
+  "pageContent.how_to.steps[2].description": dd89cdad
+  pageContent.h1: "353489e5"
+  "pageContent.how_to.steps[1].description": 418fdd6c
+  "pageContent.how_to.steps[0].image": 1042929f
+  meta.title: 3211d149
+  "pageContent.how_to.steps[0].description": 4114cbee
+  meta.ogImageAlt: 6c57ba4e
+  "pageContent.features.items[0].icon": ca8ebb47
+  "pageContent.features.items[1].icon": e421f266
+  meta.keywords: 116dc9b7
+  meta.description: 680f9a6e
+  "pageContent.features.items[2].icon": 93c5b642
+  "pageContent.features.items[3].icon": 4490aeea
+  "pageContent.faq[0].answer": b3b9b186
+  "pageContent.faq[1].answer": 045bb1a8
+  pageContent.how_to.title: fcb9c845
+  "pageContent.faq[2].answer": c6a6778c
+  "pageContent.faq[3].answer": ebb506cd
+  meta.ogImage: 1042929f
+  "pageContent.how_to.steps[0].imageAlt": 6c57ba4e
+  "pageContent.features.items[3].title": 08a005cb
+  pageContent.subtitle: 1d20ce03
+  "pageContent.features.items[2].title": ee602adb
+  "pageContent.features.items[1].title": ae0b86f0
+  "pageContent.faq[0].question": c1b1d482
+  "pageContent.faq[1].question": 07e4c10f
+  "pageContent.features.items[0].title": e28224d3

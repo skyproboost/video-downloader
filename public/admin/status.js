@@ -2,8 +2,10 @@
 (function() {
     const STATUS_URL = '/admin/status.json'
     const REFRESH_INTERVAL = 2000
+    const PUBLISH_WAIT_TIME = 5000 // Ждём 5 сек после публикации
 
     let currentStatus = null
+    let publishedAt = 0 // Время последней публикации
 
     function addStyles() {
         if (document.getElementById('ts-styles')) return
@@ -61,6 +63,20 @@
             if (res.ok) {
                 const data = await res.json()
                 currentStatus = data
+
+                const timeSincePublish = Date.now() - publishedAt
+                const isWaiting = timeSincePublish < PUBLISH_WAIT_TIME
+
+                // Если недавно нажали "Опубликовать"
+                if (isWaiting) {
+                    // idle игнорируем — ждём реального статуса
+                    if (data.status === 'idle') {
+                        return
+                    }
+                    // translating или error — сразу показываем и сбрасываем ожидание
+                    publishedAt = 0
+                }
+
                 updateBanner(data)
             }
         } catch {
@@ -99,27 +115,29 @@
         `
     }
 
-    // Показать "Идёт перевод" сразу при публикации (без ожидания сервера)
+    // Показать "Идёт перевод" сразу при публикации
     function showTranslatingNow() {
+        publishedAt = Date.now()
         updateBanner({
             status: 'translating',
             message: 'Запуск перевода...'
         })
     }
 
-    // Отслеживаем кнопку публикации
+    // Проверяем, является ли элемент пунктом меню публикации
+    function isPublishMenuItem(element) {
+        const menuItem = element.closest('[role="menuitem"]')
+        if (!menuItem) return false
+
+        const text = menuItem.textContent || ''
+        return /опубликовать|publish now|publish and/i.test(text)
+    }
+
+    // Отслеживаем клики по пунктам меню публикации
     function watchPublishButton() {
         document.addEventListener('click', (e) => {
-            const target = e.target
-
-            // Кнопка "Опубликовать" или "Publish"
-            const isPublishBtn =
-                target.closest('[class*="PublishButton"]') ||
-                target.closest('button')?.textContent?.match(/публик|publish|save/i)
-
-            if (isPublishBtn) {
-                // Небольшая задержка чтобы CMS успела сохранить
-                setTimeout(showTranslatingNow, 500)
+            if (isPublishMenuItem(e.target)) {
+                setTimeout(showTranslatingNow, 300)
             }
         }, true)
     }

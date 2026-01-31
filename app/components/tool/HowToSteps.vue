@@ -15,7 +15,7 @@
                             quality="80"
                             width="280"
                             height="180"
-                            loading="lazy"
+                            loading="eager"
                         />
                     </div>
                     <h3>{{ step.title }}</h3>

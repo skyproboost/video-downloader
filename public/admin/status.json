@@ -1,5 +1,12 @@
 {
   "status": "idle",
-  "message": "Всё переведено",
-  "updatedAt": "2026-01-31T13:24:08.462Z"
+  "message": "Ожидание изменений",
+  "queue": {
+    "pending": 0,
+    "processing": null,
+    "done": 0,
+    "errors": 0,
+    "total": 0
+  },
+  "updatedAt": "2026-01-31T20:02:51.132Z"
 }

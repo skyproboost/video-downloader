@@ -2,7 +2,7 @@ slug: tiktok-downloader
 platform: tiktok
 source_lang: ru
 meta:
-  title: Скачать тикток
+  title: Скачать тикток1222
   description: Бесплатно скачать тикток
   keywords: тикток
 pageContent:
@@ -17,16 +17,19 @@ pageContent:
     items:
       - title: Бесплатно
         description: ОЧЕНЬ БЕСПЛТАНО
-  h1: Скачать ТИКТОК видео
+        icon: "23"
+  h1: Скачать ТИКТОК видео 11
   subtitle: быстро и бесплатно
   intro: и без регистрации
   faq:
     - question: У вас бесплатное скачивание?)
       answer: Базарю, к бабке не ходи
+  platforms:
+    title: "1"
 translations:
   en:
     meta:
-      title: Download tiktok
+      title: Download tiktok1222
       description: Free download tiktok
       keywords: tiktok
     pageContent:
@@ -41,15 +44,18 @@ translations:
         items:
           - title: For free
             description: VERY FREE
-      h1: Download TIKTOK video
+            icon: "23"
+      h1: Download TIKTOK video 11
       subtitle: fast and free
       intro: and without registration
       faq:
         - question: Do you have a free download?)
           answer: Bazaar, don't go to grandma's
+      platforms:
+        title: "1"
   de:
     meta:
-      title: Laden Sie Tiktok herunter
+      title: Laden Sie tiktok1222 herunter
       description: Kostenloser Tiktok-Download
       keywords: Tiktok
     pageContent:
@@ -64,15 +70,18 @@ translations:
         items:
           - title: Kostenlos
             description: SEHR KOSTENLOS
-      h1: Laden Sie das TIKTOK-Video herunter
+            icon: "23"
+      h1: Laden Sie das TIKTOK-Video 11 herunter
       subtitle: schnell und kostenlos
       intro: und ohne Anmeldung
       faq:
         - question: Gibt es einen kostenlosen Download?)
           answer: Basar, geh nicht zu Oma
+      platforms:
+        title: "1"
   ru:
     meta:
-      title: Скачать тикток
+      title: Скачать тикток1222
       description: Бесплатно скачать тикток
       keywords: тикток
     pageContent:
@@ -87,25 +96,31 @@ translations:
         items:
           - title: Бесплатно
             description: ОЧЕНЬ БЕСПЛТАНО
-      h1: Скачать ТИКТОК видео
+            icon: "23"
+      h1: Скачать ТИКТОК видео 11
       subtitle: быстро и бесплатно
       intro: и без регистрации
       faq:
         - question: У вас бесплатное скачивание?)
           answer: Базарю, к бабке не ходи
+      platforms:
+        title: "1"
 _hashes:
-  meta.title: 9ff73ab0
-  meta.description: d028bfd8
-  meta.keywords: b7fa138e
-  pageContent.how_to.title: 7f55cf1c
-  pageContent.how_to.steps[0].title: ed9ce534
-  pageContent.how_to.steps[0].description: a8114a66
-  pageContent.how_to.steps[0].image: 1042929f
-  pageContent.features.title: 21af8fd9
-  pageContent.features.items[0].title: 6d96fd66
-  pageContent.features.items[0].description: 9808e18c
-  pageContent.h1: be85afa4
-  pageContent.subtitle: d8835a62
+  "pageContent.features.items[0].description": 9808e18c
+  pageContent.platforms.title: c4ca4238
   pageContent.intro: ec6486be
-  pageContent.faq[0].question: 73f2f778
-  pageContent.faq[0].answer: 967654b7
+  pageContent.features.title: 21af8fd9
+  "pageContent.how_to.steps[0].title": ed9ce534
+  pageContent.h1: 8e72d125
+  "pageContent.how_to.steps[0].image": 1042929f
+  meta.title: 94828dd8
+  "pageContent.how_to.steps[0].description": a8114a66
+  "pageContent.features.items[0].icon": 37693cfc
+  meta.keywords: b7fa138e
+  meta.description: d028bfd8
+  "pageContent.faq[0].answer": 967654b7
+  pageContent.how_to.title: 7f55cf1c
+  pageContent.subtitle: d8835a62
+  "pageContent.faq[0].question": 73f2f778
+  "pageContent.features.items[0].title": 6d96fd66
+footerLinkText: TikTok

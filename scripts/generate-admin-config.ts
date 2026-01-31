@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { languages } from '../config/languages'
+import { platforms } from '../config/platforms'
 
 const config = `local_backend: true
 
@@ -32,16 +33,19 @@ collections:
         pattern: ['^[a-z0-9-]+$', "Только маленькие буквы, цифры и дефис"]
         hint: "Пример: youtube-downloader, tiktok-video"
 
+      - name: footerLinkText
+        label: "🦶 Текст ссылки в футере"
+        widget: string
+        required: false
+        hint: "Если заполнено — ссылка появится в футере сайта"
+
       - name: platform
-        label: "📱 Платформа"
+        label: "🎬 Платформа"
         widget: select
         required: true
+        hint: "Выберите платформу для этого инструмента"
         options:
-          - { label: "YouTube", value: "youtube" }
-          - { label: "Instagram", value: "instagram" }
-          - { label: "TikTok", value: "tiktok" }
-          - { label: "Facebook", value: "facebook" }
-          - { label: "Twitter", value: "twitter" }
+${platforms.map(p => `          - { label: "${p.name}", value: "${p.id}" }`).join('\n')}
 
       - name: source_lang
         label: "🌍 Язык оригинала"
@@ -127,7 +131,7 @@ ${languages.map(l => `          - { label: "${l.flag} ${l.name}", value: "${l.co
                   - { name: title, label: "Название шага", widget: string, required: true }
                   - { name: description, label: "Описание", widget: text, required: true }
                   - { name: image, label: "🖼️ Картинка", widget: image, required: false }
-                  - { name: imageAlt, label: "Alt текст картинки", widget: string, required: false, hint: "Описание изображения" }
+                  - { name: imageAlt, label: "Alt текст картинки", widget: string, required: false }
 
           - name: features
             label: "✨ Блок «Преимущества»"
@@ -169,3 +173,4 @@ fs.writeFileSync(outputPath, config)
 
 console.log('✅ Generated:', outputPath)
 console.log('   Languages:', languages.map(l => l.code).join(', '))
+console.log('   Platforms:', platforms.map(p => p.id).join(', '))
