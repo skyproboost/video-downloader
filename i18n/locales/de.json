@@ -1,32 +1,65 @@
 {
   "home": {
     "title": "Kostenloser Video-Downloader",
-    "subtitle": "Laden Sie Videos von YouTube, Instagram, TikTok und mehr herunter",
+    "subtitle": "Videos von YouTube, Instagram, TikTok und mehr herunterladen",
     "meta": {
-      "title": "Kostenloser Video-Downloader - Von YouTube, TikTok, Instagram herunterladen",
-      "description": "Kostenloses Online-Tool zum Herunterladen von Videos von YouTube, TikTok, Instagram und anderen Plattformen in HD-Qualität"
+      "title": "Kostenloser Video-Downloader — YouTube, TikTok, Instagram | HD & 4K Qualität",
+      "description": "Laden Sie Videos von YouTube, TikTok, Instagram, Facebook, VK kostenlos und ohne Registrierung herunter. Shorts, Reels, Stories in HD und 4K Qualität. Schnell, sicher, ohne Wasserzeichen."
     },
     "about": {
-      "title": "Videos von jeder Plattform herunterladen",
-      "text1": "Unser kostenloser Video-Downloader ermöglicht es Ihnen, Videos von beliebten Plattformen wie YouTube, TikTok, Instagram und vielen mehr zu speichern. Keine Registrierung erforderlich, keine Software zu installieren.",
-      "text2": "Fügen Sie einfach die Video-URL ein, wählen Sie Ihre bevorzugte Qualität und laden Sie herunter. So einfach ist das!"
+      "title": "Ein Service — alle Plattformen",
+      "text1": "Suchen Sie nach einer zuverlässigen Möglichkeit, Ihre Lieblingsvideos zu speichern? Unser kostenloser Online-Video-Downloader unterstützt beliebte Video-Hosting-Seiten und soziale Netzwerke: YouTube, TikTok, Instagram, Facebook, VK, Vimeo und viele mehr. Keine Softwareinstallation erforderlich — alles funktioniert direkt im Browser.",
+      "text2": "Speichern Sie Videos in der höchsten verfügbaren Qualität — von 360p bis 4K Ultra HD. Musikvideos, Shorts, Reels, Stories, Tutorials oder Vlogs — unser Service bewältigt alles. Laden Sie Videos ohne Wasserzeichen in Originalqualität herunter.",
+      "text3": "Fügen Sie einfach die Video-URL ein, wählen Sie Format und Qualität, dann laden Sie herunter. Schnell, kostenlos und anonym. Keine Registrierung, keine Datensammlung, keine versteckten Gebühren."
     },
     "features": {
       "fast": {
         "title": "Blitzschnell",
-        "text": "Laden Sie Videos in Sekunden mit unseren optimierten Servern herunter"
+        "text": "Unsere optimierten Server verarbeiten Videos deutlich schneller als andere ähnliche Dienste. Sparen Sie Zeit mit Hochgeschwindigkeits-Downloads."
       },
       "safe": {
-        "title": "Sicher & Geschützt",
-        "text": "Keine Datenerfassung, keine Registrierung, völlig anonym"
+        "title": "Sicher & Privat",
+        "text": "Ihre Privatsphäre ist wichtig. Wir sammeln keine persönlichen Daten, verlangen keine Registrierung und speichern keinen Download-Verlauf. Völlig anonym."
       },
       "free": {
-        "title": "100% Kostenlos",
-        "text": "Alle Funktionen ohne Zahlung oder Limits verfügbar"
+        "title": "Komplett kostenlos",
+        "text": "Alle Funktionen ohne Zahlung, Abonnements oder versteckte Limits verfügbar. Unbegrenzte Downloads, für immer kostenlos."
+      },
+      "platforms": {
+        "title": "Wachsende Plattformliste",
+        "text": "YouTube, Instagram, TikTok, Facebook, VK, Vimeo — und das ist erst der Anfang. Wir fügen ständig Unterstützung für neue Plattformen hinzu."
+      },
+      "noInstall": {
+        "title": "Keine Installation",
+        "text": "Funktioniert direkt im Browser auf jedem Gerät. Keine Apps oder Erweiterungen herunterladen — einfach die Seite öffnen und loslegen."
+      },
+      "quality": {
+        "title": "Beste Qualität",
+        "text": "Videos in Originalqualität bis 4K Ultra HD herunterladen. Wählen Sie aus mehreren Formaten: MP4, MP3, WebM. Ohne Wasserzeichen."
       }
     }
   },
+  "form": {
+    "placeholder": "Video-URL hier einfügen...",
+    "download": "Herunterladen",
+    "supported": "Unterstützte Plattformen: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+  },
+  "faq": {
+    "title": "Häufig gestellte Fragen"
+  },
+  "errors": {
+    "backHome": "Zurück zur Startseite",
+    "404": {
+      "title": "Seite nicht gefunden",
+      "description": "Die gesuchte Seite existiert nicht oder wurde verschoben."
+    },
+    "500": {
+      "title": "Serverfehler",
+      "description": "Etwas ist schief gelaufen. Bitte versuchen Sie es später erneut."
+    }
+  },
   "footer": {
+    "description": "Kostenloses Online-Tool zum Herunterladen von Videos von beliebten Plattformen.",
     "rights": "Alle Rechte vorbehalten."
   }
 }

@@ -2,27 +2,23 @@
     <div v-if="page && translation" class="tool-page">
         <section class="tool-content">
             <div class="container">
-                <h1>{{ translation.pageContent?.h1 }}</h1>
-                <p class="subtitle">{{ translation.pageContent?.subtitle }}</p>
-                <ToolDownloadForm />
+                <component :is="mainTitleTag" class="main-title">{{translation.pageContent?.mainTitle}}</component>
+                <p class="subtitle" v-text="translation.pageContent?.subtitle"></p>
+                <ToolDownloadForm/>
+                <p class="intro-text" v-text="translation.pageContent?.intro"></p>
             </div>
         </section>
 
-        <section v-if="translation.pageContent?.intro" class="section intro">
+        <section v-if="page.platform" class="platforms-section">
             <div class="container">
-                <div class="intro-text">{{ translation.pageContent.intro }}</div>
+                <HomePlatformGrid :current-platform="page.platform"/>
             </div>
         </section>
-
-        <ToolPlatformsGrid
-            v-if="page.platform"
-            :platform-id="page.platform"
-        />
 
         <ToolHowToSteps
-            v-if="translation.pageContent?.how_to?.steps?.length"
-            :title="translation.pageContent.how_to.title"
-            :steps="translation.pageContent.how_to.steps"
+            v-if="hasValidSteps"
+            :title="translation.pageContent.how_to?.title"
+            :steps="translation.pageContent.how_to?.steps"
         />
 
         <ToolFeaturesGrid
@@ -37,25 +33,30 @@
         />
     </div>
 
-    <div v-else class="not-found">
-        <div class="container not-found-content">
-            <h1>404</h1>
-            <p>{{ $t('errors.pageNotFound') || 'Page Not Found' }}</p>
-            <NuxtLink :to="localePath('/')" class="back-home">
-                {{ $t('errors.backHome') || 'Back to Home' }}
-            </NuxtLink>
+    <div v-else class="error-block">
+        <div class="container error-content">
+            <h1 class="error-code" v-text="errorCode"></h1>
+            <p class="error-message" v-text="$t(`errors.${errorCode}.title`)"></p>
+            <p class="error-description" v-text="$t(`errors.${errorCode}.description`)"></p>
+            <NuxtLink :to="localePath('/')" class="back-home" v-text="$t('errors.backHome')"></NuxtLink>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 const route = useRoute()
-const { locale } = useI18n()
+const {locale} = useI18n()
 const config = useRuntimeConfig()
 const localePath = useLocalePath()
 const slug = route.params.slug as string
 
-const { data: page } = await useFetch(`/api/pages/${slug}`)
+const {data: page, error: fetchError} = await useFetch(`/api/pages/${slug}`)
+
+const hasValidSteps = computed(() => {
+    return translation.value?.pageContent?.how_to?.steps?.some(s => s.title)
+})
+
+const mainTitleTag = computed(() => hasValidSteps.value ? 'h2' : 'h1')
 
 const translation = computed(() => {
     if (!page.value) return null
@@ -63,9 +64,19 @@ const translation = computed(() => {
         return page.value.translations[locale.value]
     }
     if (page.value.meta && page.value.pageContent) {
-        return { meta: page.value.meta, pageContent: page.value.pageContent }
+        return {meta: page.value.meta, pageContent: page.value.pageContent}
     }
     return null
+})
+
+// Определяем код ошибки
+const errorCode = computed(() => {
+    if (fetchError.value) {
+        const status = fetchError.value.statusCode
+        return status === 404 || status === 500 ? status : 500
+    }
+    if (!page.value) return 404
+    return 500
 })
 
 const keywordsArray = computed(() => {
@@ -91,7 +102,7 @@ const pageUrl = computed(() => {
 })
 
 const ogLocale = computed(() => {
-    const map: Record<string, string> = { en: 'en_US', ru: 'ru_RU', de: 'de_DE' }
+    const map: Record<string, string> = {en: 'en_US', ru: 'ru_RU', de: 'de_DE'}
     return map[locale.value] || 'en_US'
 })
 
@@ -124,15 +135,15 @@ useSeoMeta({
 })
 
 useHead({
-    htmlAttrs: { lang: locale.value },
+    htmlAttrs: {lang: locale.value},
     meta: [
-        { name: 'format-detection', content: 'telephone=no' },
-        { name: 'theme-color', content: '#667eea' },
-        { property: 'og:locale:alternate', content: ogLocaleAlternate.value[0] },
-        { property: 'og:locale:alternate', content: ogLocaleAlternate.value[1] },
+        {name: 'format-detection', content: 'telephone=no'},
+        {name: 'theme-color', content: '#667eea'},
+        {property: 'og:locale:alternate', content: ogLocaleAlternate.value[0]},
+        {property: 'og:locale:alternate', content: ogLocaleAlternate.value[1]},
     ],
     link: () => {
-        const links: any[] = [{ rel: 'canonical', href: pageUrl.value }]
+        const links: any[] = [{rel: 'canonical', href: pageUrl.value}]
 
         if (page.value?.translations) {
             const validLangs = ['en', 'ru', 'de']
@@ -166,8 +177,8 @@ useHead({
                 url: pageUrl.value,
                 applicationCategory: 'MultimediaApplication',
                 operatingSystem: 'Any',
-                offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-                aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.8', ratingCount: '1250' },
+                offers: {'@type': 'Offer', price: '0', priceCurrency: 'USD'},
+                aggregateRating: {'@type': 'AggregateRating', ratingValue: '4.8', ratingCount: '1250'},
             }),
         },
     ],
@@ -176,9 +187,9 @@ useHead({
 
 <style scoped>
 .tool-content {
-    padding: 4rem 0;
+    padding: 3rem 0;
     text-align: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0e1814, #0c675b);
     color: white;
 }
 
@@ -188,56 +199,76 @@ useHead({
     margin-bottom: 0.5rem;
 }
 
+.main-title {
+    font-size: 3rem;
+}
+
 .subtitle {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     opacity: 0.9;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
 
 .section {
     padding: 3rem 0;
 }
 
+.platforms-section {
+    padding: 4rem 0;
+    background: var(--color-bg);
+}
+
 .intro-text {
     max-width: 800px;
     margin: 0 auto;
-    font-size: 1.1rem;
-    line-height: 1.8;
-    color: #4a5568;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #81aba5;
     text-align: center;
+    margin-top: 1rem;
 }
 
-/* 404 */
-.not-found {
+/* Error block */
+.error-block {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.not-found-content {
+.error-content {
     text-align: center;
     padding: 4rem 1rem;
 }
 
-.not-found h1 {
-    font-size: 6rem;
+.error-code {
+    font-size: clamp(5rem, 15vw, 7rem);
     font-weight: 700;
-    color: #667eea;
-    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #0e1814, #0c675b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     line-height: 1;
 }
 
-.not-found p {
+.error-message {
     font-size: 1.5rem;
-    color: #4a5568;
-    margin-bottom: 2rem;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.error-description {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+    max-width: 400px;
+    margin-inline: auto;
 }
 
 .back-home {
     display: inline-block;
     padding: 0.75rem 2rem;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #0e1814, #0c675b);
     color: white;
     border-radius: 0.5rem;
     font-weight: 600;
@@ -247,6 +278,6 @@ useHead({
 
 .back-home:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 12px rgba(12, 103, 91, 0.4);
 }
 </style>

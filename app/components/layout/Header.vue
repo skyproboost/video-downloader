@@ -15,10 +15,8 @@ const localePath = useLocalePath()
 <style scoped>
 .header {
     background: white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    box-shadow: 0 5px 10px #00000063;
+    position: relative;
 }
 
 .header-inner {

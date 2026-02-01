@@ -3,30 +3,63 @@
     "title": "Free Video Downloader",
     "subtitle": "Download videos from YouTube, Instagram, TikTok and more",
     "meta": {
-      "title": "Free Video Downloader - Download from YouTube, TikTok, Instagram",
-      "description": "Free online tool to download videos from YouTube, TikTok, Instagram and other platforms in HD quality"
+      "title": "Free Video Downloader — YouTube, TikTok, Instagram | HD & 4K Quality",
+      "description": "Download videos from YouTube, TikTok, Instagram, Facebook, VK for free without registration. Shorts, Reels, Stories in HD and 4K quality. Fast, secure, no watermarks."
     },
     "about": {
-      "title": "Download Videos from Any Platform",
-      "text1": "Our free video downloader allows you to save videos from popular platforms like YouTube, TikTok, Instagram, and many more. No registration required, no software to install.",
-      "text2": "Simply paste the video URL, choose your preferred quality, and download. It's that easy!"
+      "title": "One Service — All Platforms",
+      "text1": "Looking for a reliable way to save your favorite videos? Our free online video downloader supports popular video hosting sites and social networks: YouTube, TikTok, Instagram, Facebook, VK, Vimeo, and many more. No software installation required — everything works directly in your browser.",
+      "text2": "Save videos in the highest available quality — from 360p to 4K Ultra HD. Music videos, Shorts, Reels, Stories, tutorials, or vlogs — our service handles it all. Download videos without watermarks in original quality.",
+      "text3": "Simply paste the video URL, select your preferred format and quality, then download. Fast, free, and anonymous. No registration, no data collection, no hidden fees."
     },
     "features": {
       "fast": {
         "title": "Lightning Fast",
-        "text": "Download videos in seconds with our optimized servers"
+        "text": "Our optimized servers process videos significantly faster than other similar services. Save your time with high-speed downloads."
       },
       "safe": {
-        "title": "Safe & Secure",
-        "text": "No data collection, no registration, completely anonymous"
+        "title": "Safe & Private",
+        "text": "Your privacy matters. We don't collect personal data, require registration, or store your download history. Completely anonymous."
       },
       "free": {
-        "title": "100% Free",
-        "text": "All features available without any payment or limits"
+        "title": "Completely Free",
+        "text": "All features available without payment, subscriptions, or hidden limits. Unlimited downloads, forever free."
+      },
+      "platforms": {
+        "title": "Growing Platform List",
+        "text": "YouTube, Instagram, TikTok, Facebook, VK, Vimeo — and this is just the beginning. We constantly add support for new platforms."
+      },
+      "noInstall": {
+        "title": "No Installation",
+        "text": "Works directly in your browser on any device. No need to download apps or extensions — just open the site and start downloading."
+      },
+      "quality": {
+        "title": "Best Quality",
+        "text": "Download videos in original quality up to 4K Ultra HD. Choose from multiple formats: MP4, MP3, WebM. No watermarks added."
       }
     }
   },
+  "form": {
+    "placeholder": "Paste video URL here...",
+    "download": "Download",
+    "supported": "Supported platforms: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions"
+  },
+  "errors": {
+    "backHome": "Back to Home",
+    "404": {
+      "title": "Page Not Found",
+      "description": "The page you are looking for does not exist or has been moved."
+    },
+    "500": {
+      "title": "Server Error",
+      "description": "Something went wrong. Please try again later."
+    }
+  },
   "footer": {
+    "description": "Free online tool to download videos from popular platforms.",
     "rights": "All rights reserved."
   }
 }

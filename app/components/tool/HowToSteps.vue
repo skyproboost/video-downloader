@@ -1,10 +1,10 @@
 <template>
-    <section class="how-to">
+    <section v-if="steps" class="how-to">
         <div class="container">
-            <h2>{{ title }}</h2>
+            <h1 class="main-title" v-if="title" v-text="title"></h1>
             <div class="steps">
                 <div v-for="(step, i) in steps" :key="i" class="step">
-                    <div class="step-num">{{ i + 1 }}</div>
+                    <div class="step-num" v-text="i + 1"></div>
                     <div v-if="step.image" class="step-image-wrapper">
                         <NuxtPicture
                             :src="step.image"
@@ -18,8 +18,8 @@
                             loading="eager"
                         />
                     </div>
-                    <h3>{{ step.title }}</h3>
-                    <p>{{ step.description }}</p>
+                    <h3 v-text="step.title"></h3>
+                    <p v-text="step.description"></p>
                 </div>
             </div>
         </div>
@@ -28,14 +28,19 @@
 
 <script setup lang="ts">
 defineProps<{
-    title: string
-    steps: { title: string; description: string; image?: string }[]
+    title?: string
+    steps: Array<{
+        title: string
+        description: string
+        image?: string
+        imageAlt?: string
+    }>
 }>()
 </script>
 
 <style scoped>
 .how-to {
-    padding: 4rem 0;
+    padding-bottom: 3rem;
     background: #f7fafc;
 }
 
@@ -55,6 +60,11 @@ defineProps<{
 
 .step {
     text-align: center;
+}
+
+.main-title {
+    text-align: center;
+    margin-bottom: 1rem;
 }
 
 .step-num {

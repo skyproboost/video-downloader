@@ -5,8 +5,11 @@ export interface Platform {
 
 export const platforms: Platform[] = [
     { id: 'youtube', name: 'YouTube' },
+    { id: 'instagram', name: 'Instagram' },
     { id: 'tiktok', name: 'TikTok' },
-    { id: 'vk', name: 'VK Video' },
+    { id: 'vk', name: 'VK' },
+    { id: 'facebook', name: 'Facebook' },
+    { id: 'vimeo', name: 'Vimeo' },
 ]
 
 export const platformIds = platforms.map(p => p.id)

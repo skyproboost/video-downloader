@@ -4,21 +4,7 @@
             <h2>{{ title }}</h2>
             <div class="grid">
                 <div v-for="(item, i) in items" :key="i" class="card">
-                    <div v-if="item.image" class="card-image-wrapper">
-                        <NuxtPicture
-                            :src="item.image"
-                            :alt="item.imageAlt || item.title"
-                            :img-attrs="{ class: 'card-image' }"
-                            sizes="48px"
-                            format="avif,webp"
-                            quality="80"
-                            width="48"
-                            height="48"
-                            loading="eager"
-                            densities="x1 x2"
-                        />
-                    </div>
-                    <div v-else class="icon">{{ item.icon || '✨' }}</div>
+                    <div class="icon">{{ item.icon || '✨' }}</div>
                     <h3>{{ item.title }}</h3>
                     <p>{{ item.description }}</p>
                 </div>
@@ -36,13 +22,13 @@ defineProps<{
 
 <style scoped>
 .features {
-    padding: 4rem 0;
+    padding-bottom: 3rem;
 }
 
 .features h2 {
     text-align: center;
     font-size: 2rem;
-    margin-bottom: 3rem;
+    margin-bottom: 1rem;
 }
 
 .grid {
@@ -66,15 +52,6 @@ defineProps<{
 .icon {
     font-size: 2rem;
     margin-bottom: 1rem;
-}
-
-.card-image-wrapper {
-    width: 48px;
-    height: 48px;
-    margin-bottom: 1rem;
-    background: #e2e8f0;
-    border-radius: 8px;
-    overflow: hidden;
 }
 
 .card :deep(.card-image) {

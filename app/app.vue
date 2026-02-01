@@ -44,8 +44,7 @@ html, body, #__nuxt {
    ═══════════════════════════════════════════ */
 :root {
     /* Fonts */
-    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif;
-    --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    --font-sans: -math, sans-serif;
 
     /* Primary */
     --color-primary: #667eea;
@@ -125,7 +124,7 @@ html, body, #__nuxt {
    ═══════════════════════════════════════════ */
 html {
     font-family: var(--font-sans);
-    font-size: 100%; /* 16px base */
+    font-size: 90%; /* 16px base */
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -153,7 +152,6 @@ p {
 }
 
 a {
-    color: inherit;
     text-decoration: none;
 }
 
@@ -186,7 +184,6 @@ img, picture, video, canvas, svg {
    ═══════════════════════════════════════════ */
 input, button, textarea, select {
     font: inherit;
-    color: inherit;
 }
 
 button {

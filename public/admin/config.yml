@@ -41,8 +41,11 @@ collections:
         hint: "Выберите платформу для этого инструмента"
         options:
           - { label: "YouTube", value: "youtube" }
+          - { label: "Instagram", value: "instagram" }
           - { label: "TikTok", value: "tiktok" }
-          - { label: "VK Video", value: "vk" }
+          - { label: "VK", value: "vk" }
+          - { label: "Facebook", value: "facebook" }
+          - { label: "Vimeo", value: "vimeo" }
 
       - name: source_lang
         label: "🌍 Язык оригинала"
@@ -94,20 +97,20 @@ collections:
         widget: object
         required: true
         fields:
-          - name: h1
-            label: "Заголовок H1"
+          - name: mainTitle
+            label: "Главный заголовок"
             widget: string
             required: true
 
           - name: subtitle
             label: "Подзаголовок"
             widget: string
-            required: true
+            required: false
 
           - name: intro
             label: "Вступительный текст"
             widget: text
-            required: true
+            required: false
 
           - name: how_to
             label: "📋 Блок «Как скачать»"
@@ -150,9 +153,7 @@ collections:
                 required: true
                 min: 1
                 fields:
-                  - { name: icon, label: "Иконка (emoji)", widget: string, required: true }
-                  - { name: image, label: "🖼️ Картинка", widget: image, required: false, hint: "Вместо emoji" }
-                  - { name: imageAlt, label: "Alt текст картинки", widget: string, required: false }
+                  - { name: icon, label: "Иконка (emoji)", widget: string, required: false }
                   - { name: title, label: "Заголовок", widget: string, required: true }
                   - { name: description, label: "Описание", widget: text, required: true }
 

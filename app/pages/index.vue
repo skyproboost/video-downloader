@@ -15,6 +15,7 @@
                 <div class="about-content">
                     <p>{{ $t('home.about.text1') }}</p>
                     <p>{{ $t('home.about.text2') }}</p>
+                    <p>{{ $t('home.about.text3') }}</p>
                 </div>
 
                 <div class="features">
@@ -32,6 +33,21 @@
                         <span class="feature-icon">💯</span>
                         <h3>{{ $t('home.features.free.title') }}</h3>
                         <p>{{ $t('home.features.free.text') }}</p>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🌐</span>
+                        <h3>{{ $t('home.features.platforms.title') }}</h3>
+                        <p>{{ $t('home.features.platforms.text') }}</p>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">📲</span>
+                        <h3>{{ $t('home.features.noInstall.title') }}</h3>
+                        <p>{{ $t('home.features.noInstall.text') }}</p>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🎬</span>
+                        <h3>{{ $t('home.features.quality.title') }}</h3>
+                        <p>{{ $t('home.features.quality.text') }}</p>
                     </div>
                 </div>
             </div>
@@ -77,7 +93,7 @@ useHead({
     align-items: center;
     justify-content: center;
     text-align: center;
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    background: linear-gradient(135deg, #0e1814, #0c675b);
     color: var(--color-text-inverse);
     padding: var(--space-12) 0;
 }
@@ -100,6 +116,8 @@ useHead({
 .about {
     padding: var(--space-12) 0;
     background: var(--color-bg-white);
+    box-shadow: 0 -5px 10px #00000063;
+    position: relative;
 }
 
 .about-title {
@@ -111,8 +129,8 @@ useHead({
 }
 
 .about-content {
-    max-width: 48rem;
-    margin: 0 auto var(--space-10);
+    max-width: 55rem;
+    margin: 0 auto var(--space-6);
     text-align: center;
 }
 

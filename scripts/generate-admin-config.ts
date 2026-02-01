@@ -95,20 +95,20 @@ ${languages.map(l => `          - { label: "${l.flag} ${l.name}", value: "${l.co
         widget: object
         required: true
         fields:
-          - name: h1
-            label: "Заголовок H1"
+          - name: mainTitle
+            label: "Главный заголовок"
             widget: string
             required: true
 
           - name: subtitle
             label: "Подзаголовок"
             widget: string
-            required: true
+            required: false
 
           - name: intro
             label: "Вступительный текст"
             widget: text
-            required: true
+            required: false
 
           - name: how_to
             label: "📋 Блок «Как скачать»"
@@ -151,9 +151,7 @@ ${languages.map(l => `          - { label: "${l.flag} ${l.name}", value: "${l.co
                 required: true
                 min: 1
                 fields:
-                  - { name: icon, label: "Иконка (emoji)", widget: string, required: true }
-                  - { name: image, label: "🖼️ Картинка", widget: image, required: false, hint: "Вместо emoji" }
-                  - { name: imageAlt, label: "Alt текст картинки", widget: string, required: false }
+                  - { name: icon, label: "Иконка (emoji)", widget: string, required: false }
                   - { name: title, label: "Заголовок", widget: string, required: true }
                   - { name: description, label: "Описание", widget: text, required: true }
 

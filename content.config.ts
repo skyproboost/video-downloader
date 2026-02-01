@@ -1,9 +1,9 @@
 import { defineCollection, defineContentConfig, z } from '@nuxt/content'
 
 const pageContentSchema = z.object({
-    h1: z.string(),
-    subtitle: z.string(),
-    intro: z.string(),
+    mainTitle: z.string(),
+    subtitle: z.string().optional(),
+    intro: z.string().optional(),
 
     how_to: z.object({
         title: z.string(),
@@ -18,9 +18,7 @@ const pageContentSchema = z.object({
     features: z.object({
         title: z.string(),
         items: z.array(z.object({
-            icon: z.string(),
-            image: z.string().optional(),
-            imageAlt: z.string().optional(),
+            icon: z.string().optional(),
             title: z.string(),
             description: z.string(),
         })),
@@ -39,7 +37,7 @@ export default defineContentConfig({
             source: 'pages/*.yml',
             schema: z.object({
                 slug: z.string(),
-                footerLinkText: z.string().optional(), // Текст ссылки в футере
+                footerLinkText: z.string().optional(),
                 platform: z.string(),
                 source_lang: z.string().default('en'),
 

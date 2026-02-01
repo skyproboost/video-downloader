@@ -46,7 +46,7 @@ const { data: footerLinks } = await useFetch('/api/footer-links', {
 .footer {
     background: var(--color-bg-dark);
     color: var(--color-text-inverse);
-    padding: var(--space-8) 0 var(--space-6);
+    padding: var(--space-8) 0 var(--space-8);
     margin-top: auto;
 }
 
@@ -67,7 +67,7 @@ const { data: footerLinks } = await useFetch('/api/footer-links', {
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    margin-bottom: var(--space-3);
+    margin-bottom: var(--space-1);
 }
 
 .logo-icon {
