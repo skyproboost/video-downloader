@@ -18,7 +18,6 @@
                         :key="group.platformId"
                         class="link-group"
                     >
-                        <h4 class="group-title">{{ group.platformName }}</h4>
                         <ul class="group-links">
                             <li v-for="link in group.links" :key="link.slug">
                                 <NuxtLink :to="localePath(`/${link.slug}`)">
@@ -46,7 +45,7 @@ const { data: footerLinks } = await useFetch('/api/footer-links', {
 .footer {
     background: var(--color-bg-dark);
     color: var(--color-text-inverse);
-    padding: var(--space-8) 0 var(--space-8);
+    padding: var(--space-6) 0;
     margin-top: auto;
 }
 
@@ -97,21 +96,12 @@ const { data: footerLinks } = await useFetch('/api/footer-links', {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: var(--space-8);
+    gap: var(--space-4);
     justify-content: flex-end;
 }
 
 .link-group {
-    min-width: 6rem;
-}
-
-.group-title {
-    font-size: var(--text-sm);
-    font-weight: 600;
-    color: var(--color-text-inverse);
-    margin-bottom: var(--space-2);
-    padding-bottom: var(--space-2);
-    border-bottom: 2px solid var(--color-primary);
+    min-width: 5rem;
 }
 
 .group-links {
@@ -165,10 +155,6 @@ const { data: footerLinks } = await useFetch('/api/footer-links', {
 
     .link-group {
         min-width: unset;
-        text-align: center;
-    }
-
-    .group-title {
         text-align: center;
     }
 

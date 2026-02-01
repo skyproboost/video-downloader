@@ -87,7 +87,7 @@ const handleDownload = async () => {
     display: flex;
     align-items: center;
     background: white;
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-md);
     overflow: hidden;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
     border: 2px solid transparent;
@@ -185,7 +185,7 @@ const handleDownload = async () => {
 @media (max-width: 540px) {
     .input-wrapper {
         flex-direction: column;
-        border-radius: var(--radius-lg);
+        border-radius: var(--radius-md);
     }
 
     .input-icon {

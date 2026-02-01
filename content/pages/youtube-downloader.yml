@@ -36,6 +36,10 @@ translations:
         items:
           - title: Первый
             description: Первое описание
+          - title: Второй
+            description: Второе описание
+          - title: Третий
+            description: Третье описание
       mainTitle: Скачать видео с YouTube
   de:
     meta:
@@ -73,6 +77,10 @@ translations:
         items:
           - title: Erste
             description: Erste Beschreibung
+          - title: Zweite
+            description: Zweite Beschreibung
+          - title: Dritte
+            description: Dritte Beschreibung
       mainTitle: Laden Sie Videos von YouTube herunter
   en:
     meta:
@@ -109,6 +117,10 @@ translations:
         items:
           - title: First
             description: First description
+          - title: Second
+            description: Second description
+          - title: Third
+            description: Third description
       mainTitle: Download videos from YouTube
 slug: youtube-downloader
 platform: youtube
@@ -148,6 +160,10 @@ pageContent:
     items:
       - title: First
         description: First description
+      - title: Second
+        description: Second description
+      - title: Third
+        description: Third description
   mainTitle: Download videos from YouTube
 _fieldHashes:
   pageContent.features.items[2].image: 1042929f
@@ -212,7 +228,11 @@ _hashes:
   pageContent.faq[3].answer: ebb506cd
   pageContent.subtitle: 1d20ce03
   pageContent.features.title: 29f30c65
-  pageContent.features.items.__length: "1"
+  pageContent.features.items.__length: "3"
   pageContent.features.items[0].title: 7fb55ed0
   pageContent.features.items[0].description: 75b8ffd0
+  pageContent.features.items[1].title: c22cf837
+  pageContent.features.items[1].description: 4d71ca02
+  pageContent.features.items[2].title: 168909c0
+  pageContent.features.items[2].description: "69539370"
   pageContent.mainTitle: 1996e19d

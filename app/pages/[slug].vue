@@ -38,7 +38,7 @@
             <h1 class="error-code" v-text="errorCode"></h1>
             <p class="error-message" v-text="$t(`errors.${errorCode}.title`)"></p>
             <p class="error-description" v-text="$t(`errors.${errorCode}.description`)"></p>
-            <NuxtLink :to="localePath('/')" class="back-home" v-text="$t('errors.backHome')"></NuxtLink>
+            <NuxtLink :to="localePath('/')" class="back-home">{{$t('errors.backHome')}}</NuxtLink>
         </div>
     </div>
 </template>
@@ -244,40 +244,40 @@ useHead({
 .error-code {
     font-size: clamp(5rem, 15vw, 7rem);
     font-weight: 700;
-    background: linear-gradient(135deg, #0e1814, #0c675b);
+    background: #7b1c1c;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    line-height: 1;
+    line-height: 0.9;
 }
 
 .error-message {
     font-size: 1.5rem;
     font-weight: 600;
-    color: var(--color-text);
+    color: #7b1c1c;
 }
 
 .error-description {
     font-size: 1rem;
-    color: var(--color-text-muted);
-    margin-bottom: 1rem;
+    color: #7b1c1c;
+    margin-bottom: 0.5rem;
     max-width: 400px;
     margin-inline: auto;
+    line-height: 1.3;
 }
 
 .back-home {
     display: inline-block;
     padding: 0.75rem 2rem;
-    background: linear-gradient(135deg, #0e1814, #0c675b);
+    background: #3b3b3b;
     color: white;
     border-radius: 0.5rem;
     font-weight: 600;
     text-decoration: none;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: background-color .3s ease-in-out;
 }
 
 .back-home:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(12, 103, 91, 0.4);
+    background: #1c1c1c;
 }
 </style>

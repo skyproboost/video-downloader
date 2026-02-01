@@ -15,15 +15,14 @@ const localePath = useLocalePath()
 <style scoped>
 .header {
     background: white;
-    box-shadow: 0 5px 10px #00000063;
-    position: relative;
+    border-bottom: 1px solid #e7e7e7;
 }
 
 .header-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 0;
+    padding: var(--space-6) 0;
     gap: 2rem;
 }
 

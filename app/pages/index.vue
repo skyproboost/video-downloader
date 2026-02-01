@@ -116,8 +116,6 @@ useHead({
 .about {
     padding: var(--space-12) 0;
     background: var(--color-bg-white);
-    box-shadow: 0 -5px 10px #00000063;
-    position: relative;
 }
 
 .about-title {
