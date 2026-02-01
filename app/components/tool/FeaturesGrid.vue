@@ -4,7 +4,7 @@
             <h2>{{ title }}</h2>
             <div class="grid">
                 <div v-for="(item, i) in items" :key="i" class="card">
-                    <div class="icon">{{ item.icon || '✨' }}</div>
+                    <div class="icon">{{ item.icon || '' }}</div>
                     <h3>{{ item.title }}</h3>
                     <p>{{ item.description }}</p>
                 </div>
@@ -22,7 +22,7 @@ defineProps<{
 
 <style scoped>
 .features {
-    padding-bottom: 3rem;
+    padding-bottom: 4rem;
 }
 
 .features h2 {
@@ -33,25 +33,28 @@ defineProps<{
 
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    max-width: 55rem;
+    margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .card {
     background: white;
     padding: 1.5rem;
     border-radius: 1rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    transition: transform 0.2s;
-}
-
-.card:hover {
-    transform: translateY(-4px);
+    text-align: center;
+    border: 1px solid #ebebeb;
 }
 
 .icon {
     font-size: 2rem;
-    margin-bottom: 1rem;
 }
 
 .card :deep(.card-image) {
@@ -62,7 +65,7 @@ defineProps<{
 }
 
 .card h3 {
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--space-2);
 }
 
 .card p {

@@ -148,7 +148,7 @@ useHead({
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
     gap: var(--space-6);
-    max-width: 56rem;
+    max-width: 55rem;
     margin: 0 auto;
 }
 
@@ -157,12 +157,12 @@ useHead({
     padding: var(--space-6);
     background: var(--color-bg);
     border-radius: var(--radius-lg);
+    border: 1px solid #e1f3ff;
 }
 
 .feature-icon {
     display: inline-block;
     font-size: 2rem;
-    margin-bottom: var(--space-3);
 }
 
 .feature h3 {

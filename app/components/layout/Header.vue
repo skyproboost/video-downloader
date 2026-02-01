@@ -22,7 +22,7 @@ const localePath = useLocalePath()
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--space-6) 0;
+    padding: var(--space-6) var(--container-padding);
     gap: 2rem;
 }
 

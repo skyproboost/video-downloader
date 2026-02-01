@@ -40,7 +40,7 @@ defineProps<{
 
 <style scoped>
 .how-to {
-    padding-bottom: 3rem;
+    padding-bottom: 4rem;
     background: #f7fafc;
 }
 
@@ -52,9 +52,9 @@ defineProps<{
 
 .steps {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 2rem;
-    max-width: 900px;
+    max-width: 55rem;
     margin: 0 auto;
 }
 

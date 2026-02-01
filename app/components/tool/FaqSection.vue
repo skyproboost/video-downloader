@@ -51,7 +51,7 @@ const toggle = (i: number) => {
 
 <style scoped>
 .faq {
-    padding-bottom: 3rem;
+    padding-bottom: 4rem;
     background: #f7fafc;
 }
 
@@ -62,7 +62,7 @@ const toggle = (i: number) => {
 }
 
 .faq-list {
-    max-width: 700px;
+    max-width: 55rem;
     margin: 0 auto;
 }
 
@@ -75,7 +75,7 @@ const toggle = (i: number) => {
 }
 
 .faq-item.open {
-    border-color: #667eea;
+    border-color: #0c564c;
 }
 
 .question {
@@ -95,7 +95,7 @@ const toggle = (i: number) => {
 }
 
 .question:hover .icon {
-    color: #667eea;
+    color: #0c564c;
 }
 
 .icon {
@@ -108,7 +108,7 @@ const toggle = (i: number) => {
 
 .faq-item.open .icon {
     transform: rotate(180deg);
-    color: #667eea;
+    color: #0c564c;
 }
 
 .answer-wrapper {

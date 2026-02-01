@@ -69,7 +69,6 @@ const translation = computed(() => {
     return null
 })
 
-// Определяем код ошибки
 const errorCode = computed(() => {
     if (fetchError.value) {
         const status = fetchError.value.statusCode
@@ -144,10 +143,8 @@ useHead({
     ],
     link: () => {
         const links: any[] = [{rel: 'canonical', href: pageUrl.value}]
-
         if (page.value?.translations) {
             const validLangs = ['en', 'ru', 'de']
-
             Object.keys(page.value.translations)
                 .filter(lang => validLangs.includes(lang))
                 .forEach((lang) => {
@@ -157,7 +154,6 @@ useHead({
                         href: `${siteUrl.value}${lang === 'en' ? '' : '/' + lang}/${slug}`,
                     })
                 })
-
             links.push({
                 rel: 'alternate',
                 hreflang: 'x-default',
@@ -186,11 +182,21 @@ useHead({
 </script>
 
 <style scoped>
+.tool-page {
+    --content-max-width: 55rem;
+}
+
 .tool-content {
     padding: 3rem 0;
     text-align: center;
     background: linear-gradient(135deg, #0e1814, #0c675b);
     color: white;
+}
+
+.tool-content .container {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 1rem;
 }
 
 .tool-content h1 {
@@ -218,8 +224,14 @@ useHead({
     background: var(--color-bg);
 }
 
+.platforms-section .container {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
 .intro-text {
-    max-width: 800px;
+    max-width: var(--content-max-width);
     margin: 0 auto;
     font-size: 1rem;
     line-height: 1.5;

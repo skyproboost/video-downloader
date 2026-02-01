@@ -98,10 +98,11 @@ const { data: footerLinks } = await useFetch('/api/footer-links', {
     flex-wrap: wrap;
     gap: var(--space-4);
     justify-content: flex-end;
+    text-align: right;
 }
 
 .link-group {
-    min-width: 5rem;
+    min-width: 4rem;
 }
 
 .group-links {

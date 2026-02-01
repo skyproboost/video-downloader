@@ -165,7 +165,7 @@ code, kbd, samp, pre {
    ═══════════════════════════════════════════ */
 .container {
     width: 100%;
-    max-width: var(--container-max);
+    max-width: 55rem;
     margin-inline: auto;
     padding-inline: var(--container-padding);
 }
