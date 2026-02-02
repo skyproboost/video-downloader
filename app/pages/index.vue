@@ -163,6 +163,7 @@ useHead({
 .feature-icon {
     display: inline-block;
     font-size: 2rem;
+    margin-bottom: 0.5rem;
 }
 
 .feature h3 {

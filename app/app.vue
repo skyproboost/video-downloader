@@ -1,13 +1,13 @@
 <template>
+    <ToolAppLoadingIndicator />
     <div class="app-wrapper">
-        <LayoutHeader />
+        <LayoutHeader/>
         <main class="main-content">
-            <NuxtPage />
+            <NuxtPage/>
         </main>
-        <LayoutFooter />
+        <LayoutFooter/>
     </div>
 </template>
-
 <style>
 /* ═══════════════════════════════════════════
    APP LAYOUT

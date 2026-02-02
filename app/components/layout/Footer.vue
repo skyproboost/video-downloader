@@ -96,9 +96,8 @@ const { data: footerLinks } = await useFetch('/api/footer-links', {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: var(--space-4);
+    gap: var(--space-8);
     justify-content: flex-end;
-    text-align: right;
 }
 
 .link-group {

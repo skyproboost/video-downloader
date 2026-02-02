@@ -104,6 +104,7 @@ const toggle = (i: number) => {
     flex-shrink: 0;
     color: #718096;
     transition: transform 0.3s ease, color 0.3s ease;
+    margin-bottom: 0.5rem;
 }
 
 .faq-item.open .icon {
