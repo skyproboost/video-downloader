@@ -115,20 +115,19 @@ collections:
           - name: how_to
             label: "📋 Блок «Как скачать»"
             widget: object
-            collapsed: false
-            required: true
+            collapsed: true
+            required: false
+            hint: "Оставьте пустым, если блок не нужен"
             fields:
               - name: title
                 label: "Заголовок секции"
                 widget: string
-                required: true
-                default: "How to download"
+                required: false
 
               - name: steps
                 label: "Шаги"
                 widget: list
-                required: true
-                min: 1
+                required: false
                 fields:
                   - { name: title, label: "Название шага", widget: string, required: true }
                   - { name: description, label: "Описание", widget: text, required: true }
@@ -138,20 +137,19 @@ collections:
           - name: features
             label: "✨ Блок «Преимущества»"
             widget: object
-            collapsed: false
-            required: true
+            collapsed: true
+            required: false
+            hint: "Оставьте пустым, если блок не нужен"
             fields:
               - name: title
                 label: "Заголовок секции"
                 widget: string
-                required: true
-                default: "Why choose us"
+                required: false
 
               - name: items
                 label: "Преимущества"
                 widget: list
-                required: true
-                min: 1
+                required: false
                 fields:
                   - { name: icon, label: "Иконка (emoji)", widget: string, required: false }
                   - { name: title, label: "Заголовок", widget: string, required: true }
@@ -161,7 +159,7 @@ collections:
             label: "❓ Блок «Вопросы и ответы»"
             widget: list
             required: false
-            collapsed: false
+            collapsed: true
             fields:
               - { name: question, label: "Вопрос", widget: string, required: true }
               - { name: answer, label: "Ответ", widget: text, required: true }

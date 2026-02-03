@@ -49,6 +49,7 @@
   },
   "errors": {
     "backHome": "Zurück zur Startseite",
+    "retry": "Erneut versuchen",
     "404": {
       "title": "Seite nicht gefunden",
       "description": "Die gesuchte Seite existiert nicht oder wurde verschoben."
@@ -61,5 +62,10 @@
   "footer": {
     "description": "Kostenloses Online-Tool zum Herunterladen von Videos von beliebten Plattformen.",
     "rights": "Alle Rechte vorbehalten."
+  },
+  "promoBanner": {
+    "title": "YouTube ansehen",
+    "subtitle": "werbefrei",
+    "alt": "YouTube Premium Werbung"
   }
 }

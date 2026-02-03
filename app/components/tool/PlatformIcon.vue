@@ -50,7 +50,7 @@ defineProps<{
 
 <style scoped>
 .platform-icon {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: var(--space-6);
+    height: var(--space-6);
 }
 </style>

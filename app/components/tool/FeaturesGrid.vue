@@ -1,12 +1,12 @@
 <template>
     <section class="features">
         <div class="container">
-            <h2>{{ title }}</h2>
-            <div class="grid">
-                <div v-for="(item, i) in items" :key="i" class="card">
-                    <div class="icon">{{ item.icon || '' }}</div>
-                    <h3>{{ item.title }}</h3>
-                    <p>{{ item.description }}</p>
+            <h2 class="section__title">{{ title }}</h2>
+            <div class="features__grid">
+                <div v-for="(item, i) in items" :key="i" class="features__card">
+                    <div class="features__icon">{{ item.icon || '⚡' }}</div>
+                    <h3 class="features__title">{{ item.title }}</h3>
+                    <p class="features__text">{{ item.description }}</p>
                 </div>
             </div>
         </div>
@@ -22,54 +22,59 @@ defineProps<{
 
 <style scoped>
 .features {
-    padding-bottom: 4rem;
+    padding-bottom: var(--section-padding-lg);
 }
 
-.features h2 {
-    text-align: center;
-    font-size: 2rem;
-    margin-bottom: 1rem;
-}
-
-.grid {
+.features__grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    max-width: 55rem;
+    gap: var(--space-4);
+    max-width: var(--container-max);
     margin: 0 auto;
 }
 
+.features__card {
+    background: var(--color-bg-white);
+    padding: var(--space-6);
+    border-radius: var(--radius-xl);
+    text-align: center;
+    border: 1px solid var(--color-border);
+}
+
+.features__icon {
+    font-size: var(--text-3xl);
+    line-height: var(--leading-none);
+    margin-bottom: var(--space-2);
+}
+
+.features__card :deep(.card-image) {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    border-radius: var(--radius-md);
+}
+
+.features__title {
+    font-size: var(--fs-card-title);
+    font-weight: var(--font-semibold);
+    margin-bottom: var(--space-2);
+}
+
+.features__text {
+    color: var(--color-text-light);
+    font-size: var(--fs-card-text);
+    line-height: var(--leading-relaxed);
+}
+
 @media (max-width: 600px) {
-    .grid {
+    .features__grid {
         grid-template-columns: 1fr;
     }
 }
 
-.card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 1rem;
-    text-align: center;
-    border: 1px solid #ebebeb;
-}
-
-.icon {
-    font-size: 2rem;
-}
-
-.card :deep(.card-image) {
-    width: 48px;
-    height: 48px;
-    object-fit: contain;
-    border-radius: 8px;
-}
-
-.card h3 {
-    margin-bottom: var(--space-2);
-}
-
-.card p {
-    color: #718096;
-    font-size: 0.95rem;
+@media (min-width: 768px) {
+    .features {
+        padding-bottom: var(--section-padding-lg);
+    }
 }
 </style>

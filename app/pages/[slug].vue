@@ -1,30 +1,40 @@
 <template>
-    <div v-if="page && translation" class="tool-page">
-        <section class="tool-content">
+    <div class="tool-page">
+        <section class="main-section tool-main">
             <div class="container">
-                <component :is="mainTitleTag" class="main-title">{{translation.pageContent?.mainTitle}}</component>
-                <p class="subtitle" v-text="translation.pageContent?.subtitle"></p>
-                <ToolDownloadForm/>
-                <p class="intro-text" v-text="translation.pageContent?.intro"></p>
+                <div class="tool-main-content">
+                    <component :is="mainTitleTag" class="tool-main__title">
+                        {{ translation.pageContent?.mainTitle }}
+                    </component>
+                    <p v-if="translation.pageContent?.subtitle" class="tool-main__subtitle">
+                        {{ translation.pageContent.subtitle }}
+                    </p>
+                </div>
+                <ToolDownloadForm />
+                <p v-if="translation.pageContent?.intro" class="tool-main__intro">
+                    {{ translation.pageContent.intro }}
+                </p>
             </div>
         </section>
 
+        <ToolPromoBanner link="https://www.youtube.com/premium" />
+
         <section v-if="page.platform" class="platforms-section">
             <div class="container">
-                <HomePlatformGrid :current-platform="page.platform"/>
+                <LazyHomePlatformGrid :current-platform="page.platform" />
             </div>
         </section>
 
         <ToolHowToSteps
-            v-if="hasValidSteps"
+            v-if="showHowTo"
             :title="translation.pageContent.how_to?.title"
             :steps="translation.pageContent.how_to?.steps"
         />
 
         <ToolFeaturesGrid
-            v-if="translation.pageContent?.features?.items?.length"
-            :title="translation.pageContent.features.title"
-            :items="translation.pageContent.features.items"
+            v-if="showFeatures"
+            :title="translation.pageContent.features?.title"
+            :items="translation.pageContent.features?.items"
         />
 
         <ToolFaqSection
@@ -32,88 +42,117 @@
             :items="translation.pageContent.faq"
         />
     </div>
-
-    <div v-else class="error-block">
-        <div class="container error-content">
-            <h1 class="error-code" v-text="errorCode"></h1>
-            <p class="error-message" v-text="$t(`errors.${errorCode}.title`)"></p>
-            <p class="error-description" v-text="$t(`errors.${errorCode}.description`)"></p>
-            <NuxtLink :to="localePath('/')" class="back-home">{{$t('errors.backHome')}}</NuxtLink>
-        </div>
-    </div>
 </template>
 
 <script setup lang="ts">
+import { languages, defaultLanguage } from '@/../config/languages'
+
+interface PageMeta {
+    title: string
+    description: string
+    keywords?: string
+    ogImage?: string
+}
+
+interface PageContent {
+    mainTitle?: string
+    subtitle?: string
+    intro?: string
+    how_to?: {
+        title?: string
+        steps?: Array<{ title: string; description: string }>
+    }
+    features?: {
+        title?: string
+        items?: Array<{ icon?: string; title: string; description: string }>
+    }
+    faq?: Array<{ question: string; answer: string }>
+}
+
+interface PageData {
+    slug: string
+    platform: string
+    meta: PageMeta
+    pageContent: PageContent
+    translations?: Record<string, { meta: PageMeta; pageContent: PageContent }>
+}
+
 const route = useRoute()
-const {locale} = useI18n()
+const { locale } = useI18n()
 const config = useRuntimeConfig()
-const localePath = useLocalePath()
+
 const slug = route.params.slug as string
-
-const {data: page, error: fetchError} = await useFetch(`/api/pages/${slug}`)
-
-const hasValidSteps = computed(() => {
-    return translation.value?.pageContent?.how_to?.steps?.some(s => s.title)
-})
-
-const mainTitleTag = computed(() => hasValidSteps.value ? 'h2' : 'h1')
-
-const translation = computed(() => {
-    if (!page.value) return null
-    if (page.value.translations?.[locale.value]) {
-        return page.value.translations[locale.value]
-    }
-    if (page.value.meta && page.value.pageContent) {
-        return {meta: page.value.meta, pageContent: page.value.pageContent}
-    }
-    return null
-})
-
-const errorCode = computed(() => {
-    if (fetchError.value) {
-        const status = fetchError.value.statusCode
-        return status === 404 || status === 500 ? status : 500
-    }
-    if (!page.value) return 404
-    return 500
-})
-
-const keywordsArray = computed(() => {
-    const kw = translation.value?.meta?.keywords
-    if (!kw) return []
-    if (Array.isArray(kw)) return kw
-    return kw.split(',').map((k: string) => k.trim()).filter(Boolean)
-})
-
-const siteUrl = computed(() => config.public.siteUrl || 'https://yoursite.com')
+const siteUrl = config.public.siteUrl as string || 'https://yoursite.com'
 const siteName = 'VideoDownloader'
+
+// Игнорируем запросы к файлам
+if (/\.(js|json|css|map|ico|png|jpg|svg|webp|txt|xml)$/i.test(slug)) {
+    throw createError({ statusCode: 404, message: 'Not found', fatal: true })
+}
+
+// Загрузка данных
+const { data: page, error: fetchError } = await useAsyncData<PageData>(
+    `page-${slug}`,
+    () => $fetch(`/api/pages/${slug}`),
+    { getCachedData: (key, nuxtApp) => nuxtApp.payload.data[key] as PageData | undefined }
+)
+
+// 404 если страница не найдена — Nuxt покажет error.vue
+if (fetchError.value || !page.value) {
+    throw createError({
+        statusCode: fetchError.value?.statusCode || 404,
+        message: 'Page not found',
+        fatal: true,
+    })
+}
+
+// Перевод для текущего языка
+const translation = computed(() => {
+    return page.value!.translations?.[locale.value]
+        ?? { meta: page.value!.meta, pageContent: page.value!.pageContent }
+})
+
+// Условия отображения блоков
+const showHowTo = computed(() => {
+    const howTo = translation.value?.pageContent?.how_to
+    if (!howTo) return false
+    return !!howTo.title?.trim() || howTo.steps?.some(s => s.title?.trim())
+})
+
+const showFeatures = computed(() => {
+    const features = translation.value?.pageContent?.features
+    if (!features) return false
+    return !!features.title?.trim() && (features.items?.length ?? 0) > 0
+})
+
+const mainTitleTag = computed(() => showHowTo.value ? 'h2' : 'h1')
+
+// SEO
+const pageUrl = computed(() => {
+    const prefix = locale.value === defaultLanguage ? '' : `/${locale.value}`
+    return `${siteUrl}${prefix}/${slug}`
+})
 
 const ogImageUrl = computed(() => {
     const img = translation.value?.meta?.ogImage
-    if (!img) return `${siteUrl.value}/og-default.png`
-    return img.startsWith('/') ? `${siteUrl.value}${img}` : img
+    if (!img) return `${siteUrl}/og-default.png`
+    return img.startsWith('/') ? `${siteUrl}${img}` : img
 })
 
-const pageUrl = computed(() => {
-    const base = siteUrl.value
-    const langPrefix = locale.value === 'en' ? '' : `/${locale.value}`
-    return `${base}${langPrefix}/${slug}`
+const keywords = computed(() => {
+    const kw = translation.value?.meta?.keywords
+    if (!kw) return ''
+    return Array.isArray(kw) ? kw.join(', ') : kw
 })
 
-const ogLocale = computed(() => {
-    const map: Record<string, string> = {en: 'en_US', ru: 'ru_RU', de: 'de_DE'}
-    return map[locale.value] || 'en_US'
-})
-
-const ogLocaleAlternate = computed(() => {
-    const all = ['en_US', 'ru_RU', 'de_DE']
-    return all.filter(l => l !== ogLocale.value)
-})
+const localeMap: Record<string, string> = Object.fromEntries(
+    languages.map(l => [l.code, l.iso.replace('-', '_')])
+)
 
 useSeoMeta({
     title: () => translation.value?.meta?.title || '',
     description: () => translation.value?.meta?.description || '',
-    keywords: () => keywordsArray.value.join(', '),
+    keywords: () => keywords.value,
     author: siteName,
     ogTitle: () => translation.value?.meta?.title || '',
     ogDescription: () => translation.value?.meta?.description || '',
@@ -125,7 +164,7 @@ useSeoMeta({
     ogType: 'website',
     ogUrl: () => pageUrl.value,
     ogSiteName: siteName,
-    ogLocale: () => ogLocale.value,
+    ogLocale: () => localeMap[locale.value] || 'en_US',
     twitterCard: 'summary_large_image',
     twitterTitle: () => translation.value?.meta?.title || '',
     twitterDescription: () => translation.value?.meta?.description || '',
@@ -134,36 +173,20 @@ useSeoMeta({
 })
 
 useHead({
-    htmlAttrs: {lang: locale.value},
-    meta: [
-        {name: 'format-detection', content: 'telephone=no'},
-        {name: 'theme-color', content: '#667eea'},
-        {property: 'og:locale:alternate', content: ogLocaleAlternate.value[0]},
-        {property: 'og:locale:alternate', content: ogLocaleAlternate.value[1]},
-    ],
+    htmlAttrs: { lang: locale.value },
     link: () => {
-        const links: any[] = [{rel: 'canonical', href: pageUrl.value}]
-        if (page.value?.translations) {
-            const validLangs = ['en', 'ru', 'de']
-            Object.keys(page.value.translations)
-                .filter(lang => validLangs.includes(lang))
-                .forEach((lang) => {
-                    links.push({
-                        rel: 'alternate',
-                        hreflang: lang,
-                        href: `${siteUrl.value}${lang === 'en' ? '' : '/' + lang}/${slug}`,
-                    })
-                })
-            links.push({
-                rel: 'alternate',
-                hreflang: 'x-default',
-                href: `${siteUrl.value}/${slug}`,
-            })
+        const links: Array<{ rel: string; href: string; hreflang?: string }> = [
+            { rel: 'canonical', href: pageUrl.value },
+        ]
+        for (const lang of languages) {
+            const prefix = lang.code === defaultLanguage ? '' : `/${lang.code}`
+            links.push({ rel: 'alternate', hreflang: lang.code, href: `${siteUrl}${prefix}/${slug}` })
         }
+        links.push({ rel: 'alternate', hreflang: 'x-default', href: `${siteUrl}/${slug}` })
         return links
     },
-    script: [
-        {
+    script: () => {
+        const scripts: Array<{ type: string; innerHTML: string }> = [{
             type: 'application/ld+json',
             innerHTML: JSON.stringify({
                 '@context': 'https://schema.org',
@@ -173,123 +196,60 @@ useHead({
                 url: pageUrl.value,
                 applicationCategory: 'MultimediaApplication',
                 operatingSystem: 'Any',
-                offers: {'@type': 'Offer', price: '0', priceCurrency: 'USD'},
-                aggregateRating: {'@type': 'AggregateRating', ratingValue: '4.8', ratingCount: '1250'},
+                offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
             }),
-        },
-    ],
+        }]
+
+        const faq = translation.value?.pageContent?.faq
+        if (faq?.length) {
+            scripts.push({
+                type: 'application/ld+json',
+                innerHTML: JSON.stringify({
+                    '@context': 'https://schema.org',
+                    '@type': 'FAQPage',
+                    mainEntity: faq.map(item => ({
+                        '@type': 'Question',
+                        name: item.question,
+                        acceptedAnswer: { '@type': 'Answer', text: item.answer },
+                    })),
+                }),
+            })
+        }
+        return scripts
+    },
 })
 </script>
 
 <style scoped>
-.tool-page {
-    --content-max-width: 55rem;
+.tool-main-content {
+    margin-bottom: var(--space-4);
 }
 
-.tool-content {
-    padding: 3rem 0;
-    text-align: center;
-    background: linear-gradient(135deg, #0e1814, #0c675b);
-    color: white;
+.tool-main__title {
+    font-size: var(--text-5xl);
 }
 
-.tool-content .container {
-    max-width: var(--content-max-width);
-    margin: 0 auto;
-    padding: 0 1rem;
+.tool-main__subtitle {
+    font-size: var(--text-2xl);
 }
 
-.tool-content h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-}
-
-.main-title {
-    font-size: 3rem;
-}
-
-.subtitle {
-    font-size: 1.5rem;
-    opacity: 0.9;
-    margin-bottom: 1rem;
-}
-
-.section {
-    padding: 3rem 0;
+.tool-main__intro {
+    margin-top: var(--space-4);
+    font-size: 0.9rem;
+    color: var(--color-text-inverse-muted);
 }
 
 .platforms-section {
-    padding: 4rem 0;
+    padding-bottom: var(--section-padding-lg);
     background: var(--color-bg);
 }
 
-.platforms-section .container {
-    max-width: var(--content-max-width);
-    margin: 0 auto;
-    padding: 0 1rem;
-}
-
-.intro-text {
-    max-width: var(--content-max-width);
-    margin: 0 auto;
-    font-size: 1rem;
-    line-height: 1.5;
-    color: #81aba5;
-    text-align: center;
-    margin-top: 1rem;
-}
-
-/* Error block */
-.error-block {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.error-content {
-    text-align: center;
-    padding: 4rem 1rem;
-}
-
-.error-code {
-    font-size: clamp(5rem, 15vw, 7rem);
-    font-weight: 700;
-    background: #7b1c1c;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 0.9;
-}
-
-.error-message {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #7b1c1c;
-}
-
-.error-description {
-    font-size: 1rem;
-    color: #7b1c1c;
-    margin-bottom: 0.5rem;
-    max-width: 400px;
-    margin-inline: auto;
-    line-height: 1.3;
-}
-
-.back-home {
-    display: inline-block;
-    padding: 0.75rem 2rem;
-    background: #3b3b3b;
-    color: white;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background-color .3s ease-in-out;
-}
-
-.back-home:hover {
-    background: #1c1c1c;
+@media (max-width: 767px) {
+    .tool-main__title {
+        font-size: var(--text-2xl);
+    }
+    .tool-main__subtitle {
+        font-size: var(--text-base);
+    }
 }
 </style>

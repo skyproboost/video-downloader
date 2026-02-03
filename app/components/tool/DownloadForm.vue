@@ -2,10 +2,10 @@
     <div class="download-form">
         <div class="input-wrapper">
             <span class="input-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M12.6666 16.6667V14.6667M14.6666 12.6667H16.6666M3.71658 7.95972L2.30237 9.37393C0.740271 10.936 0.741283 13.4684 2.30338 15.0305C3.86548 16.5926 6.39743 16.593 7.95952 15.0309L9.37418 13.6165M2.66663 4.66675H0.666626M4.66663 0.666748V2.66675M7.95959 3.71719L9.37381 2.30298C10.9359 0.740881 13.4683 0.740428 15.0304 2.30253C16.5925 3.86462 16.592 6.39755 15.0299 7.95965L13.6158 9.37382"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
             </span>
             <input
@@ -201,7 +201,7 @@ const handleDownload = async () => {
 
     .download-btn {
         width: 100%;
-        padding: var(--space-4);
+        padding: var(--space-2);
         border-radius: 0 0 var(--radius-lg) var(--radius-lg);
     }
 }

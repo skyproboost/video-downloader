@@ -1,21 +1,20 @@
 <template>
-    <section v-if="currentPlatform" class="platform-section">
+    <section v-if="currentPlatform" class="platforms">
         <div class="container">
-            <div class="platform-hero">
-                <h2 class="platform-name">{{ currentPlatform.name }}</h2>
+            <div class="platforms__hero">
+                <h2 class="platforms__title">{{ currentPlatform.name }}</h2>
             </div>
 
-            <!-- Другие платформы -->
-            <div v-if="otherPlatforms.length > 0" class="other-platforms">
-                <h3 class="other-title">{{ otherPlatformsTitle }}</h3>
-                <div class="other-grid">
+            <div v-if="otherPlatforms.length > 0" class="platforms__other">
+                <h3 class="platforms__other-title">{{ otherPlatformsTitle }}</h3>
+                <div class="platforms__grid">
                     <NuxtLink
                         v-for="p in otherPlatforms"
                         :key="p.id"
                         :to="localePath(`/${p.id}-downloader`)"
-                        class="other-card"
+                        class="platforms__card"
                     >
-                        <span class="other-name">{{ p.name }}</span>
+                        <span class="platforms__card-name">{{ p.name }}</span>
                     </NuxtLink>
                 </div>
             </div>
@@ -50,60 +49,71 @@ const otherPlatformsTitle = computed(() => {
 </script>
 
 <style scoped>
-.platform-section {
-    padding: 4rem 0;
-    background: #f8fafc;
+.platforms {
+    padding: var(--section-padding-lg) 0;
+    background: var(--color-bg);
 }
 
-.platform-hero {
+.platforms__hero {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: var(--space-12);
 }
 
-.platform-name {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #1a202c;
+.platforms__title {
+    font-size: var(--fs-section-title);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
     margin: 0;
 }
 
-/* Другие платформы */
-.other-platforms {
+/* Other platforms */
+.platforms__other {
     text-align: center;
 }
 
-.other-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #718096;
-    margin-bottom: 1.5rem;
+.platforms__other-title {
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    color: var(--color-text-light);
+    margin-bottom: var(--space-6);
 }
 
-.other-grid {
+.platforms__grid {
     display: flex;
     justify-content: center;
-    gap: 1rem;
+    gap: var(--space-4);
     flex-wrap: wrap;
 }
 
-.other-card {
+.platforms__card {
     display: flex;
     align-items: center;
-    padding: 0.875rem 1.5rem;
-    background: white;
-    border-radius: 0.75rem;
+    padding: var(--space-3) var(--space-6);
+    background: var(--color-bg-white);
+    border-radius: var(--radius-lg);
     text-decoration: none;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+    -webkit-tap-highlight-color: transparent;
 }
 
-.other-card:hover {
+.platforms__card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-lg);
 }
 
-.other-name {
-    font-weight: 600;
-    color: #2d3748;
+.platforms__card-name {
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+}
+
+@media (max-width: 767px) {
+    .platforms {
+        padding: var(--section-padding-sm) 0;
+    }
+
+    .platforms__hero {
+        margin-bottom: var(--space-6);
+    }
 }
 </style>

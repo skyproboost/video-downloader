@@ -1,18 +1,18 @@
 <template>
     <section class="faq">
         <div class="container">
-            <h2 v-text="$t('faq.title')"></h2>
-            <div class="faq-list">
+            <h2 class="section__title">{{ $t('faq.title') }}</h2>
+            <div class="faq__list">
                 <div
                     v-for="(item, i) in items"
                     :key="i"
-                    class="faq-item"
-                    :class="{ open: activeIndex === i }"
+                    class="faq__item"
+                    :class="{ 'is-open': activeIndex === i }"
                 >
-                    <button class="question" @click="toggle(i)">
-                        <span v-text="item.question"></span>
+                    <button class="faq__question" @click="toggle(i)">
+                        <span>{{ item.question }}</span>
                         <svg
-                            class="icon"
+                            class="faq__icon"
                             viewBox="0 0 24 24"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
@@ -26,9 +26,9 @@
                             />
                         </svg>
                     </button>
-                    <div class="answer-wrapper">
-                        <div class="answer">
-                            <div class="answer-content" v-text="item.answer"></div>
+                    <div class="faq__answer-wrapper">
+                        <div class="faq__answer">
+                            <p class="faq__answer-content">{{ item.answer }}</p>
                         </div>
                     </div>
                 </div>
@@ -51,84 +51,85 @@ const toggle = (i: number) => {
 
 <style scoped>
 .faq {
-    padding-bottom: 4rem;
-    background: #f7fafc;
+    padding-bottom: var(--section-padding-sm);
+    background: var(--color-bg);
 }
 
-.faq h2 {
-    text-align: center;
-    font-size: 2rem;
-    margin-bottom: 1rem;
-}
-
-.faq-list {
-    max-width: 55rem;
+.faq__list {
+    max-width: var(--container-max);
     margin: 0 auto;
 }
 
-.faq-item {
-    background: white;
-    border-radius: 0.75rem;
-    margin-bottom: 0.5rem;
+.faq__item {
+    background: var(--color-bg-white);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-2);
     border: 1px solid transparent;
-    transition: border-color 0.3s ease;
+    transition: border-color var(--transition-slow);
 }
 
-.faq-item.open {
-    border-color: #0c564c;
+.faq__item.is-open {
+    border-color: var(--color-accent);
 }
 
-.question {
+.faq__question {
     width: 100%;
-    padding: 1.25rem;
+    padding: var(--space-5);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 1rem;
+    gap: var(--space-4);
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 1rem;
-    font-weight: 500;
+    font-size: var(--text-base);
+    font-weight: var(--font-medium);
     text-align: left;
     color: inherit;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
 }
 
-.question:hover .icon {
-    color: #0c564c;
+.faq__question:hover .faq__icon {
+    color: var(--color-accent);
 }
 
-.icon {
+.faq__icon {
     width: 1.25rem;
     height: 1.25rem;
     flex-shrink: 0;
-    color: #718096;
-    transition: transform 0.3s ease, color 0.3s ease;
-    margin-bottom: 0.5rem;
+    color: var(--color-text-light);
+    transition: transform var(--transition-slow), color var(--transition-slow);
 }
 
-.faq-item.open .icon {
+.faq__item.is-open .faq__icon {
     transform: rotate(180deg);
-    color: #0c564c;
+    color: var(--color-accent);
 }
 
-.answer-wrapper {
+.faq__answer-wrapper {
     display: grid;
     grid-template-rows: 0fr;
-    transition: grid-template-rows 0.3s ease;
+    transition: grid-template-rows var(--transition-slow);
 }
 
-.faq-item.open .answer-wrapper {
+.faq__item.is-open .faq__answer-wrapper {
     grid-template-rows: 1fr;
 }
 
-.answer {
+.faq__answer {
     overflow: hidden;
 }
 
-.answer-content {
-    padding: 0 1.25rem 1.25rem;
-    color: #718096;
-    line-height: 1.7;
+.faq__answer-content {
+    padding: 0 var(--space-5) var(--space-5);
+    color: var(--color-text-light);
+    line-height: var(--leading-loose);
+}
+
+@media (min-width: 768px) {
+    .faq {
+        padding-bottom: var(--section-padding-lg);
+    }
 }
 </style>

@@ -1,8 +1,22 @@
 <template>
     <header class="header">
-        <div class="container header-inner">
-            <NuxtLink :to="localePath('/')" class="logo">
-                📥 Video Downloader
+        <div class="container header__inner">
+            <NuxtLink :to="localePath('/')" class="header__logo">
+                <NuxtPicture
+                    src="/images/logo.png"
+                    alt="Video Downloader"
+                    width="70"
+                    height="70"
+                    sizes="100vw sm:70px"
+                    quality="50"
+                    loading="eager"
+                    preload
+                    :img-attrs="{
+                        class: 'header__logo-img',
+                        fetchpriority: 'high'
+                    }"
+                />
+                <span class="header__logo-text">Video Downloader</span>
             </NuxtLink>
         </div>
     </header>
@@ -14,32 +28,40 @@ const localePath = useLocalePath()
 
 <style scoped>
 .header {
-    background: white;
-    border-bottom: 1px solid #e7e7e7;
+    background: var(--color-bg-white);
+    border-bottom: 1px solid var(--color-border);
 }
 
-.header-inner {
+.header__inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: var(--space-6) var(--container-padding);
-    gap: 2rem;
+    gap: var(--space-8);
 }
 
-.logo {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #1a202c;
+.header__logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
     text-decoration: none;
 }
 
-.nav a {
-    color: #4a5568;
-    text-decoration: none;
-    font-weight: 500;
+.header__logo :deep(.header__logo-img) {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
 }
 
-.nav a:hover {
-    color: #667eea;
+.header__logo-text {
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+}
+
+@media (max-width: 640px) {
+    .header__logo-text {
+        font-size: var(--text-base);
+    }
 }
 </style>

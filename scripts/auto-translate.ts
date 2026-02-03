@@ -1,24 +1,65 @@
-import fs from 'fs'
-import path from 'path'
-import crypto from 'crypto'
+import fs from 'node:fs'
+import path from 'node:path'
+import crypto from 'node:crypto'
 import { parse, stringify } from 'yaml'
 import { languageCodes } from '../config/languages'
 
-const LINGVA_INSTANCES = [
-    'https://lingva.ml',
-    'https://lingva.lunar.icu',
-    'https://translate.plausibility.cloud',
-]
+// ═══════════════════════════════════════════════════════════════
+// КОНФИГУРАЦИЯ
+// ═══════════════════════════════════════════════════════════════
+
+// DeepL API (Free tier - ключ с :fx)
+const DEEPL_API_KEY = '94886d77-fa04-4568-91db-dbda3212f1d9:fx'
+const DEEPL_API_URL = 'https://api-free.deepl.com/v2'
+
+// Специальные коды DeepL (только для языков с вариантами)
+// Остальные просто uppercase: en → EN, de → DE, ru → RU и т.д.
+const DEEPL_SPECIAL_CODES: Record<string, string> = {
+    'pt': 'PT-PT',    // Португальский → Португалия (не Бразилия)
+    'zh': 'ZH-HANS',  // Китайский → упрощённый (не традиционный)
+    'no': 'NB',       // Норвежский → букмол
+}
 
 // Поля которые НЕ переводятся (копируются как есть)
-const SKIP_KEYS = ['image', 'ogImage', 'src', 'url', 'href', 'icon', 'platform', 'slug', 'footerLinkText', 'imageAlt', 'ogImageAlt']
+const SKIP_TRANSLATION_KEYS = [
+    'image', 'ogImage', 'src', 'url', 'href', 'icon',
+    'platform', 'slug', 'footerLinkText', 'imageAlt', 'ogImageAlt'
+]
 
+const CONTENT_DIR = path.resolve(process.cwd(), 'content/pages')
 const STATUS_FILE = path.resolve(process.cwd(), 'public/admin/status.json')
 const QUEUE_FILE = path.resolve(process.cwd(), 'public/admin/queue.json')
 
+// Задержка между запросами к API перевода (мс)
+// DeepL рекомендует не более 50 запросов/сек для Free
+const TRANSLATE_DELAY = 100
+
+// Счётчик запросов для периодического вывода лимитов
+let requestCount = 0
+const SHOW_USAGE_EVERY = 20 // Показывать лимиты каждые N запросов
+
 // ═══════════════════════════════════════════════════════════════
-// ОЧЕРЕДЬ
+// ТИПЫ
 // ═══════════════════════════════════════════════════════════════
+
+interface PageData {
+    slug: string
+    platform: string
+    source_lang: string
+    footerLinkText?: string
+    meta: Record<string, any>
+    pageContent: Record<string, any>
+    translations?: Record<string, {
+        meta: Record<string, any>
+        pageContent: Record<string, any>
+    }>
+    _status?: 'translating' | 'ready'
+    _hashes?: {
+        _slug: string
+        _contentHash: string
+        fields: Record<string, string>
+    }
+}
 
 interface QueueItem {
     file: string
@@ -35,112 +76,185 @@ interface QueueState {
     currentFile: string | null
 }
 
-function loadQueue(): QueueState {
-    try {
-        if (fs.existsSync(QUEUE_FILE)) {
-            return JSON.parse(fs.readFileSync(QUEUE_FILE, 'utf-8'))
-        }
-    } catch {}
-    return { items: [], processing: false, currentFile: null }
+interface FieldChange {
+    path: string
+    type: 'added' | 'changed' | 'deleted'
+    value?: any
+    needsTranslation: boolean
 }
 
-function saveQueue(queue: QueueState) {
-    fs.mkdirSync(path.dirname(QUEUE_FILE), { recursive: true })
-    fs.writeFileSync(QUEUE_FILE, JSON.stringify(queue, null, 2))
-    updateStatus(queue)
-}
-
-function addToQueue(file: string, force = false): QueueState {
-    const queue = loadQueue()
-    const slug = path.basename(file, '.yml')
-
-    const existing = queue.items.find(i => i.file === file && i.status === 'pending')
-    if (existing) {
-        existing.force = existing.force || force
-        existing.addedAt = new Date().toISOString()
-        console.log(`  ⏫ Updated in queue: ${slug}`)
-    } else {
-        queue.items.push({
-            file, slug, force,
-            addedAt: new Date().toISOString(),
-            status: 'pending'
-        })
-        console.log(`  ➕ Added to queue: ${slug}`)
-    }
-
-    saveQueue(queue)
-    return queue
-}
-
-function updateStatus(queue: QueueState) {
-    const pending = queue.items.filter(i => i.status === 'pending').length
-    const processing = queue.items.find(i => i.status === 'processing')
-    const done = queue.items.filter(i => i.status === 'done').length
-    const errors = queue.items.filter(i => i.status === 'error')
-    const total = queue.items.length
-
-    let status: 'idle' | 'translating' | 'error' = 'idle'
-    let message = 'Ожидание изменений'
-
-    if (processing) {
-        status = 'translating'
-        message = `Перевод ${done + 1}/${total}: ${processing.slug}`
-        if (pending > 0) message += ` (ещё ${pending} в очереди)`
-    } else if (pending > 0) {
-        status = 'translating'
-        message = `В очереди: ${pending} файл(ов)`
-    }
-
-    if (errors.length > 0) {
-        status = 'error'
-        message = `Ошибки: ${errors.map(e => e.slug).join(', ')}`
-    }
-
-    fs.mkdirSync(path.dirname(STATUS_FILE), { recursive: true })
-    fs.writeFileSync(STATUS_FILE, JSON.stringify({
-        status, message,
-        queue: { pending, processing: processing?.slug || null, done, errors: errors.length, total },
-        updatedAt: new Date().toISOString()
-    }, null, 2))
-}
-
-function cleanOldItems(queue: QueueState): QueueState {
-    const fiveMinAgo = Date.now() - 5 * 60 * 1000
-    queue.items = queue.items.filter(item => {
-        if (item.status === 'pending' || item.status === 'processing') return true
-        if (item.status === 'done') return false
-        return new Date(item.addedAt).getTime() > fiveMinAgo
-    })
-    return queue
+interface DeepLUsage {
+    character_count: number
+    character_limit: number
 }
 
 // ═══════════════════════════════════════════════════════════════
-// FLATTEN / UNFLATTEN - работа с путями полей
+// УТИЛИТЫ
+// ═══════════════════════════════════════════════════════════════
+
+function deepClone<T>(obj: T): T {
+    return JSON.parse(JSON.stringify(obj))
+}
+
+function hash(value: any): string {
+    const str = typeof value === 'object' ? JSON.stringify(value) : String(value ?? '')
+    return crypto.createHash('md5').update(str).digest('hex').substring(0, 12)
+}
+
+function sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+function shouldTranslate(key: string): boolean {
+    return !SKIP_TRANSLATION_KEYS.includes(key)
+}
+
+// Конвертация кода языка в формат DeepL
+// DeepL принимает uppercase коды, специальные только для языков с вариантами
+function toDeepLLang(lang: string): string {
+    const lower = lang.toLowerCase()
+    return DEEPL_SPECIAL_CODES[lower] || lang.toUpperCase()
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DeepL API
+// ═══════════════════════════════════════════════════════════════
+
+async function getDeepLUsage(): Promise<DeepLUsage | null> {
+    try {
+        const res = await fetch(`${DEEPL_API_URL}/usage`, {
+            headers: { 'Authorization': `DeepL-Auth-Key ${DEEPL_API_KEY}` }
+        })
+        if (!res.ok) return null
+        return await res.json()
+    } catch {
+        return null
+    }
+}
+
+async function showUsageInfo(force = false): Promise<void> {
+    if (!force && requestCount % SHOW_USAGE_EVERY !== 0) return
+
+    const usage = await getDeepLUsage()
+    if (usage) {
+        const used = usage.character_count.toLocaleString()
+        const limit = usage.character_limit.toLocaleString()
+        const percent = ((usage.character_count / usage.character_limit) * 100).toFixed(1)
+        const remaining = (usage.character_limit - usage.character_count).toLocaleString()
+        console.log(`\n  📊 DeepL: ${used}/${limit} символов (${percent}%) | Осталось: ${remaining}`)
+    }
+}
+
+async function translateText(text: string, from: string, to: string): Promise<string> {
+    if (!text || typeof text !== 'string') return text
+    if (from === to) return text
+    if (text.startsWith('/') || text.startsWith('http')) return text
+    if (text.trim().length === 0) return text
+
+    const sourceLang = toDeepLLang(from)
+    const targetLang = toDeepLLang(to)
+
+    try {
+        const res = await fetch(`${DEEPL_API_URL}/translate`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `DeepL-Auth-Key ${DEEPL_API_KEY}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                text: [text],
+                source_lang: sourceLang,
+                target_lang: targetLang,
+            }),
+            signal: AbortSignal.timeout(30000)
+        })
+
+        if (!res.ok) {
+            const errorText = await res.text()
+            console.warn(`\n    ⚠️ DeepL error ${res.status}: ${errorText}`)
+
+            // Проверяем лимиты при ошибке 456 (quota exceeded)
+            if (res.status === 456) {
+                console.error('\n    ❌ DeepL quota exceeded!')
+                await showUsageInfo(true)
+            }
+            return text
+        }
+
+        const data = await res.json()
+        requestCount++
+
+        // Периодически показываем лимиты
+        await showUsageInfo()
+
+        await sleep(TRANSLATE_DELAY)
+
+        if (data.translations?.[0]?.text) {
+            return data.translations[0].text
+        }
+
+        return text
+    } catch (err) {
+        console.warn(`\n    ⚠️ DeepL failed: ${err instanceof Error ? err.message : 'unknown'}`)
+        return text
+    }
+}
+
+async function translateValue(value: any, from: string, to: string): Promise<any> {
+    if (typeof value === 'string') {
+        return translateText(value, from, to)
+    }
+
+    if (Array.isArray(value)) {
+        const result = []
+        for (const item of value) {
+            result.push(await translateValue(item, from, to))
+        }
+        return result
+    }
+
+    if (typeof value === 'object' && value !== null) {
+        const result: Record<string, any> = {}
+        for (const [key, val] of Object.entries(value)) {
+            result[key] = shouldTranslate(key)
+                ? await translateValue(val, from, to)
+                : deepClone(val)
+        }
+        return result
+    }
+
+    return value
+}
+
+async function translateObject(obj: any, from: string, to: string): Promise<any> {
+    return translateValue(obj, from, to)
+}
+
+// ═══════════════════════════════════════════════════════════════
+// РАБОТА С ПУТЯМИ В ОБЪЕКТЕ
 // ═══════════════════════════════════════════════════════════════
 
 function flatten(obj: any, prefix = ''): Record<string, any> {
     const result: Record<string, any> = {}
-
     if (obj === null || obj === undefined) return result
 
     for (const [key, value] of Object.entries(obj)) {
-        const path = prefix ? `${prefix}.${key}` : key
+        const currentPath = prefix ? `${prefix}.${key}` : key
 
         if (Array.isArray(value)) {
-            // Сохраняем информацию о длине массива
-            result[`${path}.__length`] = value.length
-
+            result[`${currentPath}.__isArray`] = true
+            result[`${currentPath}.__length`] = value.length
             value.forEach((item, i) => {
                 if (typeof item === 'object' && item !== null) {
-                    Object.assign(result, flatten(item, `${path}[${i}]`))
+                    Object.assign(result, flatten(item, `${currentPath}[${i}]`))
                 } else {
-                    result[`${path}[${i}]`] = item
+                    result[`${currentPath}[${i}]`] = item
                 }
             })
         } else if (typeof value === 'object' && value !== null) {
-            Object.assign(result, flatten(value, path))
+            Object.assign(result, flatten(value, currentPath))
         } else {
-            result[path] = value
+            result[currentPath] = value
         }
     }
     return result
@@ -156,28 +270,33 @@ function getByPath(obj: any, pathStr: string): any {
     return current
 }
 
-function setByPath(obj: any, pathStr: string, value: any) {
+function setByPath(obj: any, pathStr: string, value: any): void {
     const parts = pathStr.split(/\.|\[(\d+)\]/).filter(Boolean)
     let current = obj
+
     for (let i = 0; i < parts.length - 1; i++) {
         const part = parts[i]
-        const next = parts[i + 1]
+        const nextPart = parts[i + 1]
+
         if (!(part in current)) {
-            current[part] = /^\d+$/.test(next) ? [] : {}
+            current[part] = /^\d+$/.test(nextPart) ? [] : {}
         }
         current = current[part]
     }
-    current[parts[parts.length - 1]] = value
+
+    const lastPart = parts[parts.length - 1]
+    current[lastPart] = value
 }
 
-function deleteByPath(obj: any, pathStr: string) {
+function deleteByPath(obj: any, pathStr: string): void {
     const parts = pathStr.split(/\.|\[(\d+)\]/).filter(Boolean)
     let current = obj
+
     for (let i = 0; i < parts.length - 1; i++) {
-        const part = parts[i]
-        if (current === undefined || current === null || !(part in current)) return
-        current = current[part]
+        if (current === undefined || current === null) return
+        current = current[parts[i]]
     }
+
     const lastPart = parts[parts.length - 1]
     if (current && lastPart in current) {
         if (Array.isArray(current)) {
@@ -188,122 +307,79 @@ function deleteByPath(obj: any, pathStr: string) {
     }
 }
 
-// Получаем ключ поля из пути (последняя часть)
 function getFieldKey(pathStr: string): string {
-    const match = pathStr.match(/\.([^.\[]+)$|\[(\d+)\]$|^([^.\[]+)$/)
-    if (match) return match[1] || match[2] || match[3] || ''
-    return ''
-}
-
-// Проверяем, нужно ли переводить это поле
-function needsTranslation(pathStr: string): boolean {
-    const key = getFieldKey(pathStr)
-    return !SKIP_KEYS.includes(key)
+    const match = pathStr.match(/\.([^.\[]+)$|\[(\d+)\]\.([^.\[]+)$|^([^.\[]+)$/)
+    return match?.[1] || match?.[3] || match?.[4] || pathStr.split('.').pop() || ''
 }
 
 // ═══════════════════════════════════════════════════════════════
-// ХЭШИ
+// ХЭШИРОВАНИЕ
 // ═══════════════════════════════════════════════════════════════
 
-function hashValue(value: any): string {
-    const str = typeof value === 'object' ? JSON.stringify(value) : String(value)
-    return crypto.createHash('md5').update(str).digest('hex').substring(0, 8)
+function computeContentHash(meta: any, pageContent: any): string {
+    return hash({ meta, pageContent })
 }
 
-function getFieldHashes(data: any): Record<string, string> {
+function computeFieldHashes(data: any): Record<string, string> {
     const flat = flatten(data)
     const hashes: Record<string, string> = {}
 
     for (const [path, value] of Object.entries(flat)) {
-        // Пропускаем служебные поля __length
-        if (path.endsWith('.__length')) {
-            hashes[path] = String(value) // сохраняем длину как строку
-        } else if (value !== undefined && value !== null && value !== '') {
-            hashes[path] = hashValue(value)
+        if (path.endsWith('.__isArray') || path.endsWith('.__length')) continue
+        if (value !== undefined && value !== null && value !== '') {
+            hashes[path] = hash(value)
         }
     }
     return hashes
 }
 
 // ═══════════════════════════════════════════════════════════════
-// ОПРЕДЕЛЕНИЕ ИЗМЕНЕНИЙ
+// ОПРЕДЕЛЕНИЕ СЦЕНАРИЯ И ИЗМЕНЕНИЙ
 // ═══════════════════════════════════════════════════════════════
 
-interface Change {
-    path: string
-    type: 'added' | 'changed' | 'deleted'
-    value?: any
-    needsTranslation: boolean
+type PageScenario = 'new' | 'duplicated' | 'corrupted' | 'unchanged' | 'incremental'
+
+function detectScenario(page: PageData): PageScenario {
+    const hasHashes = !!page._hashes?.fields
+    const hasTranslations = !!page.translations
+
+    const hasAllTranslations = languageCodes.every(lang => {
+        const t = page.translations?.[lang]
+        return t?.meta?.title && t?.pageContent?.mainTitle
+    })
+
+    if (!hasHashes && !hasTranslations) return 'new'
+    if (hasHashes && page._hashes!._slug !== page.slug) return 'duplicated'
+    if (!hasAllTranslations) return 'corrupted'
+
+    const currentContentHash = computeContentHash(page.meta, page.pageContent)
+    if (hasHashes && page._hashes!._contentHash === currentContentHash) return 'unchanged'
+
+    return 'incremental'
 }
 
-function detectChanges(
+function detectFieldChanges(
     currentHashes: Record<string, string>,
     savedHashes: Record<string, string>,
-    data: any
-): Change[] {
-    const changes: Change[] = []
-    const processedArrays = new Set<string>()
+    sourceData: any
+): FieldChange[] {
+    const changes: FieldChange[] = []
 
-    // 1. Проверяем изменения длины массивов (удаление элементов)
-    for (const [path, value] of Object.entries(savedHashes)) {
-        if (path.endsWith('.__length')) {
-            const arrayPath = path.replace('.__length', '')
-            const oldLength = Number(value)
-            const newLength = Number(currentHashes[path] || 0)
+    for (const [path, currentHash] of Object.entries(currentHashes)) {
+        const savedHash = savedHashes[path]
+        const fieldKey = getFieldKey(path)
+        const needsTranslation = shouldTranslate(fieldKey)
 
-            if (newLength < oldLength) {
-                // Массив уменьшился — помечаем для синхронизации
-                processedArrays.add(arrayPath)
-                changes.push({
-                    path: arrayPath,
-                    type: 'changed',
-                    value: getByPath(data, arrayPath),
-                    needsTranslation: false // структурное изменение
-                })
-            }
+        if (!savedHash) {
+            changes.push({ path, type: 'added', value: getByPath(sourceData, path), needsTranslation })
+        } else if (savedHash !== currentHash) {
+            changes.push({ path, type: 'changed', value: getByPath(sourceData, path), needsTranslation })
         }
     }
 
-    // 2. Новые и изменённые поля
-    for (const [path, hash] of Object.entries(currentHashes)) {
-        if (path.endsWith('.__length')) continue
-
-        // Проверяем, не является ли это частью уже обработанного массива
-        const isPartOfProcessedArray = Array.from(processedArrays).some(ap => path.startsWith(ap + '['))
-        if (isPartOfProcessedArray) continue
-
-        if (!(path in savedHashes)) {
-            // Новое поле
-            changes.push({
-                path,
-                type: 'added',
-                value: getByPath(data, path),
-                needsTranslation: needsTranslation(path)
-            })
-        } else if (savedHashes[path] !== hash) {
-            // Изменённое поле
-            changes.push({
-                path,
-                type: 'changed',
-                value: getByPath(data, path),
-                needsTranslation: needsTranslation(path)
-            })
-        }
-    }
-
-    // 3. Удалённые поля
-    for (const [path, _] of Object.entries(savedHashes)) {
-        if (path.endsWith('.__length')) continue
-
-        const isPartOfProcessedArray = Array.from(processedArrays).some(ap => path.startsWith(ap + '['))
-        if (isPartOfProcessedArray) continue
-
+    for (const path of Object.keys(savedHashes)) {
         if (!(path in currentHashes)) {
-            changes.push({
-                path,
-                type: 'deleted',
-                needsTranslation: false
-            })
+            changes.push({ path, type: 'deleted', needsTranslation: false })
         }
     }
 
@@ -311,122 +387,115 @@ function detectChanges(
 }
 
 // ═══════════════════════════════════════════════════════════════
-// ПЕРЕВОД
+// СИНХРОНИЗАЦИЯ ПЕРЕВОДОВ
 // ═══════════════════════════════════════════════════════════════
 
-async function translate(text: string, from: string, to: string): Promise<string> {
-    if (!text || from === to || typeof text !== 'string') return text
-    if (text.startsWith('/') || text.startsWith('http')) return text
+function ensureTranslationStructure(page: PageData): void {
+    if (!page.translations) page.translations = {}
 
-    for (const instance of LINGVA_INSTANCES) {
-        try {
-            const res = await fetch(`${instance}/api/v1/${from}/${to}/${encodeURIComponent(text)}`)
-            const data = await res.json()
-            if (data.translation) return data.translation
-        } catch { continue }
-    }
-    return text
-}
-
-async function translateValue(value: any, from: string, to: string): Promise<any> {
-    if (typeof value === 'string') {
-        await new Promise(r => setTimeout(r, 100))
-        return translate(value, from, to)
-    }
-
-    if (Array.isArray(value)) {
-        const result = []
-        for (const item of value) {
-            result.push(await translateValue(item, from, to))
+    for (const lang of languageCodes) {
+        if (!page.translations[lang]) {
+            page.translations[lang] = { meta: {}, pageContent: {} }
         }
-        return result
-    }
-
-    if (typeof value === 'object' && value !== null) {
-        const result: any = {}
-        for (const [k, v] of Object.entries(value)) {
-            result[k] = SKIP_KEYS.includes(k) ? v : await translateValue(v, from, to)
-        }
-        return result
-    }
-
-    return value
-}
-
-async function translateObject(obj: any, from: string, to: string): Promise<any> {
-    if (typeof obj === 'string') {
-        return translate(obj, from, to)
-    }
-    if (Array.isArray(obj)) {
-        const res = []
-        for (const item of obj) {
-            res.push(await translateObject(item, from, to))
-        }
-        return res
-    }
-    if (typeof obj === 'object' && obj !== null) {
-        const res: any = {}
-        for (const [k, v] of Object.entries(obj)) {
-            res[k] = SKIP_KEYS.includes(k) ? v : await translateObject(v, from, to)
-        }
-        return res
-    }
-    return obj
-}
-
-// ═══════════════════════════════════════════════════════════════
-// СИНХРОНИЗАЦИЯ СТРУКТУРЫ
-// ═══════════════════════════════════════════════════════════════
-
-function syncArrayLength(target: any, pathStr: string, newLength: number) {
-    const arr = getByPath(target, pathStr)
-    if (Array.isArray(arr) && arr.length > newLength) {
-        arr.length = newLength // обрезаем массив
+        if (!page.translations[lang].meta) page.translations[lang].meta = {}
+        if (!page.translations[lang].pageContent) page.translations[lang].pageContent = {}
     }
 }
 
-function deepClone<T>(obj: T): T {
-    return JSON.parse(JSON.stringify(obj))
+function syncNonTranslatableField(page: PageData, path: string, value: any): void {
+    for (const lang of languageCodes) {
+        setByPath(page.translations![lang], path, deepClone(value))
+    }
+}
+
+async function syncTranslatableField(
+    page: PageData, path: string, value: any, srcLang: string
+): Promise<void> {
+    const targets = languageCodes.filter(l => l !== srcLang)
+    setByPath(page.translations![srcLang], path, deepClone(value))
+
+    for (const lang of targets) {
+        const translated = await translateValue(value, srcLang, lang)
+        setByPath(page.translations![lang], path, translated)
+    }
+}
+
+function removeDeletedField(page: PageData, path: string): void {
+    for (const lang of languageCodes) {
+        deleteByPath(page.translations![lang], path)
+    }
 }
 
 // ═══════════════════════════════════════════════════════════════
-// ОБРАБОТКА ФАЙЛА
+// ОБРАБОТКА СТРАНИЦЫ
 // ═══════════════════════════════════════════════════════════════
 
-async function processFile(filePath: string, force = false): Promise<boolean> {
-    const name = path.basename(filePath)
-    const slug = name.replace('.yml', '')
+async function processPage(filePath: string, force = false): Promise<boolean> {
+    const fileName = path.basename(filePath)
+    const fileSlug = fileName.replace('.yml', '')
 
-    console.log(`\n📄 ${name}`)
+    console.log(`\n${'─'.repeat(50)}`)
+    console.log(`📄 ${fileName}`)
 
     try {
-        const page = parse(fs.readFileSync(filePath, 'utf-8'))
+        const content = fs.readFileSync(filePath, 'utf-8')
+        const page = parse(content) as PageData
 
         if (!page.meta || !page.pageContent) {
-            console.log('  ⏭️ Skip (no content)')
+            console.log('  ⏭️  Skip: no meta or pageContent')
             return false
         }
 
+        if (!page.slug) page.slug = fileSlug
+
+        if (page.slug !== fileSlug) {
+            const newFilePath = path.join(path.dirname(filePath), `${page.slug}.yml`)
+
+            if (fs.existsSync(newFilePath)) {
+                console.log(`  ❌ Error: File ${page.slug}.yml already exists!`)
+                console.log(`  💡 Change slug in ${fileName} to something unique`)
+
+                if (/^.+-\d+\.yml$/.test(fileName)) {
+                    console.log(`  🗑️  Removing duplicate file: ${fileName}`)
+                    fs.unlinkSync(filePath)
+                }
+                return false
+            }
+
+            console.log(`  📝 Renaming: ${fileName} → ${page.slug}.yml`)
+            fs.renameSync(filePath, newFilePath)
+            filePath = newFilePath
+        }
+
         const srcLang = page.source_lang || 'en'
-        const targets = languageCodes.filter(l => l !== srcLang)
         const sourceData = { meta: page.meta, pageContent: page.pageContent }
-
-        const currentHashes = getFieldHashes(sourceData)
-        const savedHashes = page._hashes || {}
-
-        // Проверяем есть ли переводы
-        const hasAllTranslations = languageCodes.every(l =>
-            page.translations?.[l]?.meta?.title && page.translations?.[l]?.pageContent?.mainTitle
-        )
+        const scenario = force ? 'new' : detectScenario(page)
+        console.log(`  📋 Scenario: ${scenario}`)
 
         // ═══════════════════════════════════════════════════════════
-        // ПОЛНЫЙ ПЕРЕВОД (создание или force)
+        // ПОЛНЫЙ ПЕРЕВОД
         // ═══════════════════════════════════════════════════════════
-        if (force || !hasAllTranslations) {
-            console.log(force ? '  🔄 Force full translation' : '  🆕 Initial translation')
+        if (['new', 'duplicated', 'corrupted'].includes(scenario)) {
+            const reason = {
+                'new': '🆕 New page',
+                'duplicated': '📋 Duplicated page detected',
+                'corrupted': '🔧 Missing/corrupted translations'
+            }[scenario]
+
+            console.log(`  ${reason} → Full translation`)
+
+            // Показываем лимиты перед началом полного перевода
+            await showUsageInfo(true)
+
+            page._status = 'translating'
+            savePageFile(filePath, page)
+            console.log('  🔒 Page hidden until translation complete')
 
             page.translations = {}
+            ensureTranslationStructure(page)
+            page.translations[srcLang] = deepClone(sourceData)
 
+            const targets = languageCodes.filter(l => l !== srcLang)
             for (const lang of targets) {
                 process.stdout.write(`  → ${lang}...`)
                 page.translations[lang] = {
@@ -436,142 +505,208 @@ async function processFile(filePath: string, force = false): Promise<boolean> {
                 console.log(' ✓')
             }
 
-            // Сохраняем source language как есть
-            page.translations[srcLang] = deepClone(sourceData)
+            page._status = 'ready'
+            page._hashes = {
+                _slug: page.slug,
+                _contentHash: computeContentHash(page.meta, page.pageContent),
+                fields: computeFieldHashes(sourceData)
+            }
 
-            page._hashes = currentHashes
-            fs.writeFileSync(filePath, stringify(page))
-            console.log('  ✅ Saved!')
+            savePageFile(filePath, page)
+            console.log('  🔓 Page published!')
+
+            // Показываем лимиты после полного перевода
+            await showUsageInfo(true)
             return true
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // БЕЗ ИЗМЕНЕНИЙ
+        // ═══════════════════════════════════════════════════════════
+        if (scenario === 'unchanged') {
+            console.log('  ⏭️  No changes detected')
+            return false
         }
 
         // ═══════════════════════════════════════════════════════════
         // ИНКРЕМЕНТАЛЬНОЕ ОБНОВЛЕНИЕ
         // ═══════════════════════════════════════════════════════════
-        const changes = detectChanges(currentHashes, savedHashes, sourceData)
+        const currentHashes = computeFieldHashes(sourceData)
+        const savedHashes = page._hashes?.fields || {}
+        const changes = detectFieldChanges(currentHashes, savedHashes, sourceData)
 
         if (changes.length === 0) {
-            console.log('  ⏭️ No changes')
+            console.log('  ⏭️  No field changes')
+            page._hashes = {
+                _slug: page.slug,
+                _contentHash: computeContentHash(page.meta, page.pageContent),
+                fields: currentHashes
+            }
+            savePageFile(filePath, page)
             return false
         }
 
         const toTranslate = changes.filter(c => c.type !== 'deleted' && c.needsTranslation)
         const toSync = changes.filter(c => c.type !== 'deleted' && !c.needsTranslation)
         const toDelete = changes.filter(c => c.type === 'deleted')
-        const arrayChanges = changes.filter(c => c.path.includes('.__length') ||
-            (c.type === 'changed' && Array.isArray(c.value)))
 
         console.log(`  📝 Changes: ${toTranslate.length} translate, ${toSync.length} sync, ${toDelete.length} delete`)
 
-        // 1. Синхронизируем структуру массивов (обрезаем если нужно)
-        for (const change of arrayChanges) {
-            if (Array.isArray(change.value)) {
-                const newLength = change.value.length
-                for (const lang of languageCodes) {
-                    if (page.translations[lang]) {
-                        syncArrayLength(page.translations[lang], change.path, newLength)
-                    }
-                }
-            }
-        }
+        ensureTranslationStructure(page)
 
-        // 2. Удаляем удалённые поля
-        if (toDelete.length > 0) {
-            for (const change of toDelete) {
-                for (const lang of languageCodes) {
-                    if (page.translations[lang]) {
-                        deleteByPath(page.translations[lang], change.path)
-                    }
-                }
-            }
-            console.log(`  🗑️ Deleted ${toDelete.length} field(s)`)
+        for (const change of toDelete) {
+            removeDeletedField(page, change.path)
         }
+        if (toDelete.length > 0) console.log(`  🗑️  Deleted ${toDelete.length} field(s)`)
 
-        // 3. Синхронизируем поля без перевода (картинки, иконки и т.д.)
-        if (toSync.length > 0) {
-            for (const change of toSync) {
-                // Если это массив — копируем структуру с переводом содержимого
-                if (Array.isArray(change.value)) {
-                    for (const lang of languageCodes) {
-                        if (!page.translations[lang]) {
-                            page.translations[lang] = { meta: {}, pageContent: {} }
-                        }
-                        if (lang === srcLang) {
-                            setByPath(page.translations[lang], change.path, deepClone(change.value))
-                        } else {
-                            const translated = await translateObject(deepClone(change.value), srcLang, lang)
-                            setByPath(page.translations[lang], change.path, translated)
-                        }
-                    }
-                } else {
-                    // Простое значение — копируем во все языки
-                    for (const lang of languageCodes) {
-                        if (page.translations[lang]) {
-                            setByPath(page.translations[lang], change.path, change.value)
-                        }
-                    }
-                }
-            }
-            console.log(`  🔗 Synced ${toSync.length} field(s)`)
+        for (const change of toSync) {
+            syncNonTranslatableField(page, change.path, change.value)
         }
+        if (toSync.length > 0) console.log(`  🔗 Synced ${toSync.length} field(s)`)
 
-        // 4. Переводим текстовые поля
         if (toTranslate.length > 0) {
+            const targets = languageCodes.filter(l => l !== srcLang)
+
             for (const lang of targets) {
                 process.stdout.write(`  → ${lang}: `)
-                let count = 0
 
                 for (const change of toTranslate) {
-                    if (!page.translations[lang]) {
-                        page.translations[lang] = { meta: {}, pageContent: {} }
-                    }
-
                     const translated = await translateValue(change.value, srcLang, lang)
-                    setByPath(page.translations[lang], change.path, translated)
-                    count++
+                    setByPath(page.translations![lang], change.path, translated)
                     process.stdout.write('.')
                 }
-                console.log(` ${count} field(s)`)
+                console.log(' ✓')
             }
 
-            // Обновляем source language
             for (const change of toTranslate) {
-                if (!page.translations[srcLang]) {
-                    page.translations[srcLang] = { meta: {}, pageContent: {} }
-                }
-                setByPath(page.translations[srcLang], change.path, change.value)
+                setByPath(page.translations![srcLang], change.path, deepClone(change.value))
             }
+
+            console.log(`  📝 Translated ${toTranslate.length} field(s)`)
         }
 
-        page._hashes = currentHashes
-        fs.writeFileSync(filePath, stringify(page))
+        page._hashes = {
+            _slug: page.slug,
+            _contentHash: computeContentHash(page.meta, page.pageContent),
+            fields: currentHashes
+        }
+
+        savePageFile(filePath, page)
         console.log('  ✅ Saved!')
         return true
 
-    } catch (e) {
-        console.error(`  ❌ Error: ${e}`)
-        throw e
+    } catch (error) {
+        console.error(`  ❌ Error: ${error}`)
+        throw error
     }
 }
 
 // ═══════════════════════════════════════════════════════════════
-// ПРОЦЕССОР ОЧЕРЕДИ
+// ОЧЕРЕДЬ
 // ═══════════════════════════════════════════════════════════════
+
+function loadQueue(): QueueState {
+    try {
+        if (fs.existsSync(QUEUE_FILE)) {
+            return JSON.parse(fs.readFileSync(QUEUE_FILE, 'utf-8'))
+        }
+    } catch {}
+    return { items: [], processing: false, currentFile: null }
+}
+
+function saveQueue(queue: QueueState): void {
+    fs.mkdirSync(path.dirname(QUEUE_FILE), { recursive: true })
+    fs.writeFileSync(QUEUE_FILE, JSON.stringify(queue, null, 2))
+    updateStatus(queue)
+}
+
+function updateStatus(queue: QueueState): void {
+    const pending = queue.items.filter(i => i.status === 'pending').length
+    const processing = queue.items.find(i => i.status === 'processing')
+    const done = queue.items.filter(i => i.status === 'done').length
+    const errors = queue.items.filter(i => i.status === 'error')
+
+    let status: 'idle' | 'translating' | 'error' = 'idle'
+    let message = 'Ожидание изменений'
+
+    if (processing) {
+        status = 'translating'
+        message = `Перевод: ${processing.slug}`
+        if (pending > 0) message += ` (+${pending} в очереди)`
+    } else if (pending > 0) {
+        status = 'translating'
+        message = `В очереди: ${pending}`
+    }
+
+    if (errors.length > 0) {
+        status = 'error'
+        message = `Ошибки: ${errors.map(e => e.slug).join(', ')}`
+    }
+
+    fs.mkdirSync(path.dirname(STATUS_FILE), { recursive: true })
+    fs.writeFileSync(STATUS_FILE, JSON.stringify({
+        status,
+        message,
+        queue: { pending, processing: processing?.slug || null, done, errors: errors.length },
+        updatedAt: new Date().toISOString()
+    }, null, 2))
+}
+
+function addToQueue(file: string, force = false): boolean {
+    const queue = loadQueue()
+    const slug = path.basename(file, '.yml')
+
+    const existing = queue.items.find(
+        i => i.file === file && (i.status === 'pending' || i.status === 'processing')
+    )
+
+    if (existing) {
+        if (force && !existing.force) {
+            existing.force = true
+            saveQueue(queue)
+            console.log(`  🔄 Updated in queue: ${slug} (force)`)
+        }
+        return false
+    }
+
+    queue.items.push({
+        file,
+        slug,
+        force,
+        addedAt: new Date().toISOString(),
+        status: 'pending'
+    })
+
+    console.log(`  ➕ Queue: ${slug}${force ? ' (force)' : ''}`)
+    saveQueue(queue)
+    return true
+}
+
+function cleanQueue(queue: QueueState): QueueState {
+    const fiveMinAgo = Date.now() - 5 * 60 * 1000
+    queue.items = queue.items.filter(item => {
+        if (item.status === 'pending' || item.status === 'processing') return true
+        if (item.status === 'done') return false
+        return new Date(item.addedAt).getTime() > fiveMinAgo
+    })
+    return queue
+}
 
 let isProcessing = false
 
-async function processQueue() {
+async function processQueue(): Promise<void> {
     if (isProcessing) return
     isProcessing = true
 
     const startTime = Date.now()
-    let processed = 0, errors = 0
+    let processed = 0
+    let errors = 0
 
     try {
         while (true) {
-            let queue = cleanOldItems(loadQueue())
-
+            let queue = cleanQueue(loadQueue())
             const next = queue.items.find(i => i.status === 'pending')
+
             if (!next) {
                 queue.processing = false
                 queue.currentFile = null
@@ -585,9 +720,9 @@ async function processQueue() {
             saveQueue(queue)
 
             try {
-                await processFile(next.file, next.force)
+                const changed = await processPage(next.file, next.force)
                 next.status = 'done'
-                processed++
+                if (changed) processed++
             } catch (e) {
                 next.status = 'error'
                 next.error = String(e)
@@ -604,68 +739,113 @@ async function processQueue() {
         }
     } finally {
         isProcessing = false
-        saveQueue(cleanOldItems(loadQueue()))
+        saveQueue(cleanQueue(loadQueue()))
 
         const duration = ((Date.now() - startTime) / 1000).toFixed(1)
         if (processed > 0 || errors > 0) {
-            console.log('\n' + '═'.repeat(50))
-            console.log(`📊 ИТОГО: ✅ ${processed} | ❌ ${errors} | ⏱️ ${duration}s`)
+            console.log(`\n${'═'.repeat(50)}`)
+            console.log(`📊 Result: ✅ ${processed} translated | ❌ ${errors} errors | ⏱️ ${duration}s`)
+
+            // Финальный вывод лимитов
+            await showUsageInfo(true)
             console.log('═'.repeat(50))
         }
     }
 }
 
 // ═══════════════════════════════════════════════════════════════
-// BATCH & WATCH
+// КОМАНДЫ
 // ═══════════════════════════════════════════════════════════════
 
-async function processAll(force = false) {
-    const dir = path.resolve(process.cwd(), 'content/pages')
-    const files = fs.readdirSync(dir).filter(f => f.endsWith('.yml'))
+async function processAll(force = false): Promise<void> {
+    const files = fs.readdirSync(CONTENT_DIR).filter(f => f.endsWith('.yml'))
 
-    console.log('\n' + '═'.repeat(50))
+    console.log(`\n${'═'.repeat(50)}`)
     console.log(`📁 Files: ${files.length} | Mode: ${force ? 'FORCE' : 'incremental'}`)
+    console.log(`🔤 Translator: DeepL API`)
+
+    // Показываем лимиты в начале
+    await showUsageInfo(true)
     console.log('═'.repeat(50))
 
-    for (const f of files) addToQueue(path.join(dir, f), force)
+    for (const file of files) {
+        addToQueue(path.join(CONTENT_DIR, file), force)
+    }
+
     await processQueue()
     console.log('\n🎉 Done!\n')
 }
 
-function watch() {
-    const dir = path.resolve(process.cwd(), 'content/pages')
+let isSavingFile = false
+const recentlySaved = new Set<string>()
 
-    console.log('\n' + '═'.repeat(50))
+function markAsSaving(filePath: string): void {
+    isSavingFile = true
+    const fileName = path.basename(filePath)
+    recentlySaved.add(fileName)
+    setTimeout(() => {
+        recentlySaved.delete(fileName)
+        isSavingFile = false
+    }, 3000)
+}
+
+function savePageFile(filePath: string, page: PageData): void {
+    markAsSaving(filePath)
+    fs.writeFileSync(filePath, stringify(page))
+}
+
+async function watch(): Promise<void> {
+    console.log(`\n${'═'.repeat(50)}`)
     console.log('👀 WATCH MODE')
-    console.log(`📁 ${dir}`)
-    console.log(`🌍 ${languageCodes.join(', ')}`)
+    console.log(`📁 ${CONTENT_DIR}`)
+    console.log(`🌍 Languages: ${languageCodes.join(', ')}`)
+    console.log(`🔤 Translator: DeepL API`)
+
+    // Показываем лимиты при старте
+    await showUsageInfo(true)
     console.log('═'.repeat(50) + '\n')
 
     saveQueue({ items: [], processing: false, currentFile: null })
 
-    const timers = new Map<string, NodeJS.Timeout>()
-    const lastSaved = new Map<string, number>()
+    const debounceTimers = new Map<string, NodeJS.Timeout>()
+    const processingFiles = new Set<string>()
 
-    fs.watch(dir, (_, file) => {
-        if (!file?.endsWith('.yml')) return
+    fs.watch(CONTENT_DIR, async (eventType, fileName) => {
+        if (!fileName?.endsWith('.yml')) return
+        if (recentlySaved.has(fileName)) return
+        if (processingFiles.has(fileName)) return
 
-        const now = Date.now()
-        if ((now - (lastSaved.get(file) || 0)) < 5000) return
+        const queue = loadQueue()
+        const alreadyInQueue = queue.items.some(
+            i => i.slug === fileName.replace('.yml', '') &&
+                (i.status === 'pending' || i.status === 'processing')
+        )
+        if (alreadyInQueue) return
 
-        clearTimeout(timers.get(file))
-        timers.set(file, setTimeout(async () => {
-            timers.delete(file)
-            const fp = path.join(dir, file)
-            if (!fs.existsSync(fp)) return
+        clearTimeout(debounceTimers.get(fileName))
+        debounceTimers.set(fileName, setTimeout(async () => {
+            debounceTimers.delete(fileName)
 
-            console.log(`\n📝 Changed: ${file}`)
-            addToQueue(fp, false)
-            lastSaved.set(file, Date.now())
+            if (recentlySaved.has(fileName) || processingFiles.has(fileName)) return
+
+            const filePath = path.join(CONTENT_DIR, fileName)
+            if (!fs.existsSync(filePath)) {
+                console.log(`\n🗑️  Deleted: ${fileName}`)
+                return
+            }
+
+            console.log(`\n📝 Changed: ${fileName}`)
+            processingFiles.add(fileName)
+
+            addToQueue(filePath, false)
             await processQueue()
-            lastSaved.set(file, Date.now())
+
+            processingFiles.delete(fileName)
             console.log('\n👀 Watching...')
-        }, 2000))
+        }, 3000))
     })
+
+    console.log('👀 Watching for changes...\n')
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -673,31 +853,56 @@ function watch() {
 // ═══════════════════════════════════════════════════════════════
 
 const args = process.argv.slice(2)
+const hasForce = args.includes('--force')
 
 if (args.includes('--watch')) {
     watch()
 } else if (args.includes('--all')) {
-    processAll(args.includes('--force'))
+    processAll(hasForce)
 } else if (args.includes('--status')) {
-    const q = loadQueue()
-    console.log(`\n📊 Queue: ${q.items.length} items, processing: ${q.processing}`)
-    q.items.forEach(i => console.log(`  ${{pending:'⏳',processing:'🔄',done:'✅',error:'❌'}[i.status]} ${i.slug}`))
+    const queue = loadQueue()
+    console.log(`\n📊 Queue: ${queue.items.length} items`)
+    const icons = { pending: '⏳', processing: '🔄', done: '✅', error: '❌' }
+    queue.items.forEach(i => console.log(`  ${icons[i.status]} ${i.slug}`))
+
+    // Показываем лимиты DeepL
+    showUsageInfo(true)
+} else if (args.includes('--usage')) {
+    // Новая команда - только показать лимиты
+    showUsageInfo(true).then(() => {
+        console.log('')
+    })
 } else {
     const slug = args.find(a => !a.startsWith('--'))
     if (!slug) {
         console.log(`
-📖 Usage:
-  npx tsx scripts/auto-translate.ts --watch
-  npx tsx scripts/auto-translate.ts --all [--force]
-  npx tsx scripts/auto-translate.ts <slug> [--force]
-  npx tsx scripts/auto-translate.ts --status`)
+📖 Auto-Translate v2 (DeepL)
+
+Usage:
+  npx tsx scripts/auto-translate.ts --watch          Watch for changes
+  npx tsx scripts/auto-translate.ts --all            Translate all (incremental)
+  npx tsx scripts/auto-translate.ts --all --force    Translate all (force)
+  npx tsx scripts/auto-translate.ts <slug>           Translate one page
+  npx tsx scripts/auto-translate.ts <slug> --force   Force translate one page
+  npx tsx scripts/auto-translate.ts --status         Show queue status
+  npx tsx scripts/auto-translate.ts --usage          Show DeepL usage/limits
+
+Scenarios handled:
+  🆕 New page        → Full translation
+  📋 Duplicated      → Detected by slug mismatch → Full translation  
+  🔧 Corrupted       → Missing translations → Full translation
+  📝 Changed         → Incremental update (only changed fields)
+  ⏭️  Unchanged       → Skip
+`)
         process.exit(1)
     }
-    const fp = path.resolve(`content/pages/${slug}.yml`)
-    if (!fs.existsSync(fp)) {
-        console.error('❌ Not found:', fp)
+
+    const filePath = path.resolve(CONTENT_DIR, `${slug}.yml`)
+    if (!fs.existsSync(filePath)) {
+        console.error(`❌ Not found: ${filePath}`)
         process.exit(1)
     }
-    addToQueue(fp, args.includes('--force'))
+
+    addToQueue(filePath, hasForce)
     processQueue()
 }

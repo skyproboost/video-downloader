@@ -3,33 +3,42 @@ import cssPurge from 'vite-plugin-purgecss'
 
 const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 const isProduction = process.env.NODE_ENV === 'production'
+
 const staticCacheHeaders = {
     'Cache-Control': 'public, max-age=31536000, s-maxage=86400, stale-while-revalidate=86400'
 }
 
 export default defineNuxtConfig({
     compatibilityDate: '2025-07-15',
-    devtools: {enabled: true},
+    devtools: {enabled: !isProduction},
 
     future: {
         compatibilityVersion: 4,
     },
 
+    // ═══════════════════════════════════════════
+    // МОДУЛИ
+    // ═══════════════════════════════════════════
     modules: [
-        '@nuxt/content',
         '@nuxtjs/i18n',
         '@nuxtjs/sitemap',
         '@nuxtjs/robots',
         '@nuxt/image',
-        'nuxt-delay-hydration',
         'nuxt-security',
+        'nuxt-delay-hydration'
     ],
 
+    // ═══════════════════════════════════════════
+    // DELAY HYDRATION — ускоряет первую отрисовку
+    // ═══════════════════════════════════════════
     delayHydration: {
         mode: 'init',
         debug: !isProduction,
     },
 
+    // ═══════════════════════════════════════════
+    // ИЗОБРАЖЕНИЯ
+    // ═══════════════════════════════════════════
     image: {
         quality: 80,
         format: ['avif', 'webp'],
@@ -44,10 +53,13 @@ export default defineNuxtConfig({
         densities: [1, 2],
         provider: 'ipx',
         ipx: {
-            maxAge: 60 * 60 * 24 * 365, // 1 год кэша
-        },
+            maxAge: 60 * 60 * 24 * 365,
+        }
     },
 
+    // ═══════════════════════════════════════════
+    // APP HEAD — глобальные мета-теги
+    // ═══════════════════════════════════════════
     app: {
         head: {
             htmlAttrs: {lang: defaultLanguage},
@@ -59,7 +71,9 @@ export default defineNuxtConfig({
                 {name: 'apple-mobile-web-app-capable', content: 'yes'},
                 {name: 'apple-mobile-web-app-status-bar-style', content: 'default'},
                 {name: 'theme-color', content: '#ffffff'},
+                {name: 'robots', content: 'index, follow, max-image-preview:large'},
                 {name: 'msapplication-TileColor', content: '#ffffff'},
+                // og:type лучше задавать на уровне страниц через useSeoMeta
             ],
             link: [
                 {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'},
@@ -68,7 +82,9 @@ export default defineNuxtConfig({
         },
     },
 
-    // ===== i18n =====
+    // ═══════════════════════════════════════════
+    // i18n — мультиязычность
+    // ═══════════════════════════════════════════
     i18n: {
         locales: languages.map(lang => ({
             code: lang.code,
@@ -88,18 +104,18 @@ export default defineNuxtConfig({
         },
     },
 
-    // ===== Sitemap =====
+    // ═══════════════════════════════════════════
+    // SITEMAP
+    // ═══════════════════════════════════════════
     sitemap: {
         sources: ['/api/__sitemap__/urls'],
-        xslColumns: [
-            {label: 'URL', width: '50%'},
-            {label: 'Last Modified', select: 'sitemap:lastmod', width: '25%'},
-            {label: 'Images', select: 'count(image:image)', width: '15%'},
-            {label: 'Priority', select: 'sitemap:priority', width: '10%'},
-        ],
+        exclude: ['/admin/**', '/api/**'],
+        cacheMaxAgeSeconds: 3600,
     },
 
-    // ===== Robots =====
+    // ═══════════════════════════════════════════
+    // ROBOTS
+    // ═══════════════════════════════════════════
     robots: {
         groups: [
             {
@@ -110,33 +126,29 @@ export default defineNuxtConfig({
         ],
     },
 
+    // ═══════════════════════════════════════════
+    // SECURITY — защита и заголовки
+    // ═══════════════════════════════════════════
     security: {
         hidePoweredBy: true,
         removeLoggers: isProduction,
-        nonce: true,
-        ssg: {
-            hashScripts: true,
-            hashStyles: true,
-        },
-        sri: true,
         headers: {
             crossOriginResourcePolicy: 'same-origin',
             crossOriginOpenerPolicy: 'same-origin',
             crossOriginEmbedderPolicy: isProduction ? 'credentialless' : false,
             contentSecurityPolicy: isProduction ? {
-                'default-src': ['\'none\''],
-                'script-src': ['\'self\'', '\'nonce-{{nonce}}\'', 'https:'],
-                'script-src-attr': ['\'self\''],
-                'style-src': ['\'self\'', '\'nonce-{{nonce}}\''],
-                'img-src': ['\'self\'', 'data:', 'https:'],
-                'font-src': ['\'self\''],
+                'default-src': ["'none'"],
+                'script-src': ["'self'", "'nonce-{{nonce}}'", 'https:'],
+                'script-src-attr': ["'self'"],
+                'style-src': ["'self'", "'nonce-{{nonce}}'"],
+                'img-src': ["'self'", 'data:', 'https:'],
+                'font-src': ["'self'"],
                 'connect-src': ["'self'"],
-                'connect-src': ['\'self\''],
-                'object-src': ['\'none\''],
-                'frame-src': ['\'self\'', 'https:'],
-                'worker-src': ['\'self\''],
-                'base-uri': ['\'self\''],
-                'manifest-src': ['\'self\''],
+                'object-src': ["'none'"],
+                'frame-src': ["'self'", 'https:'],
+                'worker-src': ["'self'"],
+                'base-uri': ["'self'"],
+                'manifest-src': ["'self'"],
                 'upgrade-insecure-requests': true,
             } : false,
             originAgentCluster: '?1',
@@ -173,44 +185,28 @@ export default defineNuxtConfig({
             },
         },
         requestSizeLimiter: {
-            enabled: process.env.NODE_ENV === 'production',
-            maxRequestSizeInBytes: 1024 * 1024 * 100,  // 2MB
-            maxUploadFileRequestInBytes: 0
+            enabled: isProduction,
+            maxRequestSizeInBytes: 2 * 1024 * 1024, // 2MB (было неверно 100MB)
+            maxUploadFileRequestInBytes: 0,
         },
         rateLimiter: {
             tokensPerInterval: 500,
             interval: 'minute',
             headers: true,
-            skip: [
-                '/ws',
-                '/_ipx/**'
-            ]
+            skip: ['/ws', '/_ipx/**'],
         },
-        nonce: {
-            enabled: true,
-            methods: ['script', 'style'],
-            useRandomNonce: true
-        },
-        sri: {
-            enabled: true,
-            hash: 'sha512'
-        },
+        nonce: true,
+        sri: true,
         ssg: {
             hashScripts: true,
             hashStyles: true,
-            meta: true
+            meta: true,
         },
         xssValidator: {
             stripIgnoreTag: true,
             stripIgnoreTagBody: ['script', 'style'],
             css: false,
             escapeHtml: true,
-            customRules: {
-                allowedTags: ['br', 'p', 'a'],
-                allowedAttributes: {
-                    a: ['href', 'title']
-                }
-            }
         },
         corsHandler: {
             origin: isProduction ? siteUrl : '*',
@@ -218,51 +214,86 @@ export default defineNuxtConfig({
         },
         allowedMethodsRestricter: {
             methods: ['GET', 'POST'],
-            throwError: true
+            throwError: true,
         },
         csrf: false,
     },
 
-    // ===== Runtime Config =====
+    // ═══════════════════════════════════════════
+    // RUNTIME CONFIG
+    // ═══════════════════════════════════════════
     runtimeConfig: {
         public: {
-            siteUrl: siteUrl,
-            languages: languages,
-            defaultLanguage: defaultLanguage,
+            siteUrl,
+            languages,
+            defaultLanguage,
         },
     },
 
     experimental: {
-        payloadExtraction: false,
+        payloadExtraction: true,
+        renderJsonPayloads: true,
+        sharedPrerenderData: true,
+        treeshakeClientOnly: true,
+        asyncContext: true,
+        typedPages: true,
     },
 
+    // ═══════════════════════════════════════════
+    // NITRO — серверные настройки и кэширование
+    // ═══════════════════════════════════════════
     nitro: {
         compressPublicAssets: true,
         routeRules: {
+            // API — без ISR, скрыт от поисковиков
             '/api/**': {
+                headers: {'X-Robots-Tag': 'noindex, nofollow'},
+            },
+
+            // Статика — долгий кэш (1 год)
+            '/_ipx/**': {headers: staticCacheHeaders},
+            '/_nuxt/**': {headers: staticCacheHeaders},
+
+            // Админка — без кэша, без индексации
+            '/admin/**': {
+                prerender: false,
+                robots: false,
+                isr: false,
                 headers: {
-                    'X-Robots-Tag': 'noindex, nofollow'
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache'
                 }
             },
-            '/_ipx/**': {
-                headers: staticCacheHeaders
-            },
-            '/admin/**': {prerender: false},
+
+            // Главная — пререндер при билде
+            '/': {prerender: true},
+
+            // ВСЕ ОСТАЛЬНЫЕ СТРАНИЦЫ — ISR (кэш на 1 час)
+            '/**': {isr: 3600},
         },
     },
 
+    // ═══════════════════════════════════════════
+    // SITE
+    // ═══════════════════════════════════════════
     site: {
         url: siteUrl,
     },
 
+    // ═══════════════════════════════════════════
+    // VITE — сборка
+    // ═══════════════════════════════════════════
     vite: {
         plugins: [
             cssPurge({
-                safelist: [/^image-/, /^error-/, /side-color-/]
-            })
-        ]
+                safelist: [/^image-/, /^error-/, /side-color-/],
+            }),
+        ],
     },
 
+    // ═══════════════════════════════════════════
+    // HOOKS
+    // ═══════════════════════════════════════════
     hooks: {
         'build:manifest': (manifest) => {
             for (const key in manifest) {
