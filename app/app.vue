@@ -122,7 +122,7 @@
 .grid-auto {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-    gap: var(--space-4);
+    gap: var(--space-2);
     max-width: var(--container-max);
     margin: 0 auto;
 }

@@ -114,7 +114,7 @@ function escapeHtml(text: string): string {
 
 <style scoped>
 .how-to {
-    padding: var(--section-padding-lg) 0;
+    padding: 0 0 var(--section-padding-lg) 0;
     background: var(--color-bg);
 }
 
@@ -129,12 +129,12 @@ function escapeHtml(text: string): string {
 .how-to__blocks {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
+    gap: var(--space-2);
 }
 
 .how-to-block {
     display: flex;
-    gap: var(--space-4);
+    gap: var(--space-2);
     align-items: flex-start;
     padding: var(--space-4);
     background: var(--color-bg-white);
