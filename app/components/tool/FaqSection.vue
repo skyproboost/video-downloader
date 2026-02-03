@@ -64,7 +64,7 @@ const toggle = (i: number) => {
     background: var(--color-bg-white);
     border-radius: var(--radius-lg);
     margin-bottom: var(--space-2);
-    border: 1px solid transparent;
+    border: 1px solid var(--color-border);
     transition: border-color var(--transition-slow);
 }
 

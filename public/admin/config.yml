@@ -117,22 +117,46 @@ collections:
             widget: object
             collapsed: true
             required: false
-            hint: "Оставьте пустым, если блок не нужен"
+            hint: "Блоки с картинкой слева и инструкцией справа"
             fields:
               - name: title
                 label: "Заголовок секции"
                 widget: string
                 required: false
+                hint: "Например: Как скачать видео"
 
-              - name: steps
-                label: "Шаги"
+              - name: blocks
+                label: "Блоки инструкций"
                 widget: list
                 required: false
+                hint: "Каждый блок = картинка + заголовок + описание"
                 fields:
-                  - { name: title, label: "Название шага", widget: string, required: true }
-                  - { name: description, label: "Описание", widget: text, required: true }
-                  - { name: image, label: "🖼️ Картинка", widget: image, required: false }
-                  - { name: imageAlt, label: "Alt текст картинки", widget: string, required: false }
+                  - name: title
+                    label: "Заголовок блока"
+                    widget: string
+                    required: true
+                    hint: "Например: Как скачать видео с Ютуба на компьютер бесплатно?"
+
+                  - name: content
+                    label: "Описание (шаги списком)"
+                    widget: text
+                    required: true
+                    hint: |
+                      Каждый шаг с новой строки:
+                      1. Первый шаг
+                      2. Второй шаг
+                      3. Третий шаг
+
+                  - name: image
+                    label: "🖼️ Картинка"
+                    widget: image
+                    required: false
+                    hint: "Рекомендуемый размер: 400x300px"
+
+                  - name: imageAlt
+                    label: "Alt текст картинки"
+                    widget: string
+                    required: false
 
           - name: features
             label: "✨ Блок «Преимущества»"

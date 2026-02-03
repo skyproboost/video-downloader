@@ -10,14 +10,43 @@ translations:
         steps:
           - title: We try and download
             description: Press the button and go
+            image: /images/image_2025-10-26_23-18-53.png
           - image: /images/image_2025-10-26_23-18-53.png
             title: The first one
             description: Description
+        blocks:
+          - image: /images/image_2025-10-26_23-18-53.png
+            title: How to download YouTube videos to my computer for free?
+            content: |-
+              1. Trying
+              2. testing
+              3. Record
+              4. Check
+          - title: How to install a computer
+            content: |-
+              1. Go to the store
+              2. Leave the store
+          - image: /images/image_2025-10-26_23-18-53.png
+            title: How to download the internet
+            content: |-
+              1. You go to your grandmother at the market.
+              2. You buy seeds.
+              3. You go to feed the pigeons
       features:
-        title: Why choose us
+        title: Why choose us?
+        items:
+          - title: Speed
+            description: Best in optimization and speed
+          - title: Performance
+            description: Maximum performance
       mainTitle: Download video from YouTube
       subtitle: Videos can be downloaded via YouTube at any time
       intro: YouTube resolutions mp3, mp4
+      faq:
+        - question: You?
+          answer: I'm a brother
+        - question: We?
+          answer: What about you?
   ru:
     meta:
       title: YouTube
@@ -28,14 +57,43 @@ translations:
         steps:
           - title: Пытаемся и скачиваем
             description: Нажимаем кнопку и вперед
+            image: /images/image_2025-10-26_23-18-53.png
           - image: /images/image_2025-10-26_23-18-53.png
             title: Первая
             description: Описание
+        blocks:
+          - image: /images/image_2025-10-26_23-18-53.png
+            title: Как скачать видео с YouTube на компьютер бесплатно?
+            content: |-
+              1. Пробуем
+              2. Тестируем
+              3. Записываем 
+              4. Проверяем
+          - title: "Как установить компьютер "
+            content: |-
+              1. Зайди в магазин
+              2. Выйди из магазина
+          - image: /images/image_2025-10-26_23-18-53.png
+            title: Как скачать интернет
+            content: |-
+              1. Идешь к бабке на рынок
+              2. Покупаешь семечки
+              3. Идешь кормить голубей
       features:
-        title: Why choose us
+        title: Почему выбирают нас?
+        items:
+          - title: Скорость
+            description: Лучшие в оптимизации и скорости
+          - title: Производительность
+            description: Максимальная производительность
       mainTitle: Загрузить видео с YouTube
       subtitle: Видео через YouTube можно скачать в любое время
       intro: YouTube разрешения mp3, mp4
+      faq:
+        - question: Ты?
+          answer: Я брат
+        - question: Мы?
+          answer: А вы?
   de:
     meta:
       title: YouTube
@@ -46,14 +104,43 @@ translations:
         steps:
           - title: Wir versuchen es und laden es herunter
             description: Knopf drücken und los geht’s
+            image: /images/image_2025-10-26_23-18-53.png
           - image: /images/image_2025-10-26_23-18-53.png
             title: Die erste
             description: Beschreibung
+        blocks:
+          - image: /images/image_2025-10-26_23-18-53.png
+            title: Wie kann ich YouTube-Videos kostenlos auf meinen Computer herunterladen?
+            content: |-
+              1. Ausprobieren.
+              2. Testen
+              3. Aufnehmen
+              4. Prüfen
+          - title: Wie man einen Computer einrichtet
+            content: |-
+              1. Gehen Sie in den Laden
+              2. Verlassen Sie den Laden
+          - image: /images/image_2025-10-26_23-18-53.png
+            title: Wie man das Internet herunterlädt
+            content: |-
+              1. du gehst zu deiner Großmutter auf den Markt.
+              2. Sie kaufen Saatgut.
+              3. Sie gehen die Tauben füttern.
       features:
-        title: Warum sollten Sie sich für uns entscheiden?
+        title: Warum sollten Sie uns wählen?
+        items:
+          - title: Geschwindigkeit
+            description: Beste Optimierung und Geschwindigkeit
+          - title: Leistung
+            description: Maximale Leistung
       mainTitle: Laden Sie das Video von YouTube herunter
       subtitle: Videos können jederzeit über YouTube heruntergeladen werden
       intro: YouTube-Auflösungen mp3, mp4
+      faq:
+        - question: Sie?
+          answer: Ich bin ein Bruder
+        - question: Wir?
+          answer: Was ist mit Ihnen?
 slug: youtube-downloader
 platform: youtube
 source_lang: ru
@@ -66,28 +153,75 @@ pageContent:
     steps:
       - title: Пытаемся и скачиваем
         description: Нажимаем кнопку и вперед
+        image: /images/image_2025-10-26_23-18-53.png
+        imageAlt: ""
       - title: Первая
         image: /images/image_2025-10-26_23-18-53.png
         description: Описание
+    blocks:
+      - title: Как скачать видео с YouTube на компьютер бесплатно?
+        content: |-
+          1. Пробуем
+          2. Тестируем
+          3. Записываем 
+          4. Проверяем
+        image: /images/image_2025-10-26_23-18-53.png
+      - title: "Как установить компьютер "
+        content: |-
+          1. Зайди в магазин
+          2. Выйди из магазина
+      - title: Как скачать интернет
+        content: |-
+          1. Идешь к бабке на рынок
+          2. Покупаешь семечки
+          3. Идешь кормить голубей
+        image: /images/image_2025-10-26_23-18-53.png
   features:
-    title: Why choose us
+    title: Почему выбирают нас?
+    items:
+      - title: Скорость
+        description: Лучшие в оптимизации и скорости
+      - title: Производительность
+        description: Максимальная производительность
   mainTitle: Загрузить видео с YouTube
   subtitle: Видео через YouTube можно скачать в любое время
   intro: YouTube разрешения mp3, mp4
+  faq:
+    - question: Ты?
+      answer: Я брат
+    - question: Мы?
+      answer: А вы?
 _status: ready
 _hashes:
   _slug: youtube-downloader
-  _contentHash: 780f0c7d8779
+  _contentHash: 03b6b79c7293
   fields:
     meta.title: 8dd1bae8da2e
     meta.description: 8dd1bae8da2e
     pageContent.how_to.title: b1c9a08e7ace
     pageContent.how_to.steps[0].title: 62a9df77b22c
     pageContent.how_to.steps[0].description: fd91b578f0b8
+    pageContent.how_to.steps[0].image: 1042929fd4b5
     pageContent.how_to.steps[1].title: 5ed00bf2b35d
     pageContent.how_to.steps[1].image: 1042929fd4b5
     pageContent.how_to.steps[1].description: 38ca0af80cd7
-    pageContent.features.title: 8778ea3b6b03
+    pageContent.how_to.blocks[0].title: 9a4eb3d891ca
+    pageContent.how_to.blocks[0].content: 6f7e9677e358
+    pageContent.how_to.blocks[0].image: 1042929fd4b5
+    pageContent.how_to.blocks[1].title: e6c023534ec8
+    pageContent.how_to.blocks[1].content: 4c71cc6a7377
+    pageContent.how_to.blocks[2].title: 8f1322d5676f
+    pageContent.how_to.blocks[2].content: 35bc307f5ac5
+    pageContent.how_to.blocks[2].image: 1042929fd4b5
+    pageContent.features.title: 476303b7d570
+    pageContent.features.items[0].title: 0b5b65fa070d
+    pageContent.features.items[0].description: ddfd01e09f1a
+    pageContent.features.items[1].title: a12969d4c312
+    pageContent.features.items[1].description: a7c8bbac8cb4
     pageContent.mainTitle: c8f672ee0539
     pageContent.subtitle: 88cb096ab0ab
     pageContent.intro: 8da075e573ac
+    pageContent.faq[0].question: 0fb718a5efbe
+    pageContent.faq[0].answer: 42d9d765632c
+    pageContent.faq[1].question: d81ab4cbf70b
+    pageContent.faq[1].answer: 5d286ca4e9e1

@@ -28,7 +28,7 @@
         <ToolHowToSteps
             v-if="showHowTo"
             :title="translation.pageContent.how_to?.title"
-            :steps="translation.pageContent.how_to?.steps"
+            :blocks="translation.pageContent.how_to?.blocks"
         />
 
         <ToolFeaturesGrid
@@ -115,8 +115,7 @@ const translation = computed(() => {
 // Условия отображения блоков
 const showHowTo = computed(() => {
     const howTo = translation.value?.pageContent?.how_to
-    if (!howTo) return false
-    return !!howTo.title?.trim() || howTo.steps?.some(s => s.title?.trim())
+    return howTo?.blocks && howTo.blocks.length > 0
 })
 
 const showFeatures = computed(() => {
@@ -240,7 +239,6 @@ useHead({
 }
 
 .platforms-section {
-    padding-bottom: var(--section-padding-lg);
     background: var(--color-bg);
 }
 

@@ -1,110 +1,229 @@
 <template>
-    <section v-if="steps" class="how-to">
+    <section v-if="blocks?.length" class="how-to">
         <div class="container">
-            <h1 class="main-title" v-if="title" v-text="title"></h1>
-            <div class="steps">
-                <div v-for="(step, i) in steps" :key="i" class="step">
-                    <div class="step-num" v-text="i + 1"></div>
-                    <div v-if="step.image" class="step-image-wrapper">
+            <h1 v-if="title" class="how-to__title">{{ title }}</h1>
+
+            <div class="how-to__blocks">
+                <article
+                    v-for="(block, i) in blocks"
+                    :key="i"
+                    class="how-to-block"
+                >
+                    <!-- Картинка -->
+                    <div v-if="block.image" class="how-to-block__image-wrapper">
                         <NuxtPicture
-                            :src="step.image"
-                            :alt="step.imageAlt || step.title"
-                            :img-attrs="{ class: 'step-image' }"
-                            sizes="xs:280px sm:280px md:280px"
-                            format="avif,webp"
-                            quality="80"
-                            width="280"
-                            height="180"
-                            loading="eager"
+                            :src="block.image"
+                            :alt="block.imageAlt || block.title"
+                            :img-attrs="{ class: 'how-to-block__image', fetchpriority: 'low' }"
+                            sizes="(max-width: 767px) 100vw, 320px"
+                            quality="70"
+                            width="320"
+                            height="240"
+                            loading="lazy"
+                            placeholder
                         />
                     </div>
-                    <h3 v-text="step.title"></h3>
-                    <p v-text="step.description"></p>
-                </div>
+
+                    <!-- Контент -->
+                    <div class="how-to-block__content">
+                        <h2 class="how-to-block__title">{{ block.title }}</h2>
+                        <div
+                            class="how-to-block__text"
+                            v-html="renderContent(block.content)"
+                        ></div>
+                    </div>
+                </article>
             </div>
         </div>
     </section>
 </template>
 
 <script setup lang="ts">
+interface HowToBlock {
+    title: string
+    content: string
+    image?: string
+    imageAlt?: string
+}
+
 defineProps<{
     title?: string
-    steps: Array<{
-        title: string
-        description: string
-        image?: string
-        imageAlt?: string
-    }>
+    blocks?: HowToBlock[]
 }>()
+
+// Парсим текст в HTML (нумерованные/маркированные списки + параграфы)
+function renderContent(text: string): string {
+    if (!text) return ''
+
+    const lines = text.split('\n').filter(line => line.trim())
+    const result: string[] = []
+    let inList = false
+    let listType: 'ol' | 'ul' | null = null
+
+    for (const line of lines) {
+        const trimmed = line.trim()
+
+        // Нумерованный список: 1. text или 1) text
+        const numberedMatch = trimmed.match(/^(\d+)[.)]\s+(.+)$/)
+        // Маркированный список: - text или * text или • text
+        const bulletMatch = trimmed.match(/^[-*•]\s+(.+)$/)
+
+        if (numberedMatch) {
+            if (!inList || listType !== 'ol') {
+                if (inList) result.push(listType === 'ol' ? '</ol>' : '</ul>')
+                result.push('<ol>')
+                inList = true
+                listType = 'ol'
+            }
+            result.push(`<li>${escapeHtml(numberedMatch[2])}</li>`)
+        } else if (bulletMatch) {
+            if (!inList || listType !== 'ul') {
+                if (inList) result.push(listType === 'ol' ? '</ol>' : '</ul>')
+                result.push('<ul>')
+                inList = true
+                listType = 'ul'
+            }
+            result.push(`<li>${escapeHtml(bulletMatch[1])}</li>`)
+        } else {
+            // Обычный текст — закрываем список если был
+            if (inList) {
+                result.push(listType === 'ol' ? '</ol>' : '</ul>')
+                inList = false
+                listType = null
+            }
+            result.push(`<p>${escapeHtml(trimmed)}</p>`)
+        }
+    }
+
+    // Закрываем список в конце если нужно
+    if (inList) {
+        result.push(listType === 'ol' ? '</ol>' : '</ul>')
+    }
+
+    return result.join('')
+}
+
+function escapeHtml(text: string): string {
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+}
 </script>
 
 <style scoped>
 .how-to {
-    padding-bottom: 4rem;
-    background: #f7fafc;
+    padding: var(--section-padding-lg) 0;
+    background: var(--color-bg);
 }
 
-.how-to h2 {
+.how-to__title {
     text-align: center;
-    font-size: 2rem;
-    margin-bottom: 3rem;
+    font-size: var(--fs-section-title);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    margin-bottom: var(--space-4);
 }
 
-.steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
-    max-width: 55rem;
-    margin: 0 auto;
-}
-
-.step {
-    text-align: center;
-}
-
-.main-title {
-    text-align: center;
-    margin-bottom: 1rem;
-}
-
-.step-num {
-    width: 50px;
-    height: 50px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    border-radius: 50%;
+.how-to__blocks {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin: 0 auto 1rem;
+    flex-direction: column;
+    gap: var(--space-4);
 }
 
-.step-image-wrapper {
-    width: 100%;
-    max-width: 280px;
-    margin: 0 auto 1rem;
-    aspect-ratio: 280 / 180;
-    background: #e2e8f0;
-    border-radius: 8px;
+.how-to-block {
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
+    padding: var(--space-4);
+    background: var(--color-bg-white);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border);
+}
+
+.how-to-block__image-wrapper {
+    flex-shrink: 0;
+    width: 320px;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-lg);
     overflow: hidden;
+    background: var(--color-bg);
 }
 
-.step :deep(.step-image) {
+.how-to-block :deep(.how-to-block__image) {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.step h3 {
-    margin-bottom: 0.5rem;
+.how-to-block__content {
+    flex: 1;
+    min-width: 0;
 }
 
-.step p {
-    color: #718096;
-    font-size: 0.95rem;
+.how-to-block__title {
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    margin: 0 0 var(--space-2);
+    line-height: var(--leading-snug);
+}
+
+.how-to-block__text {
+    font-size: var(--text-base);
+    color: var(--color-text-muted);
+    line-height: var(--leading-relaxed);
+}
+
+.how-to-block__text :deep(ol),
+.how-to-block__text :deep(ul) {
+    margin: 0;
+    padding-left: var(--space-5);
+}
+
+.how-to-block__text :deep(li:last-child) {
+    margin-bottom: 0;
+}
+
+.how-to-block__text :deep(p) {
+    margin: 0 0 var(--space-3);
+}
+
+.how-to-block__text :deep(p:last-child) {
+    margin-bottom: 0;
+}
+
+.how-to-block__text :deep(a) {
+    color: var(--color-primary);
+    text-decoration: underline;
+}
+
+.how-to-block__text :deep(a:hover) {
+    color: var(--color-primary-dark);
+}
+
+.how-to-block__text :deep(strong) {
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+    .how-to-block {
+        flex-direction: column;
+    }
+
+    .how-to-block__image-wrapper {
+        width: 100%;
+    }
+
+    .how-to-block__title {
+        font-size: var(--text-lg);
+    }
+
+    .how-to-block__text {
+        font-size: var(--text-sm);
+    }
 }
 </style>
