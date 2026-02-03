@@ -8,19 +8,15 @@ import { languageCodes } from '../config/languages'
 // КОНФИГУРАЦИЯ
 // ═══════════════════════════════════════════════════════════════
 
-// DeepL API (Free tier - ключ с :fx)
 const DEEPL_API_KEY = '94886d77-fa04-4568-91db-dbda3212f1d9:fx'
 const DEEPL_API_URL = 'https://api-free.deepl.com/v2'
 
-// Специальные коды DeepL (только для языков с вариантами)
-// Остальные просто uppercase: en → EN, de → DE, ru → RU и т.д.
 const DEEPL_SPECIAL_CODES: Record<string, string> = {
-    'pt': 'PT-PT',    // Португальский → Португалия (не Бразилия)
-    'zh': 'ZH-HANS',  // Китайский → упрощённый (не традиционный)
-    'no': 'NB',       // Норвежский → букмол
+    'pt': 'PT-PT',
+    'zh': 'ZH-HANS',
+    'no': 'NB',
 }
 
-// Поля которые НЕ переводятся (копируются как есть)
 const SKIP_TRANSLATION_KEYS = [
     'image', 'ogImage', 'src', 'url', 'href', 'icon',
     'platform', 'slug', 'footerLinkText', 'imageAlt', 'ogImageAlt'
@@ -30,13 +26,9 @@ const CONTENT_DIR = path.resolve(process.cwd(), 'content/pages')
 const STATUS_FILE = path.resolve(process.cwd(), 'public/admin/status.json')
 const QUEUE_FILE = path.resolve(process.cwd(), 'public/admin/queue.json')
 
-// Задержка между запросами к API перевода (мс)
-// DeepL рекомендует не более 50 запросов/сек для Free
 const TRANSLATE_DELAY = 100
-
-// Счётчик запросов для периодического вывода лимитов
 let requestCount = 0
-const SHOW_USAGE_EVERY = 20 // Показывать лимиты каждые N запросов
+const SHOW_USAGE_EVERY = 20
 
 // ═══════════════════════════════════════════════════════════════
 // ТИПЫ
@@ -109,11 +101,26 @@ function shouldTranslate(key: string): boolean {
     return !SKIP_TRANSLATION_KEYS.includes(key)
 }
 
-// Конвертация кода языка в формат DeepL
-// DeepL принимает uppercase коды, специальные только для языков с вариантами
 function toDeepLLang(lang: string): string {
     const lower = lang.toLowerCase()
     return DEEPL_SPECIAL_CODES[lower] || lang.toUpperCase()
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CACHE WARMING (прогрев ISR кэша)
+// ═══════════════════════════════════════════════════════════════
+
+async function warmCache(slug: string): Promise<void> {
+    const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+    try {
+        await fetch(`${siteUrl}/${slug}`, {
+            signal: AbortSignal.timeout(5000),
+            headers: { 'X-Cache-Warm': '1' }
+        })
+        console.log(`  🔥 Cache warmed: ${slug}`)
+    } catch {
+        // Игнорируем — сервер может быть не запущен
+    }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -173,7 +180,6 @@ async function translateText(text: string, from: string, to: string): Promise<st
             const errorText = await res.text()
             console.warn(`\n    ⚠️ DeepL error ${res.status}: ${errorText}`)
 
-            // Проверяем лимиты при ошибке 456 (quota exceeded)
             if (res.status === 456) {
                 console.error('\n    ❌ DeepL quota exceeded!')
                 await showUsageInfo(true)
@@ -184,9 +190,7 @@ async function translateText(text: string, from: string, to: string): Promise<st
         const data = await res.json()
         requestCount++
 
-        // Периодически показываем лимиты
         await showUsageInfo()
-
         await sleep(TRANSLATE_DELAY)
 
         if (data.translations?.[0]?.text) {
@@ -427,6 +431,28 @@ function removeDeletedField(page: PageData, path: string): void {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// СОХРАНЕНИЕ ФАЙЛА
+// ═══════════════════════════════════════════════════════════════
+
+let isSavingFile = false
+const recentlySaved = new Set<string>()
+
+function markAsSaving(filePath: string): void {
+    isSavingFile = true
+    const fileName = path.basename(filePath)
+    recentlySaved.add(fileName)
+    setTimeout(() => {
+        recentlySaved.delete(fileName)
+        isSavingFile = false
+    }, 3000)
+}
+
+function savePageFile(filePath: string, page: PageData): void {
+    markAsSaving(filePath)
+    fs.writeFileSync(filePath, stringify(page))
+}
+
+// ═══════════════════════════════════════════════════════════════
 // ОБРАБОТКА СТРАНИЦЫ
 // ═══════════════════════════════════════════════════════════════
 
@@ -484,7 +510,6 @@ async function processPage(filePath: string, force = false): Promise<boolean> {
 
             console.log(`  ${reason} → Full translation`)
 
-            // Показываем лимиты перед началом полного перевода
             await showUsageInfo(true)
 
             page._status = 'translating'
@@ -515,7 +540,7 @@ async function processPage(filePath: string, force = false): Promise<boolean> {
             savePageFile(filePath, page)
             console.log('  🔓 Page published!')
 
-            // Показываем лимиты после полного перевода
+            await warmCache(page.slug)
             await showUsageInfo(true)
             return true
         }
@@ -593,6 +618,8 @@ async function processPage(filePath: string, force = false): Promise<boolean> {
 
         savePageFile(filePath, page)
         console.log('  ✅ Saved!')
+
+        await warmCache(page.slug)
         return true
 
     } catch (error) {
@@ -745,8 +772,6 @@ async function processQueue(): Promise<void> {
         if (processed > 0 || errors > 0) {
             console.log(`\n${'═'.repeat(50)}`)
             console.log(`📊 Result: ✅ ${processed} translated | ❌ ${errors} errors | ⏱️ ${duration}s`)
-
-            // Финальный вывод лимитов
             await showUsageInfo(true)
             console.log('═'.repeat(50))
         }
@@ -764,7 +789,6 @@ async function processAll(force = false): Promise<void> {
     console.log(`📁 Files: ${files.length} | Mode: ${force ? 'FORCE' : 'incremental'}`)
     console.log(`🔤 Translator: DeepL API`)
 
-    // Показываем лимиты в начале
     await showUsageInfo(true)
     console.log('═'.repeat(50))
 
@@ -776,24 +800,6 @@ async function processAll(force = false): Promise<void> {
     console.log('\n🎉 Done!\n')
 }
 
-let isSavingFile = false
-const recentlySaved = new Set<string>()
-
-function markAsSaving(filePath: string): void {
-    isSavingFile = true
-    const fileName = path.basename(filePath)
-    recentlySaved.add(fileName)
-    setTimeout(() => {
-        recentlySaved.delete(fileName)
-        isSavingFile = false
-    }, 3000)
-}
-
-function savePageFile(filePath: string, page: PageData): void {
-    markAsSaving(filePath)
-    fs.writeFileSync(filePath, stringify(page))
-}
-
 async function watch(): Promise<void> {
     console.log(`\n${'═'.repeat(50)}`)
     console.log('👀 WATCH MODE')
@@ -801,7 +807,6 @@ async function watch(): Promise<void> {
     console.log(`🌍 Languages: ${languageCodes.join(', ')}`)
     console.log(`🔤 Translator: DeepL API`)
 
-    // Показываем лимиты при старте
     await showUsageInfo(true)
     console.log('═'.repeat(50) + '\n')
 
@@ -864,14 +869,9 @@ if (args.includes('--watch')) {
     console.log(`\n📊 Queue: ${queue.items.length} items`)
     const icons = { pending: '⏳', processing: '🔄', done: '✅', error: '❌' }
     queue.items.forEach(i => console.log(`  ${icons[i.status]} ${i.slug}`))
-
-    // Показываем лимиты DeepL
     showUsageInfo(true)
 } else if (args.includes('--usage')) {
-    // Новая команда - только показать лимиты
-    showUsageInfo(true).then(() => {
-        console.log('')
-    })
+    showUsageInfo(true).then(() => console.log(''))
 } else {
     const slug = args.find(a => !a.startsWith('--'))
     if (!slug) {

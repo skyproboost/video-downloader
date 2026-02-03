@@ -16,6 +16,8 @@ export default defineNuxtConfig({
         compatibilityVersion: 4,
     },
 
+    css: ['@/assets/css/global.css'],
+
     // ═══════════════════════════════════════════
     // МОДУЛИ
     // ═══════════════════════════════════════════
@@ -110,7 +112,7 @@ export default defineNuxtConfig({
     sitemap: {
         sources: ['/api/__sitemap__/urls'],
         exclude: ['/admin/**', '/api/**'],
-        cacheMaxAgeSeconds: 3600,
+        cacheMaxAgeSeconds: 3600
     },
 
     // ═══════════════════════════════════════════
@@ -289,19 +291,5 @@ export default defineNuxtConfig({
                 safelist: [/^image-/, /^error-/, /side-color-/],
             }),
         ],
-    },
-
-    // ═══════════════════════════════════════════
-    // HOOKS
-    // ═══════════════════════════════════════════
-    hooks: {
-        'build:manifest': (manifest) => {
-            for (const key in manifest) {
-                const entry = manifest[key]
-                if (entry.isEntry && entry.css) {
-                    entry.css = entry.css.filter((css: string) => !css.startsWith('entry'))
-                }
-            }
-        },
-    },
+    }
 })

@@ -48,7 +48,7 @@ interface PageData {
         meta: PageMeta
         pageContent: PageContent
     }>
-    _status?: 'translating' | 'ready'  // Статус публикации
+    _status?: 'translating' | 'ready'
     _hashes?: Record<string, any>
 }
 
@@ -59,12 +59,12 @@ const ROOT_DIR = process.cwd().endsWith('.output')
 
 const PAGES_DIR = join(ROOT_DIR, 'content', 'pages')
 
-// Кэш в памяти (короткий TTL для быстрого обновления статуса)
+// Кэш в памяти
 const cache = new Map<string, { data: PageData; timestamp: number }>()
 const CACHE_TTL = 30 * 1000  // 30 секунд
 const isDev = process.env.NODE_ENV !== 'production'
 
-// Валидация slug (только буквы, цифры, дефис, без расширений файлов)
+// Валидация slug
 const SLUG_REGEX = /^[a-z0-9-]+$/
 const IGNORED_EXTENSIONS = /\.(js|json|css|map|ico|png|jpg|svg|webp|txt|xml)$/i
 
@@ -73,36 +73,37 @@ export default defineEventHandler(async (event) => {
     if (process.env.NODE_ENV === 'production') {
         const secFetch = getRequestHeader(event, 'sec-fetch-site')
         if (secFetch === 'cross-site') {
-            throw createError({ status: 403, message: 'Forbidden' })
+            throw createError({ statusCode: 403, message: 'Forbidden' })
         }
     }
 
     const slug = getRouterParam(event, 'slug')
 
-    // Игнорируем запросы к файлам (sw.js, favicon.ico и т.д.)
+    // Игнорируем запросы к файлам
     if (slug && IGNORED_EXTENSIONS.test(slug)) {
-        throw createError({ status: 404, message: 'Not found' })
+        throw createError({ statusCode: 404, message: 'Not found' })
     }
 
     // Валидация slug
     if (!slug || !SLUG_REGEX.test(slug)) {
-        throw createError({ status: 400, message: 'Invalid slug' })
+        throw createError({ statusCode: 400, message: 'Invalid slug' })
     }
 
-    // Блокируем системные пути
+    // Блокируем служебные пути
     if (slug.startsWith('_') || slug.startsWith('.')) {
-        throw createError({ status: 404, message: 'Page not found' })
+        throw createError({ statusCode: 404, message: 'Page not found' })
     }
+
+    const now = Date.now()
 
     // Проверяем кэш (только в production)
-    const now = Date.now()
     if (!isDev) {
         const cached = cache.get(slug)
         if (cached && (now - cached.timestamp) < CACHE_TTL) {
             // Проверяем статус даже из кэша
             if (cached.data._status === 'translating') {
                 throw createError({
-                    status: 404,
+                    statusCode: 404,
                     message: 'Page is being prepared'
                 })
             }
@@ -112,17 +113,27 @@ export default defineEventHandler(async (event) => {
 
     const filePath = join(PAGES_DIR, `${slug}.yml`)
 
-    // Асинхронная проверка существования файла
+    // Проверка существования файла
     try {
         await access(filePath)
     } catch {
-        throw createError({ status: 404, message: 'Page not found' })
+        throw createError({ statusCode: 404, message: 'Page not found' })
     }
 
-    // Асинхронное чтение и парсинг
+    // Чтение и парсинг
     try {
         const content = await readFile(filePath, 'utf-8')
         const page = parse(content) as PageData
+
+        // ═══════════════════════════════════════════════════════════
+        // ПРОВЕРКА: страница ещё переводится?
+        // ═══════════════════════════════════════════════════════════
+        if (page._status === 'translating') {
+            throw createError({
+                statusCode: 404,
+                message: 'Page is being prepared'
+            })
+        }
 
         // Сохраняем в кэш (только в production)
         if (!isDev) {
@@ -138,7 +149,12 @@ export default defineEventHandler(async (event) => {
 
         return page
     } catch (e) {
+        // Если это наша ошибка (page is being prepared) — пробрасываем
+        if (e && typeof e === 'object' && 'statusCode' in e) {
+            throw e
+        }
+
         console.error(`Error reading ${slug}.yml:`, e)
-        throw createError({ status: 500, message: 'Error reading page' })
+        throw createError({ statusCode: 500, message: 'Error reading page' })
     }
 })

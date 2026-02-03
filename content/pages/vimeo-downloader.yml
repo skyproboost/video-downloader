@@ -1,0 +1,78 @@
+footerLinkText: Vimeo
+translations:
+  en:
+    meta:
+      title: Vimeo
+      description: Vimeo
+    pageContent:
+      how_to:
+        title: How to download
+        steps:
+          - title: Trying and downloading
+            description: Push the button and go
+      features:
+        title: Why choose us
+      mainTitle: Download video from Vimeo
+      subtitle: Videos via Vimeo can be downloaded at any time
+      intro: Vimeo permissions mp3, mp4
+  ru:
+    meta:
+      title: Vimeo
+      description: Vimeo
+    pageContent:
+      how_to:
+        title: How to download
+        steps:
+          - title: Пытаемся и скачиваем
+            description: Нажимаем кнопку и вперед
+      features:
+        title: Why choose us
+      mainTitle: Загрузить видео с Vimeo
+      subtitle: Видео через Vimeo  можно скачать в любое время
+      intro: Vimeo разрешения mp3, mp4
+  de:
+    meta:
+      title: Vimeo
+      description: Vimeo
+    pageContent:
+      how_to:
+        title: Wie kann man herunterladen
+        steps:
+          - title: Ausprobieren und Herunterladen
+            description: Drücken Sie den Knopf und gehen Sie.
+      features:
+        title: Warum uns wählen
+      mainTitle: Video von Vimeo herunterladen
+      subtitle: Videos über Vimeo können jederzeit heruntergeladen werden
+      intro: Vimeo-Erlaubnisse mp3, mp4
+slug: vimeo-downloader
+platform: vimeo
+source_lang: ru
+meta:
+  title: Vimeo
+  description: Vimeo
+pageContent:
+  how_to:
+    title: How to download
+    steps:
+      - title: Пытаемся и скачиваем
+        description: Нажимаем кнопку и вперед
+  features:
+    title: Why choose us
+  mainTitle: Загрузить видео с Vimeo
+  subtitle: Видео через Vimeo  можно скачать в любое время
+  intro: Vimeo разрешения mp3, mp4
+_status: ready
+_hashes:
+  _slug: vimeo-downloader
+  _contentHash: 787d1b7a080e
+  fields:
+    meta.title: 15db599e0119
+    meta.description: 15db599e0119
+    pageContent.how_to.title: bfa49f012d67
+    pageContent.how_to.steps[0].title: 62a9df77b22c
+    pageContent.how_to.steps[0].description: fd91b578f0b8
+    pageContent.features.title: 8778ea3b6b03
+    pageContent.mainTitle: 3ac4b5db1a62
+    pageContent.subtitle: 4e35f10d0376
+    pageContent.intro: 22936f430d62

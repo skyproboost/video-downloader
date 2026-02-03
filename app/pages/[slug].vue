@@ -82,11 +82,11 @@ const { locale } = useI18n()
 const config = useRuntimeConfig()
 
 const slug = route.params.slug as string
-const siteUrl = config.public.siteUrl as string || 'https://yoursite.com'
+const siteUrl = config.public.siteUrl as string || 'localhost:3000'
 const siteName = 'VideoDownloader'
 
 // Игнорируем запросы к файлам
-if (/\.(js|json|css|map|ico|png|jpg|svg|webp|txt|xml)$/i.test(slug)) {
+if (/^(_|api)|\.(js|json|css|map|ico|png|jpg|svg|webp|txt|xml)$/i.test(slug)) {
     throw createError({ statusCode: 404, message: 'Not found', fatal: true })
 }
 

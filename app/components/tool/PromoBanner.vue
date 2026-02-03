@@ -15,11 +15,11 @@
                         width="880"
                         height="146"
                         sizes="100vw sm:880px"
-                        quality="60"
+                        quality="50"
                         loading="eager"
                         :img-attrs="{
                             class: 'promo-banner__image promo-banner__image--desktop',
-                            fetchpriority: 'high'
+                            fetchpriority: 'low'
                         }"
                     />
                     <!-- Mobile картинка -->
@@ -29,11 +29,11 @@
                         width="640"
                         height="433"
                         sizes="100vw sm:640px"
-                        quality="30"
+                        quality="20"
                         loading="eager"
                         :img-attrs="{
                             class: 'promo-banner__image promo-banner__image--mobile',
-                            fetchpriority: 'high'
+                            fetchpriority: 'low'
                         }"
                     />
 
@@ -79,7 +79,7 @@ withDefaults(defineProps<Props>(), {
     text-decoration: none;
     border-radius: var(--radius-xl);
     overflow: hidden;
-    transition: transform var(--transition-slow), box-shadow var(--transition-slow);
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
     -webkit-tap-highlight-color: transparent;
 }
 

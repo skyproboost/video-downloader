@@ -1,22 +1,4 @@
-slug: youtube-downloader
 footerLinkText: YouTube
-platform: youtube
-source_lang: ru
-meta:
-  title: YouTube
-  description: YouTube
-pageContent:
-  how_to:
-    title: How to download
-    steps:
-      - title: Пытаемся и скачиваем
-        description: Нажимаем кнопку и вперед
-  features:
-    title: Why choose us
-  mainTitle: Загрузить видео с YouTube
-  subtitle: Видео через YouTube можно скачать в любое время
-  intro: YouTube разрешения mp3, mp4
-_status: ready
 translations:
   en:
     meta:
@@ -28,6 +10,9 @@ translations:
         steps:
           - title: We try and download
             description: Press the button and go
+          - image: /images/image_2025-10-26_23-18-53.png
+            title: The first one
+            description: Description
       features:
         title: Why choose us
       mainTitle: Download video from YouTube
@@ -39,10 +24,13 @@ translations:
       description: YouTube
     pageContent:
       how_to:
-        title: How to download
+        title: "Как скачать "
         steps:
           - title: Пытаемся и скачиваем
             description: Нажимаем кнопку и вперед
+          - image: /images/image_2025-10-26_23-18-53.png
+            title: Первая
+            description: Описание
       features:
         title: Why choose us
       mainTitle: Загрузить видео с YouTube
@@ -54,24 +42,51 @@ translations:
       description: YouTube
     pageContent:
       how_to:
-        title: Anleitung zum Herunterladen
+        title: Wie kann man herunterladen
         steps:
           - title: Wir versuchen es und laden es herunter
             description: Knopf drücken und los geht’s
+          - image: /images/image_2025-10-26_23-18-53.png
+            title: Die erste
+            description: Beschreibung
       features:
         title: Warum sollten Sie sich für uns entscheiden?
       mainTitle: Laden Sie das Video von YouTube herunter
       subtitle: Videos können jederzeit über YouTube heruntergeladen werden
       intro: YouTube-Auflösungen mp3, mp4
+slug: youtube-downloader
+platform: youtube
+source_lang: ru
+meta:
+  title: YouTube
+  description: YouTube
+pageContent:
+  how_to:
+    title: "Как скачать "
+    steps:
+      - title: Пытаемся и скачиваем
+        description: Нажимаем кнопку и вперед
+      - title: Первая
+        image: /images/image_2025-10-26_23-18-53.png
+        description: Описание
+  features:
+    title: Why choose us
+  mainTitle: Загрузить видео с YouTube
+  subtitle: Видео через YouTube можно скачать в любое время
+  intro: YouTube разрешения mp3, mp4
+_status: ready
 _hashes:
   _slug: youtube-downloader
-  _contentHash: b8a3a0b133f5
+  _contentHash: 780f0c7d8779
   fields:
     meta.title: 8dd1bae8da2e
     meta.description: 8dd1bae8da2e
-    pageContent.how_to.title: bfa49f012d67
+    pageContent.how_to.title: b1c9a08e7ace
     pageContent.how_to.steps[0].title: 62a9df77b22c
     pageContent.how_to.steps[0].description: fd91b578f0b8
+    pageContent.how_to.steps[1].title: 5ed00bf2b35d
+    pageContent.how_to.steps[1].image: 1042929fd4b5
+    pageContent.how_to.steps[1].description: 38ca0af80cd7
     pageContent.features.title: 8778ea3b6b03
     pageContent.mainTitle: c8f672ee0539
     pageContent.subtitle: 88cb096ab0ab

@@ -1,8 +1,12 @@
 import { defineEventHandler } from 'h3'
-import { readFile, readdir, stat } from 'node:fs/promises'
+import { readFile, readdir, stat, access } from 'node:fs/promises'
 import { resolve, join } from 'node:path'
 import { parse } from 'yaml'
 import { languageCodes, defaultLanguage } from '@/../config/languages'
+
+// ═══════════════════════════════════════════════════════════════
+// ТИПЫ
+// ═══════════════════════════════════════════════════════════════
 
 interface SitemapImage {
     loc: string
@@ -17,29 +21,46 @@ interface SitemapUrl {
     images?: SitemapImage[]
 }
 
-interface PageMeta {
-    title?: string
-    ogImage?: string
-}
-
 interface PageData {
     slug?: string
-    meta?: PageMeta
+    meta?: { title?: string; ogImage?: string }
     pageContent?: unknown
-    translations?: Record<string, {
-        meta?: PageMeta
-        pageContent?: unknown
-    }>
+    translations?: Record<string, { meta?: { ogImage?: string }; pageContent?: unknown }>
+    _status?: string
 }
 
-// Кэш результатов
-let cache: { data: SitemapUrl[]; timestamp: number } | null = null
+// ═══════════════════════════════════════════════════════════════
+// КОНФИГУРАЦИЯ
+// ═══════════════════════════════════════════════════════════════
+
 const CACHE_TTL = 5 * 60 * 1000 // 5 минут
-
 const IMAGE_REGEX = /\.(?:jpe?g|png|gif|webp|avif|svg)$/i
-const PAGES_DIR = resolve(process.cwd(), 'content/pages')
+const isDev = process.env.NODE_ENV !== 'production'
 
-// Собираем картинки итеративно (без рекурсии)
+let cache: { data: SitemapUrl[]; timestamp: number } | null = null
+
+// ═══════════════════════════════════════════════════════════════
+// УТИЛИТЫ
+// ═══════════════════════════════════════════════════════════════
+
+function formatDate(date: Date): string {
+    return date.toISOString().split('T')[0]
+}
+
+function buildUrl(baseUrl: string, locale: string, slug?: string): string {
+    const parts = [baseUrl]
+
+    if (locale !== defaultLanguage) {
+        parts.push(locale)
+    }
+
+    if (slug) {
+        parts.push(slug)
+    }
+
+    return parts.join('/').replace(/\/+/g, '/').replace(':/', '://')
+}
+
 function collectImages(obj: unknown, baseUrl: string, images: Set<string>): void {
     const stack: unknown[] = [obj]
 
@@ -47,10 +68,8 @@ function collectImages(obj: unknown, baseUrl: string, images: Set<string>): void
         const item = stack.pop()
         if (!item) continue
 
-        if (typeof item === 'string') {
-            if (IMAGE_REGEX.test(item)) {
-                images.add(item[0] === '/' ? `${baseUrl}${item}` : item)
-            }
+        if (typeof item === 'string' && IMAGE_REGEX.test(item)) {
+            images.add(item.startsWith('/') ? `${baseUrl}${item}` : item)
         } else if (Array.isArray(item)) {
             stack.push(...item)
         } else if (typeof item === 'object') {
@@ -59,41 +78,54 @@ function collectImages(obj: unknown, baseUrl: string, images: Set<string>): void
     }
 }
 
-function addOgImage(ogImage: string | undefined, baseUrl: string, images: Set<string>): void {
-    if (ogImage) {
-        images.add(ogImage[0] === '/' ? `${baseUrl}${ogImage}` : ogImage)
+function getPagesDir(): string {
+    const cwd = process.cwd()
+
+    // В production .output может быть cwd
+    if (cwd.endsWith('.output') || cwd.includes('.output')) {
+        return resolve(cwd, '..', 'content/pages')
     }
+
+    return resolve(cwd, 'content/pages')
 }
 
-function formatDate(date: Date): string {
-    const y = date.getFullYear()
-    const m = String(date.getMonth() + 1).padStart(2, '0')
-    const d = String(date.getDate()).padStart(2, '0')
-    return `${y}-${m}-${d}`
-}
+// ═══════════════════════════════════════════════════════════════
+// ОБРАБОТКА СТРАНИЦЫ
+// ═══════════════════════════════════════════════════════════════
 
-async function processPage(filePath: string, baseUrl: string): Promise<SitemapUrl[] | null> {
+async function processPage(filePath: string, baseUrl: string): Promise<SitemapUrl[]> {
     const [content, stats] = await Promise.all([
         readFile(filePath, 'utf-8'),
         stat(filePath),
     ])
 
     const page = parse(content) as PageData
-    if (!page?.slug) return null
+
+    // Пропускаем страницы без slug или в процессе перевода
+    if (!page?.slug || page._status === 'translating') {
+        return []
+    }
 
     const lastmod = formatDate(stats.mtime)
     const images = new Set<string>()
 
-    // Собираем картинки из основного контента
-    addOgImage(page.meta?.ogImage, baseUrl, images)
+    // Собираем картинки
+    if (page.meta?.ogImage) {
+        const og = page.meta.ogImage
+        images.add(og.startsWith('/') ? `${baseUrl}${og}` : og)
+    }
+
     collectImages(page.pageContent, baseUrl, images)
 
-    // Собираем картинки из переводов
     if (page.translations) {
         for (const lang of languageCodes) {
             const trans = page.translations[lang]
             if (!trans) continue
-            addOgImage(trans.meta?.ogImage, baseUrl, images)
+
+            if (trans.meta?.ogImage) {
+                const og = trans.meta.ogImage
+                images.add(og.startsWith('/') ? `${baseUrl}${og}` : og)
+            }
             collectImages(trans.pageContent, baseUrl, images)
         }
     }
@@ -103,9 +135,9 @@ async function processPage(filePath: string, baseUrl: string): Promise<SitemapUr
         ? [...images].map(loc => ({ loc, title }))
         : undefined
 
-    // URL для всех языков
+    // Генерируем URL для всех языков
     return languageCodes.map(locale => ({
-        loc: `${baseUrl}${locale === defaultLanguage ? '' : `/${locale}`}/${page.slug}`,
+        loc: buildUrl(baseUrl, locale, page.slug),
         lastmod,
         changefreq: 'weekly' as const,
         priority: 0.8,
@@ -113,45 +145,90 @@ async function processPage(filePath: string, baseUrl: string): Promise<SitemapUr
     }))
 }
 
-async function generateSitemap(): Promise<SitemapUrl[]> {
-    const baseUrl = process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000'
-    const today = formatDate(new Date())
+// ═══════════════════════════════════════════════════════════════
+// ГЕНЕРАЦИЯ SITEMAP
+// ═══════════════════════════════════════════════════════════════
 
-    // Главные страницы для каждого языка
+async function generateSitemap(): Promise<SitemapUrl[]> {
+    const baseUrl = (process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, '')
+    const today = formatDate(new Date())
+    const pagesDir = getPagesDir()
+
+    // Главные страницы
     const homeUrls: SitemapUrl[] = languageCodes.map(locale => ({
-        loc: locale === defaultLanguage ? baseUrl : `${baseUrl}/${locale}`,
+        loc: buildUrl(baseUrl, locale),
         lastmod: today,
-        changefreq: 'daily',
+        changefreq: 'daily' as const,
         priority: 1.0,
     }))
 
     try {
-        const files = await readdir(PAGES_DIR)
+        await access(pagesDir)
+
+        const files = await readdir(pagesDir)
         const ymlFiles = files.filter(f => f.endsWith('.yml'))
 
-        // Параллельная обработка всех файлов
+        if (isDev) {
+            console.log(`📄 Sitemap: found ${ymlFiles.length} pages`)
+        }
+
+        if (ymlFiles.length === 0) {
+            return homeUrls
+        }
+
+        // Параллельная обработка
         const results = await Promise.all(
             ymlFiles.map(file =>
-                processPage(join(PAGES_DIR, file), baseUrl).catch(err => {
-                    console.error(`Sitemap: Error processing ${file}`, err)
-                    return null
+                processPage(join(pagesDir, file), baseUrl).catch(err => {
+                    console.error(`❌ Sitemap error [${file}]:`, err.message)
+                    return []
                 })
             )
         )
 
-        const pageUrls = results.flat().filter((url): url is SitemapUrl => url !== null)
+        const pageUrls = results.flat()
 
-        return [...homeUrls, ...pageUrls].filter(u => !u.loc.includes('127.0.0.1'))
+        // Объединяем и дедуплицируем по loc
+        const allUrls = [...homeUrls, ...pageUrls]
+        const seen = new Set<string>()
+        const uniqueUrls = allUrls.filter(url => {
+            if (seen.has(url.loc)) {
+                console.warn(`⚠️ Sitemap: duplicate URL removed: ${url.loc}`)
+                return false
+            }
+            seen.add(url.loc)
+            return true
+        })
+
+        // Сортировка: сначала по приоритету (desc), потом по URL (asc)
+        uniqueUrls.sort((a, b) => {
+            if (b.priority !== a.priority) return b.priority - a.priority
+            return a.loc.localeCompare(b.loc)
+        })
+
+        if (isDev) {
+            console.log(`✅ Sitemap: generated ${uniqueUrls.length} URLs`)
+        }
+
+        return uniqueUrls
     } catch (e) {
-        console.error('Sitemap: Error reading pages directory', e)
+        console.error('❌ Sitemap error:', e)
         return homeUrls
     }
 }
 
+// ═══════════════════════════════════════════════════════════════
+// HANDLER
+// ═══════════════════════════════════════════════════════════════
+
 export default defineEventHandler(async (): Promise<SitemapUrl[]> => {
+    // В dev всегда генерируем заново для удобства
+    if (isDev) {
+        return generateSitemap()
+    }
+
     const now = Date.now()
 
-    // Возвращаем кэш если свежий
     if (cache && (now - cache.timestamp) < CACHE_TTL) {
         return cache.data
     }

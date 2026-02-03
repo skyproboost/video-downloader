@@ -8,7 +8,7 @@
 
             <div class="error-actions">
                 <a href="/" class="error-link error-link--primary" @click.prevent="handleBack">
-                    {{ t('errors.backHome') }}
+                    {{ backHomeText }}
                 </a>
                 <a
                     v-if="error?.statusCode === 500"
@@ -16,7 +16,7 @@
                     class="error-link error-link--secondary"
                     @click.prevent="handleRetry"
                 >
-                    {{ t('errors.retry') }}
+                    {{ retryText }}
                 </a>
             </div>
         </div>
@@ -28,45 +28,65 @@ import type { NuxtError } from '#app'
 
 const props = defineProps<{ error: NuxtError }>()
 
-const { t } = useI18n()
+// Fallback тексты если i18n не загрузился
+const fallbacks = {
+    backHome: 'Back to Home',
+    retry: 'Try again',
+    404: { title: 'Page Not Found', description: 'The page you are looking for does not exist.' },
+    500: { title: 'Server Error', description: 'Something went wrong. Please try again later.' }
+}
+
+// Безопасный доступ к i18n
+const i18n = tryUseI18n()
+const t = i18n?.t ?? (() => null)
+
+const code = computed(() => props.error?.statusCode || 500)
+const is404 = computed(() => code.value === 404)
 
 const errorTitle = computed(() => {
-    const code = props.error?.statusCode
-    if (code === 404) return t('errors.404.title')
-    return t('errors.500.title')
+    const key = is404.value ? 'errors.404.title' : 'errors.500.title'
+    return t(key) ?? (is404.value ? fallbacks[404].title : fallbacks[500].title)
 })
 
 const errorDescription = computed(() => {
-    const code = props.error?.statusCode
-    if (code === 404) return t('errors.404.description')
-    return t('errors.500.description')
+    const key = is404.value ? 'errors.404.description' : 'errors.500.description'
+    return t(key) ?? (is404.value ? fallbacks[404].description : fallbacks[500].description)
 })
 
+const backHomeText = computed(() => t('errors.backHome') ?? fallbacks.backHome)
+const retryText = computed(() => t('errors.retry') ?? fallbacks.retry)
 
-
-const handleBack = () => {
-    clearError({ redirect: '/' })
-}
-
+const handleBack = () => clearError({ redirect: '/' })
 const handleRetry = () => {
     clearError()
     window.location.reload()
 }
 
 useSeoMeta({
-    title: () => `${props.error?.statusCode || 500} - ${errorTitle.value}`,
+    title: () => `${code.value} - ${errorTitle.value}`,
     robots: 'noindex, nofollow',
 })
+
+function tryUseI18n() {
+    try {
+        return useI18n()
+    } catch {
+        return null
+    }
+}
 </script>
 
 <style scoped>
 .error-page {
     min-height: 100vh;
+    min-height: 100dvh;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: var(--space-8);
     background: var(--color-bg);
+    font-family: var(--font-sans);
 }
 
 .error-container {
@@ -95,7 +115,7 @@ useSeoMeta({
 .error-description {
     font-size: var(--text-base);
     color: var(--color-text-muted);
-    margin: 0 0 var(--space-1);
+    margin: 0;
     line-height: var(--leading-relaxed);
 }
 
@@ -109,6 +129,7 @@ useSeoMeta({
 .error-link {
     font-size: var(--text-base);
     font-weight: var(--font-semibold);
+    text-decoration: none;
     transition: color var(--transition-base);
 }
 
