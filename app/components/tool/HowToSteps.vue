@@ -134,7 +134,7 @@ function escapeHtml(text: string): string {
 
 .how-to-block {
     display: flex;
-    gap: var(--space-2);
+    gap: var(--space-4);
     align-items: flex-start;
     padding: var(--space-4);
     background: var(--color-bg-white);
