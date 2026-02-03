@@ -144,7 +144,7 @@
     --container-max: 55rem;
     --container-sm: 32rem;
     --container-xs: 25rem;
-    --container-padding: var(--space-6);
+    --container-padding: var(--space-4);
 
     /* ─── Section Padding ─── */
     --section-padding: var(--space-12);

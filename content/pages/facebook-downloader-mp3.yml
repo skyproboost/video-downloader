@@ -1,4 +1,4 @@
-footerLinkText: Facebook
+footerLinkText: Facebook-mp3
 translations:
   en:
     meta:
@@ -144,7 +144,7 @@ translations:
           answer: Ich bin ein Bruder
         - question: Wir?
           answer: Was ist mit Ihnen?
-slug: facebook-downloader
+slug: facebook-downloader-mp3
 platform: facebook
 source_lang: ru
 meta:
@@ -196,7 +196,7 @@ pageContent:
       answer: А вы?
 _status: ready
 _hashes:
-  _slug: facebook-downloader
+  _slug: facebook-downloader-mp3
   _contentHash: 667d092e20c6
   fields:
     "pageContent.features.items[1].description": a7c8bbac8cb4

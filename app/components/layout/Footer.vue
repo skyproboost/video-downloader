@@ -1,127 +1,128 @@
 <template>
     <footer class="footer">
-        <div class="container">
-            <div class="footer__content">
-                <!-- Бренд -->
-                <div class="footer__brand">
-                    <span class="footer__logo">Video Downloader</span>
-                    <p class="footer__copyright">
-                        © {{ new Date().getFullYear() }} Video Downloader. {{ $t('footer.rights') }}
-                    </p>
+        <div class="container __footer-inner">
+            <!-- Ссылки по платформам -->
+            <div v-if="groupedLinks?.length" class="footer__links">
+                <div
+                    v-for="group in groupedLinks"
+                    :key="group.platformId"
+                    class="footer__group"
+                >
+                    <h3 class="footer__group-title">{{ group.platformName }}</h3>
+                    <ul class="footer__list">
+                        <li v-for="link in group.links" :key="link.slug">
+                            <NuxtLink
+                                :to="localePath(`/${link.slug}`)"
+                                class="footer__link"
+                            >
+                                {{ link.text }}
+                            </NuxtLink>
+                        </li>
+                    </ul>
                 </div>
+            </div>
 
-                <!-- Ссылки по группам -->
-                <div v-if="footerLinks?.length" class="footer__links">
-                    <div
-                        v-for="group in footerLinks"
-                        :key="group.platformId"
-                        class="footer__group"
-                    >
-                        <NuxtLink
-                            v-for="link in group.links"
-                            :key="link.slug"
-                            :to="localePath(`/${link.slug}`)"
-                            class="footer__link"
-                        >
-                            {{ link.text }}
-                        </NuxtLink>
-                    </div>
-                </div>
+            <!-- Нижняя часть -->
+            <div class="footer__bottom">
+                <p class="footer__description">{{ $t('footer.description') }}</p>
+                <p class="footer__copy">
+                    © {{ currentYear }} VideoDownloader. {{ $t('footer.rights') }}
+                </p>
             </div>
         </div>
     </footer>
 </template>
 
 <script setup lang="ts">
-const { locale } = useI18n()
-const localePath = useLocalePath()
+interface FooterLink {
+    slug: string
+    text: string
+}
 
-const { data: footerLinks } = await useFetch('/api/footer-links', {
-    query: { locale },
+interface GroupedLinks {
+    platformId: string
+    platformName: string
+    links: FooterLink[]
+}
+
+const localePath = useLocalePath()
+const currentYear = new Date().getFullYear()
+
+const { data: groupedLinks } = await useFetch<GroupedLinks[]>('/api/footer-links', {
+    key: 'footer-links',
+    default: () => [],
 })
 </script>
 
 <style scoped>
+.__footer-inner {
+    padding: var(--space-8) var(--container-padding);
+}
+
 .footer {
     background: var(--color-bg-dark);
     color: var(--color-text-inverse);
-    padding: var(--space-6) 0;
-    margin-top: auto;
 }
 
-.footer__content {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-}
-
-/* Brand */
-.footer__brand {
-    flex-shrink: 0;
-}
-
-.footer__logo {
-    display: block;
-    font-size: var(--text-lg);
-    font-weight: var(--font-bold);
-    color: var(--color-primary);
-}
-
-.footer__copyright {
-    color: var(--color-text-light);
-    font-size: var(--text-xs);
-}
-
-/* Links */
 .footer__links {
     display: flex;
-    gap: var(--space-8);
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: var(--space-10);
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-5);
+    border-bottom: 1px solid var(--color-border-dark);
 }
 
-.footer__group {
+.footer__group-title {
+    font-size: var(--text-sm);
+    font-weight: var(--font-bold);
+    color: var(--color-text-inverse);
+    margin-bottom: var(--space-2);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.footer__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
     display: flex;
     flex-direction: column;
     gap: var(--space-1);
 }
 
 .footer__link {
-    color: var(--color-text-lighter);
+    color: var(--color-text-inverse-muted);
     font-size: var(--text-sm);
+    text-decoration: none;
     transition: color var(--transition-fast);
 }
 
 .footer__link:hover {
-    color: var(--color-primary);
+    color: var(--color-text-inverse);
 }
 
-/* Mobile */
-@media (max-width: 768px) {
-    .footer__content {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-
-    .footer__brand {
-        margin-bottom: var(--space-6);
-    }
-
-    .footer__links {
-        display: grid;
-        grid-template-columns: repeat(4, auto);
-        gap: var(--space-4) var(--space-8);
-        justify-content: center;
-    }
-
-    .footer__group {
-        align-items: flex-start;
-    }
+.footer__bottom {
+    text-align: center;
 }
 
-/* Маленькие экраны - 2 колонки */
-@media (max-width: 480px) {
+.footer__description {
+    color: var(--color-text-inverse-muted);
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-2);
+}
+
+.footer__copy {
+    color: var(--color-text-inverse-muted);
+    font-size: var(--text-xs);
+    opacity: 0.7;
+}
+
+@media (max-width: 400px) {
     .footer__links {
-        grid-template-columns: repeat(4, auto);
+        gap: var(--space-8);
     }
 }
 </style>
