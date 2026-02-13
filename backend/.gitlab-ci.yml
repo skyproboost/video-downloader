@@ -1,0 +1,14 @@
+stages:
+  - pull
+  - build
+
+job_pull:
+  stage: pull
+  script:
+    - echo "Pulling code"
+
+job_build:
+  stage: build
+  script:
+    - echo "Building the project"
+

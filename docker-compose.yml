@@ -1,0 +1,114 @@
+services:
+  api: &backend_app
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+    image: downloader-api:${VERSION:-latest}
+    container_name: downloader-api
+    hostname: downloader-api
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - ./logs:/app/logs
+      - downloads:/tmp/downloads
+    healthcheck:
+      test: curl localhost:${PORT}/api/health
+      interval: 2s
+      timeout: 3s
+      retries: 40
+    networks:
+      - default
+
+  db:
+    image: postgres:17.2-alpine
+    hostname: downloader-db
+    container_name: downloader-db
+    env_file:
+      - .env
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASS} 
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_BASE}
+      PGPORT: ${DB_PORT}
+    volumes:
+      - downloader-db-data:/var/lib/postgresql/data
+      - ./backend/db-init-scripts:/docker-entrypoint-initdb.d:ro  # To create RO user
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    restart: always
+    healthcheck:
+      test: pg_isready -d ${DB_BASE}
+      interval: 2s
+      timeout: 3s
+      retries: 40
+    networks:
+      - default
+
+  redis:
+    image: redis:alpine
+    hostname: downloader-redis
+    container_name: downloader-redis
+    restart: always
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - 6379:6379
+    healthcheck:
+      test: redis-cli ping
+      interval: 1s
+      timeout: 3s
+      retries: 50
+    networks:
+      - default
+  
+  worker:
+    container_name: downloader-worker
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+    command: uv run -- taskiq worker app.tasks.broker:broker app.tasks
+    env_file:
+      - .env
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./logs:/app/logs
+      - downloads:/tmp/downloads
+  scheduler:
+    container_name: downloader-scheduler
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+    command: uv run -- taskiq scheduler app.tasks.broker:scheduler app.tasks
+    env_file:
+      - .env
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./logs:/app/logs
+
+
+volumes:
+  downloader-db-data:
+    external: true
+  downloads:
+
+networks:
+  default:
+    driver: bridge

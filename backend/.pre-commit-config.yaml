@@ -1,0 +1,28 @@
+repos:
+    - repo: local
+      hooks:
+
+          - id: ruff format
+            name: Format with Ruff
+            entry: uvx ruff
+            language: system
+            pass_filenames: false
+            always_run: true
+            args: ["format"]
+
+          - id: ruff check
+            name: Check with Ruff
+            entry: uvx ruff
+            language: system
+            pass_filenames: false
+            always_run: true
+            args: ["check", "--fix-only", "--no-unsafe-fixes"]
+          
+          #- id: pytest
+            #name: Run pytest
+            #entry: uv run --frozen pytest
+            #language: system
+            #pass_filenames: false
+            #always_run: true
+            #args: ["-vv", "."]
+
