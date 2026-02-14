@@ -60,6 +60,10 @@
     margin-inline: auto;
 }
 
+.main-section__platforms {
+    margin-top: var(--space-8);
+}
+
 /* Section */
 .section {
     padding: var(--section-py) 0;

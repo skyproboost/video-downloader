@@ -1,4 +1,7 @@
 {
+  "header": {
+    "search": "Suche"
+  },
   "home": {
     "title": "Kostenloser Video-Downloader",
     "subtitle": "Videos von YouTube, Instagram, TikTok und mehr herunterladen",
@@ -42,7 +45,17 @@
   "form": {
     "placeholder": "Video-URL hier einfügen...",
     "download": "Herunterladen",
+    "success": "Video zum Download bereit!",
     "supported": "Unterstützte Plattformen: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+  },
+  "error": {
+    "invalidUrl": "Ungültiger Link. Bitte versuchen Sie es erneut.",
+    "notFound": "Unter diesem Link wurde nichts gefunden. Überprüfen Sie die URL und versuchen Sie es erneut.",
+    "rateLimited": "Zu viele Anfragen. Versuchen Sie es in {seconds} Sekunden erneut.",
+    "tooManyRequests": "Zu viele Anfragen. Bitte warten Sie eine Minute.",
+    "serverError": "Serverfehler. Bitte versuchen Sie es später erneut.",
+    "network": "Verbindungsfehler. Überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
+    "unknown": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
   },
   "faq": {
     "title": "Häufig gestellte Fragen"

@@ -4,7 +4,8 @@
             <div class="container">
                 <h1 class="main-section__title">{{ $t('home.title') }}</h1>
                 <p class="main-section__subtitle">{{ $t('home.subtitle') }}</p>
-                <HomePlatformGrid />
+                <ToolDownloadForm />
+                <HomePlatformGrid class="main-section__platforms" />
             </div>
         </section>
 
