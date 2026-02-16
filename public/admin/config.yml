@@ -46,6 +46,7 @@ collections:
           - { label: "VK", value: "vk" }
           - { label: "Facebook", value: "facebook" }
           - { label: "Vimeo", value: "vimeo" }
+          - { label: "Other", value: "other" }
 
       - name: source_lang
         label: "🌍 Язык оригинала"
@@ -54,9 +55,8 @@ collections:
         default: "en"
         hint: "На каком языке заполняете контент. Переводы создаются автоматически."
         options:
-          - { label: "🇬🇧 English", value: "en" }
-          - { label: "🇷🇺 Русский", value: "ru" }
-          - { label: "🇩🇪 Deutsch", value: "de" }
+          - { label: "English", value: "en" }
+          - { label: "Русский", value: "ru" }
 
       - name: meta
         label: "🔍 SEO мета-теги"
@@ -108,7 +108,7 @@ collections:
             required: false
 
           - name: intro
-            label: "Вступительный текст"
+            label: "Подпись под инпутом"
             widget: text
             required: false
 
@@ -134,7 +134,7 @@ collections:
                   - name: title
                     label: "Заголовок блока"
                     widget: string
-                    required: true
+                    required: false
                     hint: "Например: Как скачать видео с Ютуба на компьютер бесплатно?"
 
                   - name: content

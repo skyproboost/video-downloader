@@ -11,13 +11,17 @@ import { languageCodes } from '../config/languages'
 const DEEPL_API_KEY = '94886d77-fa04-4568-91db-dbda3212f1d9:fx'
 const DEEPL_API_URL = 'https://api-free.deepl.com/v2'
 
-const DEEPL_SPECIAL_CODES: Record<string, string> = {
-    'pt': 'PT-PT', 'zh': 'ZH-HANS', 'no': 'NB',
+// DeepL использует разные коды для source и target языков
+const DEEPL_SOURCE_CODES: Record<string, string> = {
+    'no': 'NB',
+}
+const DEEPL_TARGET_CODES: Record<string, string> = {
+    'pt': 'PT-PT', 'zh': 'ZH-HANS', 'no': 'NB', 'en': 'EN-US',
 }
 
 const SKIP_TRANSLATION_KEYS = [
     'image', 'ogImage', 'src', 'url', 'href', 'icon',
-    'platform', 'slug', 'footerLinkText', 'imageAlt', 'ogImageAlt'
+    'platform', 'slug', 'footerLinkText'
 ]
 
 const CONTENT_DIR = path.resolve(process.cwd(), 'content/pages')
@@ -27,10 +31,16 @@ const QUEUE_FILE = path.join(ADMIN_DIR, 'queue.json')
 const RETRY_FILE = path.join(ADMIN_DIR, 'retry.json')
 const FAILED_FILE = path.join(ADMIN_DIR, 'failed.json')
 
-const TRANSLATE_DELAY = 100
+// ── Задержки и retry ──
+const TRANSLATE_DELAY = 15_000          // 15 сек между запросами к DeepL
+const RATE_LIMIT_RETRIES = 3
+const RATE_LIMIT_BACKOFF = [30, 60, 120]
+const BATCH_SIZE = 50                   // Макс. строк в одном запросе к DeepL
+
 const RETRY_INTERVAL = 3 * 60 * 1000
 const MAX_RETRIES = 20
 let requestCount = 0
+let pageCharCount = 0
 const SHOW_USAGE_EVERY = 20
 
 // ═══════════════════════════════════════════════════════════════
@@ -84,14 +94,16 @@ interface FieldChange {
     value?: any; needsTranslation: boolean
 }
 
+interface TranslatableItem { path: string; text: string }
+
 // ═══════════════════════════════════════════════════════════════
-// LIVE PROCESSING STATE (для отображения в админке)
+// LIVE PROCESSING STATE
 // ═══════════════════════════════════════════════════════════════
 
 let liveProcessing: {
     slug: string
     scenario: string
-    stage: string           // 'starting' | 'translating' | 'saving' | 'warming'
+    stage: string
     currentLang?: string
     langsTotal: number
     langsDone: number
@@ -102,7 +114,6 @@ let liveProcessing: {
 let lastStatusBroadcast = 0
 
 function broadcastStatus(): void {
-    // Throttle: не чаще раз в 500мс
     const now = Date.now()
     if (now - lastStatusBroadcast < 500) return
     lastStatusBroadcast = now
@@ -209,13 +220,20 @@ function hash(value: any): string {
 
 function sleep(ms: number): Promise<void> { return new Promise(r => setTimeout(r, ms)) }
 function shouldTranslate(key: string): boolean { return !SKIP_TRANSLATION_KEYS.includes(key) }
-function toDeepLLang(lang: string): string { return DEEPL_SPECIAL_CODES[lang.toLowerCase()] || lang.toUpperCase() }
+function toDeepLSource(lang: string): string { return DEEPL_SOURCE_CODES[lang.toLowerCase()] || lang.toUpperCase() }
+function toDeepLTarget(lang: string): string { return DEEPL_TARGET_CODES[lang.toLowerCase()] || lang.toUpperCase() }
 function ensureDir(fp: string): void { fs.mkdirSync(path.dirname(fp), { recursive: true }) }
 
 function readJsonSafe<T>(fp: string, fb: T): T {
     try { if (fs.existsSync(fp)) return JSON.parse(fs.readFileSync(fp, 'utf-8')) } catch {} return fb
 }
 function writeJson(fp: string, data: any): void { ensureDir(fp); fs.writeFileSync(fp, JSON.stringify(data, null, 2)) }
+
+function formatTime(sec: number): string {
+    if (sec < 60) return `${sec}с`
+    const m = Math.floor(sec / 60), s = sec % 60
+    return s > 0 ? `${m}м ${s}с` : `${m}м`
+}
 
 // ═══════════════════════════════════════════════════════════════
 // CACHE WARMING
@@ -249,47 +267,189 @@ async function showUsageInfo(force = false): Promise<void> {
     }
 }
 
-async function translateText(text: string, from: string, to: string): Promise<string> {
-    if (!text || typeof text !== 'string' || from === to) return text
-    if (text.startsWith('/') || text.startsWith('http') || text.trim().length === 0) return text
+async function showPageUsage(slug: string): Promise<void> {
+    if (pageCharCount === 0) return
+    const usage = await getDeepLUsage()
+    if (!usage) { console.log(`\n  📈 Страница "${slug}": ${pageCharCount.toLocaleString()} символов`); return }
+    const remaining = usage.character_limit - usage.character_count
+    const pagePct = ((pageCharCount / usage.character_limit) * 100).toFixed(2)
+    const pagesLeft = pageCharCount > 0 ? Math.floor(remaining / pageCharCount) : 0
+    console.log(`\n  📈 Страница "${slug}":`)
+    console.log(`     Потрачено: ${pageCharCount.toLocaleString()} символов (${pagePct}% от лимита)`)
+    console.log(`     Осталось:  ${remaining.toLocaleString()} символов`)
+    console.log(`     ≈ ${pagesLeft} таких же страниц можно ещё перевести`)
+}
 
-    try {
-        const res = await fetch(`${DEEPL_API_URL}/translate`, {
-            method: 'POST',
-            headers: { 'Authorization': `DeepL-Auth-Key ${DEEPL_API_KEY}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: [text], source_lang: toDeepLLang(from), target_lang: toDeepLLang(to) }),
-            signal: AbortSignal.timeout(30000)
-        })
-        if (!res.ok) {
-            const body = await res.text().catch(() => '')
-            const short = body.includes('<html') ? (body.match(/<title>(.*?)<\/title>/)?.[1] || `HTTP ${res.status}`) : body.substring(0, 120)
-            console.warn(`\n    ⚠️ DeepL ${res.status}: ${short}`)
-            if (res.status === 456) { console.error('\n    ❌ DeepL quota!'); await showUsageInfo(true) }
-            throw new TranslationError(`DeepL ${res.status}: ${short}`, res.status)
+// ═══════════════════════════════════════════════════════════════
+// СБОР ПЕРЕВОДИМЫХ СТРОК
+// ═══════════════════════════════════════════════════════════════
+
+function collectTranslatable(obj: any, prefix = ''): TranslatableItem[] {
+    const r: TranslatableItem[] = []
+    if (typeof obj === 'string') {
+        if (obj && !obj.startsWith('/') && !obj.startsWith('http') && obj.trim().length > 0) {
+            r.push({ path: prefix, text: obj })
         }
-        const data = await res.json()
-        requestCount++; await showUsageInfo(); await sleep(TRANSLATE_DELAY)
-        if (data.translations?.[0]?.text) return data.translations[0].text
-        throw new TranslationError('DeepL: empty result')
-    } catch (err) {
-        if (err instanceof TranslationError) throw err
-        throw new TranslationError(`DeepL failed: ${err instanceof Error ? err.message : 'unknown'}`)
+    } else if (Array.isArray(obj)) {
+        obj.forEach((item, i) => {
+            const p = prefix ? `${prefix}[${i}]` : `[${i}]`
+            r.push(...collectTranslatable(item, p))
+        })
+    } else if (typeof obj === 'object' && obj !== null) {
+        for (const [k, v] of Object.entries(obj)) {
+            const p = prefix ? `${prefix}.${k}` : k
+            if (shouldTranslate(k)) r.push(...collectTranslatable(v, p))
+        }
     }
+    return r
 }
 
-async function translateValue(v: any, from: string, to: string): Promise<any> {
-    if (typeof v === 'string') return translateText(v, from, to)
-    if (Array.isArray(v)) { const r = []; for (const i of v) r.push(await translateValue(i, from, to)); return r }
-    if (typeof v === 'object' && v !== null) {
-        const r: Record<string, any> = {}
-        for (const [k, val] of Object.entries(v)) r[k] = shouldTranslate(k) ? await translateValue(val, from, to) : deepClone(val)
-        return r
-    }
-    return v
+function countTranslatableStrings(obj: any): number {
+    return collectTranslatable(obj).length
 }
 
-async function translateObject(obj: any, from: string, to: string): Promise<any> {
-    return translateValue(obj, from, to)
+function showEstimate(totalStrings: number, totalLangs: number): void {
+    const batches = Math.ceil(totalStrings / BATCH_SIZE)
+    const totalRequests = batches * totalLangs
+    const totalSec = Math.ceil(totalRequests * TRANSLATE_DELAY / 1000)
+    console.log(`  ⏱️  ${totalStrings} строк × ${totalLangs} яз. = ${totalRequests} запрос(ов), ~${formatTime(totalSec)}`)
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BATCH ПЕРЕВОД (DeepL принимает массив text[])
+// ═══════════════════════════════════════════════════════════════
+
+async function batchTranslateTexts(texts: string[], from: string, to: string): Promise<string[]> {
+    if (texts.length === 0) return []
+    if (from === to) return [...texts]
+
+    const results: string[] = []
+
+    for (let ci = 0; ci < texts.length; ci += BATCH_SIZE) {
+        const chunk = texts.slice(ci, ci + BATCH_SIZE)
+
+        for (let attempt = 0; attempt <= RATE_LIMIT_RETRIES; attempt++) {
+            try {
+                const res = await fetch(`${DEEPL_API_URL}/translate`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `DeepL-Auth-Key ${DEEPL_API_KEY}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: chunk, source_lang: toDeepLSource(from), target_lang: toDeepLTarget(to) }),
+                    signal: AbortSignal.timeout(120_000)
+                })
+
+                if (res.status === 429) {
+                    if (attempt >= RATE_LIMIT_RETRIES) {
+                        throw new TranslationError(`DeepL 429: rate limit (${RATE_LIMIT_RETRIES} retries exhausted)`, 429)
+                    }
+                    const waitSec = RATE_LIMIT_BACKOFF[attempt] || 120
+                    console.warn(`\n    ⏳ DeepL 429 — ждём ${waitSec}с (попытка ${attempt + 1}/${RATE_LIMIT_RETRIES})...`)
+                    await sleep(waitSec * 1000)
+                    continue
+                }
+
+                if (!res.ok) {
+                    const body = await res.text().catch(() => '')
+                    const short = body.includes('<html') ? (body.match(/<title>(.*?)<\/title>/)?.[1] || `HTTP ${res.status}`) : body.substring(0, 120)
+                    console.warn(`\n    ⚠️ DeepL ${res.status}: ${short}`)
+                    if (res.status === 456) { console.error('\n    ❌ DeepL quota!'); await showUsageInfo(true) }
+                    throw new TranslationError(`DeepL ${res.status}: ${short}`, res.status)
+                }
+
+                const data = await res.json()
+                if (!data.translations || data.translations.length !== chunk.length) {
+                    throw new TranslationError(`DeepL: ожидалось ${chunk.length} переводов, получено ${data.translations?.length || 0}`)
+                }
+
+                const charsInChunk = chunk.reduce((s, t) => s + t.length, 0)
+                pageCharCount += charsInChunk
+                requestCount++
+                await showUsageInfo()
+
+                results.push(...data.translations.map((t: any) => t.text))
+
+                // Пауза после запроса
+                await sleep(TRANSLATE_DELAY)
+                break
+
+            } catch (err) {
+                if (err instanceof TranslationError) throw err
+                throw new TranslationError(`DeepL batch failed: ${err instanceof Error ? err.message : 'unknown'}`)
+            }
+        }
+    }
+
+    return results
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ВЫСОКОУРОВНЕВЫЕ ФУНКЦИИ ПЕРЕВОДА
+// ═══════════════════════════════════════════════════════════════
+
+/** Перевод объекта {meta, pageContent} одним батчем на один язык */
+async function translateSourceData(
+    sourceData: { meta: any; pageContent: any },
+    from: string,
+    to: string
+): Promise<{ meta: any; pageContent: any }> {
+    if (from === to) return deepClone(sourceData)
+
+    const items = collectTranslatable(sourceData)
+    if (items.length === 0) return deepClone(sourceData)
+
+    const translated = await batchTranslateTexts(items.map(i => i.text), from, to)
+
+    const result = deepClone(sourceData)
+    for (let i = 0; i < items.length; i++) {
+        setByPath(result, items[i].path, translated[i])
+    }
+    return result
+}
+
+/** Перевод списка изменённых полей одним батчем на один язык */
+async function translateChangedFields(
+    changes: FieldChange[],
+    from: string,
+    to: string
+): Promise<Map<string, any>> {
+    // Собираем все строки из всех изменённых полей
+    const items: TranslatableItem[] = []
+    const fieldBounds: { fieldIdx: number; start: number; count: number }[] = []
+
+    for (let fi = 0; fi < changes.length; fi++) {
+        const c = changes[fi]
+        const fieldItems = collectTranslatable(c.value, c.path)
+        fieldBounds.push({ fieldIdx: fi, start: items.length, count: fieldItems.length })
+        items.push(...fieldItems)
+    }
+
+    if (items.length === 0) return new Map()
+
+    const translated = await batchTranslateTexts(items.map(i => i.text), from, to)
+
+    // Собираем результат: для каждого изменённого поля восстанавливаем переведённое значение
+    const result = new Map<string, any>()
+
+    for (const { fieldIdx, start, count } of fieldBounds) {
+        const c = changes[fieldIdx]
+        if (count === 1 && items[start].path === c.path) {
+            // Простое строковое поле
+            result.set(c.path, translated[start])
+        } else {
+            // Составное поле (объект/массив) — восстанавливаем структуру
+            const clone = deepClone(c.value)
+            for (let i = 0; i < count; i++) {
+                const fullPath = items[start + i].path
+                // Убираем базовый путь чтобы получить относительный
+                const relPath = fullPath.startsWith(c.path + '.') ? fullPath.slice(c.path.length + 1)
+                    : fullPath.startsWith(c.path + '[') ? fullPath.slice(c.path.length)
+                        : fullPath
+                setByPath(clone, relPath, translated[start + i])
+            }
+            result.set(c.path, clone)
+        }
+    }
+
+    return result
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -359,7 +519,6 @@ function detectScenario(page: PageData): Scenario {
     const hasH = !!page._hashes?.fields, hasTr = !!page.translations
     if (!hasH && !hasTr) return 'new'
     if (hasH && page._hashes!._slug !== page.slug) return 'duplicated'
-
     const missing: string[] = [], broken: string[] = []
     for (const l of languageCodes) {
         const t = page.translations?.[l]
@@ -368,7 +527,6 @@ function detectScenario(page: PageData): Scenario {
     }
     if (broken.length > 0) return 'corrupted'
     if (missing.length > 0) return 'missing-langs'
-
     const cur = computeContentHash(page.meta, page.pageContent)
     if (hasH && page._hashes!._contentHash === cur) return 'unchanged'
     return 'incremental'
@@ -391,7 +549,10 @@ function detectFieldChanges(curH: Record<string, string>, savedH: Record<string,
 
 function ensureTranslationStructure(page: PageData): void {
     if (!page.translations) page.translations = {}
-    for (const l of languageCodes) {
+    // Включаем srcLang — он может не быть в languageCodes
+    const srcLang = page.source_lang || 'en'
+    const allLangs = new Set([...languageCodes, srcLang])
+    for (const l of allLangs) {
         if (!page.translations[l]) page.translations[l] = { meta: {}, pageContent: {} }
         if (!page.translations[l].meta) page.translations[l].meta = {}
         if (!page.translations[l].pageContent) page.translations[l].pageContent = {}
@@ -409,10 +570,16 @@ function syncNonTranslatableField(page: PageData, p: string, val: any): void {
 const recentlySaved = new Set<string>()
 function markAsSaving(fp: string): void {
     const fn = path.basename(fp); recentlySaved.add(fn)
-    setTimeout(() => recentlySaved.delete(fn), 3000)
+    setTimeout(() => recentlySaved.delete(fn), 5000)
 }
 function savePageFile(fp: string, page: PageData): void { markAsSaving(fp); fs.writeFileSync(fp, stringify(page)) }
 function getFileMtime(fp: string): number { try { return fs.statSync(fp).mtimeMs } catch { return 0 } }
+
+// ═══════════════════════════════════════════════════════════════
+// BUSY SET (module-level)
+// ═══════════════════════════════════════════════════════════════
+
+const busy = new Set<string>()
 
 // ═══════════════════════════════════════════════════════════════
 // RETRY + FAILED
@@ -470,6 +637,7 @@ async function processPage(filePath: string, force = false): Promise<boolean> {
 
     console.log(`\n${'─'.repeat(50)}`)
     console.log(`📄 ${fileName}`)
+    pageCharCount = 0
 
     const content = fs.readFileSync(filePath, 'utf-8')
     const page = parse(content) as PageData
@@ -495,7 +663,6 @@ async function processPage(filePath: string, force = false): Promise<boolean> {
     const scenario = force ? 'new' : detectScenario(page)
     console.log(`  📋 Scenario: ${scenario}`)
 
-    // ═══ БЭКАП перед любыми изменениями ═══
     const fullBackup = deepClone(page)
     const targets = languageCodes.filter(l => l !== srcLang)
 
@@ -507,7 +674,9 @@ async function processPage(filePath: string, force = false): Promise<boolean> {
         console.log(`  ${reasons[scenario]} → Полный перевод`)
         await showUsageInfo(true)
 
-        // Скрываем ТОЛЬКО новые стр при ПЕРВОЙ попытке (не retry)
+        const strCount = countTranslatableStrings(sourceData)
+        showEstimate(strCount, targets.length)
+
         const isRetryAttempt = isInRetry(page.slug)
         if (scenario === 'new' && !isRetryAttempt) {
             page._status = 'translating'
@@ -515,7 +684,7 @@ async function processPage(filePath: string, force = false): Promise<boolean> {
             console.log('  🔒 Скрыта до завершения')
         }
 
-        liveProcessing = { slug: page.slug, scenario, stage: 'translating', langsTotal: targets.length, langsDone: 0 }
+        liveProcessing = { slug: page.slug, scenario, stage: 'translating', langsTotal: targets.length, langsDone: 0, fieldsTotal: strCount }
         broadcastStatus()
 
         const newTranslations: Record<string, any> = {}
@@ -524,15 +693,13 @@ async function processPage(filePath: string, force = false): Promise<boolean> {
 
         for (let li = 0; li < targets.length; li++) {
             const lang = targets[li]
-            process.stdout.write(`  → ${lang}...`)
+            process.stdout.write(`  → ${lang} (${strCount} строк)...`)
             liveProcessing.currentLang = lang; liveProcessing.langsDone = li
             broadcastStatus()
 
             try {
-                newTranslations[lang] = {
-                    meta: await translateObject(deepClone(sourceData.meta), srcLang, lang),
-                    pageContent: await translateObject(deepClone(sourceData.pageContent), srcLang, lang),
-                }
+                newTranslations[lang] = await translateSourceData(sourceData, srcLang, lang)
+                liveProcessing.fieldsDone = strCount
                 console.log(' ✓')
             } catch (err) {
                 console.log(' ✗')
@@ -550,7 +717,6 @@ async function processPage(filePath: string, force = false): Promise<boolean> {
             throw new TranslationError(`Full translation failed (${scenario})`)
         }
 
-        // Успех → применяем
         page.translations = newTranslations
         ensureTranslationStructure(page)
         delete page._translationPending
@@ -559,6 +725,7 @@ async function processPage(filePath: string, force = false): Promise<boolean> {
         savePageFile(filePath, page)
         console.log('  🔓 Опубликовано!')
         await warmCache(page.slug)
+        await showPageUsage(page.slug)
         await showUsageInfo(true)
         broadcastStatus()
         return true
@@ -574,7 +741,11 @@ async function processPage(filePath: string, force = false): Promise<boolean> {
         })
         console.log(`  🌍 Языки: ${missing.join(', ')}`)
 
-        liveProcessing = { slug: page.slug, scenario, stage: 'translating', langsTotal: missing.length, langsDone: 0 }
+        const strCount = countTranslatableStrings(sourceData)
+        const langsToTranslate = missing.filter(l => l !== srcLang).length
+        showEstimate(strCount, langsToTranslate)
+
+        liveProcessing = { slug: page.slug, scenario, stage: 'translating', langsTotal: missing.length, langsDone: 0, fieldsTotal: strCount }
         broadcastStatus()
 
         const newLangData: Record<string, any> = {}
@@ -582,15 +753,13 @@ async function processPage(filePath: string, force = false): Promise<boolean> {
 
         for (let li = 0; li < missing.length; li++) {
             const lang = missing[li]
-            process.stdout.write(`  → ${lang}...`)
+            process.stdout.write(`  → ${lang} (${strCount} строк)...`)
             liveProcessing.currentLang = lang; liveProcessing.langsDone = li
             broadcastStatus()
 
             try {
-                newLangData[lang] = lang === srcLang ? deepClone(sourceData) : {
-                    meta: await translateObject(deepClone(sourceData.meta), srcLang, lang),
-                    pageContent: await translateObject(deepClone(sourceData.pageContent), srcLang, lang),
-                }
+                newLangData[lang] = await translateSourceData(sourceData, srcLang, lang)
+                liveProcessing.fieldsDone = strCount
                 console.log(' ✓')
             } catch (err) {
                 console.log(' ✗'); failed = true; break
@@ -613,6 +782,7 @@ async function processPage(filePath: string, force = false): Promise<boolean> {
         savePageFile(filePath, page)
         console.log('  ✅ Языки добавлены!')
         await warmCache(page.slug)
+        await showPageUsage(page.slug)
         broadcastStatus()
         return true
     }
@@ -639,9 +809,17 @@ async function processPage(filePath: string, force = false): Promise<boolean> {
     const toSync = changes.filter(c => c.type !== 'deleted' && !c.needsTranslation)
     const toDelete = changes.filter(c => c.type === 'deleted')
 
-    console.log(`  📝 Изменения: ${toTranslate.length} перевод, ${toSync.length} sync, ${toDelete.length} удалено`)
+    // Считаем реальное кол-во строк для батча
+    let totalStringsToTranslate = 0
+    for (const c of toTranslate) totalStringsToTranslate += collectTranslatable(c.value, c.path).length
 
-    liveProcessing = { slug: page.slug, scenario, stage: 'translating', langsTotal: targets.length, langsDone: 0, fieldsTotal: toTranslate.length, fieldsDone: 0 }
+    console.log(`  📝 Изменения: ${toTranslate.length} полей (${totalStringsToTranslate} строк), ${toSync.length} sync, ${toDelete.length} удалено`)
+
+    if (totalStringsToTranslate > 0) {
+        showEstimate(totalStringsToTranslate, targets.length)
+    }
+
+    liveProcessing = { slug: page.slug, scenario, stage: 'translating', langsTotal: targets.length, langsDone: 0, fieldsTotal: totalStringsToTranslate, fieldsDone: 0 }
     broadcastStatus()
 
     ensureTranslationStructure(page)
@@ -664,29 +842,26 @@ async function processPage(filePath: string, force = false): Promise<boolean> {
     for (const c of toSync) syncNonTranslatableField(page, c.path, c.value)
     if (toSync.length > 0) console.log(`  🔗 Synced ${toSync.length}`)
 
-    // Перевод
+    // Перевод батчем
     if (toTranslate.length > 0) {
         let failed = false
         try {
             for (let li = 0; li < targets.length; li++) {
                 const lang = targets[li]
-                process.stdout.write(`  → ${lang}: `)
+                process.stdout.write(`  → ${lang} (${totalStringsToTranslate} строк)...`)
                 liveProcessing.currentLang = lang; liveProcessing.langsDone = li; liveProcessing.fieldsDone = 0
                 broadcastStatus()
 
-                for (let fi = 0; fi < toTranslate.length; fi++) {
-                    const c = toTranslate[fi]
-                    const translated = await translateValue(c.value, srcLang, lang)
-                    setByPath(page.translations![lang], c.path, translated)
-                    process.stdout.write('.')
-                    liveProcessing.fieldsDone = fi + 1
-                    broadcastStatus()
+                const translated = await translateChangedFields(toTranslate, srcLang, lang)
+                for (const [p, val] of translated) {
+                    setByPath(page.translations![lang], p, val)
                 }
+                liveProcessing.fieldsDone = totalStringsToTranslate
                 console.log(' ✓')
             }
             // Source lang
             for (const c of toTranslate) setByPath(page.translations![srcLang], c.path, deepClone(c.value))
-            console.log(`  📝 Переведено ${toTranslate.length} поле(й)`)
+            console.log(`  📝 Переведено ${toTranslate.length} поле(й) (${totalStringsToTranslate} строк)`)
         } catch (err) {
             failed = true; console.log(' ✗')
             console.error(`\n  ❌ ${err instanceof TranslationError ? err.message : err}`)
@@ -703,7 +878,6 @@ async function processPage(filePath: string, force = false): Promise<boolean> {
 
     liveProcessing = null
 
-    // Проверка: файл не изменился во время перевода?
     const mtimeAfter = getFileMtime(filePath)
     if (mtimeAfter !== mtimeBefore && !recentlySaved.has(path.basename(filePath))) {
         console.log('  ⚠️ Файл изменён во время перевода! Пропуск.')
@@ -716,6 +890,7 @@ async function processPage(filePath: string, force = false): Promise<boolean> {
     savePageFile(filePath, page)
     console.log('  ✅ Сохранено!')
     await warmCache(page.slug)
+    await showPageUsage(page.slug)
     broadcastStatus()
     return true
 }
@@ -725,7 +900,6 @@ async function processPage(filePath: string, force = false): Promise<boolean> {
 // ═══════════════════════════════════════════════════════════════
 
 function loadQueue(): QueueState { return readJsonSafe(QUEUE_FILE, { items: [], processing: false, currentFile: null }) }
-
 function saveQueue(q: QueueState): void { writeJson(QUEUE_FILE, q); writeFullStatus() }
 
 function addToQueue(file: string, force = false): boolean {
@@ -806,9 +980,14 @@ async function processRetries(): Promise<void> {
         const q = loadQueue()
         if (q.items.some(i => i.slug === item.slug && (i.status === 'pending' || i.status === 'processing'))) continue
         if (!fs.existsSync(item.file)) { removeFromRetry(item.slug); continue }
+        const fileName = path.basename(item.file)
+        busy.add(fileName)
         addToQueue(item.file, false)
     }
+
     await processQueue()
+
+    for (const item of due) busy.delete(path.basename(item.file))
 }
 
 async function fixFailed(): Promise<void> {
@@ -824,10 +1003,13 @@ async function fixFailed(): Promise<void> {
     for (const item of [...failed.items]) {
         if (!fs.existsSync(item.file)) { removeFromFailed(item.slug); continue }
         console.log(`\n  🔧 ${item.slug} (было ${item.totalAttempts} попыток)`)
+        const fileName = path.basename(item.file)
+        busy.add(fileName)
         try {
             const changed = await processPage(item.file, true)
             if (changed) { fixed++; removeFromFailed(item.slug); removeFromRetry(item.slug) }
         } catch (e) { still++; console.error(`  ❌ Всё ещё ошибка: ${e}`) }
+        busy.delete(fileName)
     }
 
     console.log(`\n${'═'.repeat(50)}`)
@@ -844,6 +1026,7 @@ async function processAll(force = false): Promise<void> {
     const files = fs.readdirSync(CONTENT_DIR).filter(f => f.endsWith('.yml'))
     console.log(`\n${'═'.repeat(50)}`)
     console.log(`📁 Файлов: ${files.length} | ${force ? 'FORCE' : 'incremental'}`)
+    console.log(`⏱️  Задержка между запросами: ${TRANSLATE_DELAY / 1000}с`)
     await showUsageInfo(true)
     console.log('═'.repeat(50))
     if (force) { saveRetry({ items: [] }); saveFailed({ items: [] }) }
@@ -854,21 +1037,73 @@ async function processAll(force = false): Promise<void> {
 
 async function syncLanguages(): Promise<void> {
     const files = fs.readdirSync(CONTENT_DIR).filter(f => f.endsWith('.yml'))
+    const langSet = new Set(languageCodes)
+
     console.log(`\n${'═'.repeat(50)}`)
     console.log(`🌍 SYNC LANGUAGES: ${languageCodes.join(', ')}`)
+    console.log(`⏱️  Задержка между запросами: ${TRANSLATE_DELAY / 1000}с`)
     await showUsageInfo(true)
     console.log('═'.repeat(50))
 
-    let n = 0
+    let toAdd = 0, cleaned = 0
+
     for (const f of files) {
-        const fp = path.join(CONTENT_DIR, f), pg = parse(fs.readFileSync(fp, 'utf-8')) as PageData
-        if (!pg.meta || !pg.pageContent || !pg.translations) continue
-        const miss = languageCodes.filter(l => { const t = pg.translations?.[l]; return !t?.meta || !t?.pageContent || !t.meta.title || !t.pageContent.mainTitle })
-        if (miss.length === 0) { console.log(`  ✓ ${f}`); continue }
-        addToQueue(fp, false); n++
+        const fp = path.join(CONTENT_DIR, f)
+        const pg = parse(fs.readFileSync(fp, 'utf-8')) as PageData
+        if (!pg.meta || !pg.pageContent) continue
+
+        let fileChanged = false
+
+        // ── Удаление лишних языков ──
+        if (pg.translations) {
+            const extraLangs = Object.keys(pg.translations).filter(l => !langSet.has(l))
+            if (extraLangs.length > 0) {
+                for (const l of extraLangs) delete pg.translations[l]
+                console.log(`  🗑️  ${f}: удалены языки ${extraLangs.join(', ')}`)
+                fileChanged = true; cleaned++
+            }
+        }
+
+        // ── Сохраняем если были только удаления ──
+        if (fileChanged && !pg.translations) {
+            // Все языки удалены — обновляем хэши и сохраняем
+            const sourceData = { meta: pg.meta, pageContent: pg.pageContent }
+            pg._hashes = { _slug: pg.slug, _contentHash: computeContentHash(pg.meta, pg.pageContent), fields: computeFieldHashes(sourceData) }
+            savePageFile(fp, pg)
+        }
+
+        // ── Проверка недостающих языков ──
+        if (!pg.translations && languageCodes.length > 0) {
+            // Нет переводов вообще — нужен полный перевод
+            if (fileChanged) savePageFile(fp, pg)
+            addToQueue(fp, false); toAdd++; continue
+        }
+
+        const miss = languageCodes.filter(l => {
+            const t = pg.translations?.[l]
+            return !t?.meta || !t?.pageContent || !t.meta.title || !t.pageContent.mainTitle
+        })
+
+        if (miss.length > 0) {
+            if (fileChanged) savePageFile(fp, pg)
+            addToQueue(fp, false); toAdd++; continue
+        }
+
+        // ── Только удаления, без добавлений ──
+        if (fileChanged) {
+            const sourceData = { meta: pg.meta, pageContent: pg.pageContent }
+            pg._hashes = { _slug: pg.slug, _contentHash: computeContentHash(pg.meta, pg.pageContent), fields: computeFieldHashes(sourceData) }
+            savePageFile(fp, pg)
+        } else {
+            console.log(`  ✓ ${f}`)
+        }
     }
-    if (n > 0) await processQueue()
-    console.log(`\n📊 Требуют перевода: ${n}`)
+
+    if (toAdd > 0) await processQueue()
+
+    console.log(`\n${'═'.repeat(50)}`)
+    console.log(`📊 Sync: 🗑️ ${cleaned} очищено | 🌍 ${toAdd} на перевод`)
+    console.log('═'.repeat(50))
 }
 
 async function watch(): Promise<void> {
@@ -876,7 +1111,8 @@ async function watch(): Promise<void> {
     console.log('👀 WATCH MODE')
     console.log(`📁 ${CONTENT_DIR}`)
     console.log(`🌍 ${languageCodes.join(', ')}`)
-    console.log(`🔄 Retry: ${RETRY_INTERVAL / 60000} мин / макс. ${MAX_RETRIES}`)
+    console.log(`⏱️  Задержка: ${TRANSLATE_DELAY / 1000}с | Retry: ${RETRY_INTERVAL / 60000} мин / макс. ${MAX_RETRIES}`)
+    console.log(`📦 Batch: до ${BATCH_SIZE} строк за запрос`)
     await showUsageInfo(true)
     console.log('═'.repeat(50) + '\n')
 
@@ -884,13 +1120,12 @@ async function watch(): Promise<void> {
     writeFullStatus()
 
     const debounce = new Map<string, NodeJS.Timeout>()
-    const busy = new Set<string>()
 
     const retryTimer = setInterval(async () => {
         if (isProcessing) return
         const due = getRetryDue()
         if (due.length > 0) { await processRetries(); writeFullStatus(); console.log('\n👀 Watching...') }
-        else writeFullStatus() // обновляем countdown
+        else writeFullStatus()
     }, 30_000)
 
     fs.watch(CONTENT_DIR, async (_, fileName) => {
@@ -914,7 +1149,6 @@ async function watch(): Promise<void> {
             console.log(`\n📝 Изменён: ${fileName}`)
             busy.add(fileName)
 
-            // Ручное изменение сбрасывает retry/failed
             removeFromRetry(slug)
             removeFromFailed(slug)
 
@@ -964,7 +1198,7 @@ else {
     const slug = args.find(a => !a.startsWith('--'))
     if (!slug) {
         console.log(`
-📖 Auto-Translate v5 (DeepL)
+📖 Auto-Translate v6 (DeepL Batch)
 
 Команды:
   --watch              Watch + авто-retry каждые 3 мин
@@ -978,6 +1212,9 @@ else {
   --status             Полный статус
   --usage              Лимиты DeepL
 
+Batch: до ${BATCH_SIZE} строк за 1 запрос к DeepL
+Задержка: ${TRANSLATE_DELAY / 1000}с между запросами
+429 retry: ${RATE_LIMIT_RETRIES}x (${RATE_LIMIT_BACKOFF.join('с, ')}с)
 Retry: каждые ${RETRY_INTERVAL/60000} мин, макс ${MAX_RETRIES} попыток → failed.json → --fix-failed
 `); process.exit(1)
     }

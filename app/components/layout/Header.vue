@@ -48,63 +48,65 @@
                     </svg>
                 </button>
 
-                <Transition name="dropdown">
-                    <div v-if="isOpen" class="lang__dropdown">
-                        <div class="lang__search-wrap">
-                            <div class="lang__search-box">
-                                <svg
-                                    class="lang__search-icon"
-                                    width="14"
-                                    height="14"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    <circle cx="11" cy="11" r="8" />
-                                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                                </svg>
-                                <input
-                                    ref="searchInput"
-                                    v-model="search"
-                                    type="text"
-                                    class="lang__search"
-                                    :placeholder="$t('header.search')"
-                                    @keydown.esc="isOpen = false"
-                                />
-                            </div>
-                        </div>
-
-                        <div
-                            class="lang__grid"
-                            :class="`lang__grid--cols-${columns}`"
-                        >
-                            <div v-if="!filteredLangs.length" class="lang__empty">
-                                {{ $t('header.noResults', 'No results') }}
-                            </div>
-                            <button
-                                v-for="lang in filteredLangs"
-                                :key="lang.code"
-                                class="lang__option"
-                                :class="{ 'lang__option--active': lang.code === currentLang?.code }"
-                                @click="switchLang(lang.code)"
+                <div
+                    class="lang__dropdown"
+                    :class="{ 'lang__dropdown--open': isOpen }"
+                >
+                    <div class="lang__search-wrap">
+                        <div class="lang__search-box">
+                            <svg
+                                class="lang__search-icon"
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
                             >
-                                <img
-                                    :src="getFlagUrl(lang.country, 40)"
-                                    :alt="lang.name"
-                                    class="lang__option-flag"
-                                    width="20"
-                                    height="15"
-                                    loading="lazy"
-                                />
-                                <span class="lang__option-name">{{ lang.name }}</span>
-                                <span class="lang__option-code">{{ lang.code.toUpperCase() }}</span>
-                            </button>
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                            <input
+                                ref="searchInput"
+                                v-model="search"
+                                type="text"
+                                class="lang__search"
+                                :placeholder="$t('header.search')"
+                                @keydown.esc="isOpen = false"
+                            />
                         </div>
                     </div>
-                </Transition>
+
+                    <div
+                        class="lang__grid"
+                        :class="`lang__grid--cols-${columns}`"
+                    >
+                        <div v-if="!filteredLangs.length" class="lang__empty">
+                            {{ $t('header.noResults', 'No results') }}
+                        </div>
+                        <NuxtLink
+                            v-for="lang in filteredLangs"
+                            :key="lang.code"
+                            :to="switchLocalePath(lang.code)"
+                            class="lang__option"
+                            :class="{ 'lang__option--active': lang.code === currentLang?.code }"
+                            @click.prevent="switchLang(lang.code)"
+                        >
+                            <img
+                                :src="getFlagUrl(lang.country, 40)"
+                                :alt="lang.name"
+                                class="lang__option-flag"
+                                width="20"
+                                height="15"
+                                loading="lazy"
+                            />
+                            <span class="lang__option-name">{{ lang.name }}</span>
+                            <span class="lang__option-code">{{ lang.code.toUpperCase() }}</span>
+                        </NuxtLink>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -266,6 +268,19 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside))
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
     overflow: hidden;
     z-index: 1000;
+
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-6px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+}
+
+.lang__dropdown--open {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
 }
 
 /* ── Search ── */
@@ -377,6 +392,7 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside))
     cursor: pointer;
     transition: all 0.15s ease;
     white-space: nowrap;
+    text-decoration: none;
 }
 
 .lang__option:hover {
@@ -410,18 +426,6 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside))
     background: rgba(255, 255, 255, 0.06);
     padding: 2px 6px;
     border-radius: 4px;
-}
-
-/* ── Transition ── */
-.dropdown-enter-active,
-.dropdown-leave-active {
-    transition: all 0.2s ease;
-}
-
-.dropdown-enter-from,
-.dropdown-leave-to {
-    opacity: 0;
-    transform: translateY(-6px);
 }
 
 /* ── Responsive ── */

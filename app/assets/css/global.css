@@ -142,7 +142,7 @@
 
     /* ─── Container ─── */
     --container-max: 55rem;
-    --container-sm: 32rem;
+    --container-sm: 35rem;
     --container-xs: 25rem;
     --container-padding: var(--space-4);
 

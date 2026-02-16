@@ -26,7 +26,7 @@
 
                     <!-- Контент -->
                     <div class="how-to-block__content">
-                        <h2 class="how-to-block__title">{{ block.title }}</h2>
+                        <h3 class="how-to-block__title">{{ block.title }}</h3>
                         <div
                             class="how-to-block__text"
                             v-html="renderContent(block.content)"

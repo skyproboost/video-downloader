@@ -179,7 +179,11 @@ useHead({
         ]
         for (const lang of languages) {
             const prefix = lang.code === defaultLanguage ? '' : `/${lang.code}`
-            links.push({ rel: 'alternate', hreflang: lang.code, href: `${siteUrl}${prefix}/${slug}` })
+            links.push({
+                rel: 'alternate',
+                hreflang: lang.iso,
+                href: `${siteUrl}${prefix}/${slug}`,
+            })
         }
         links.push({ rel: 'alternate', hreflang: 'x-default', href: `${siteUrl}/${slug}` })
         return links
@@ -229,7 +233,7 @@ useHead({
 }
 
 .tool-main__subtitle {
-    font-size: var(--text-2xl);
+    font-size: var(--text-xl);
 }
 
 .tool-main__intro {

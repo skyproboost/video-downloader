@@ -48,13 +48,11 @@ const currentYear = new Date().getFullYear()
 const route = useRoute()
 
 const { data: groupedLinks, refresh } = await useFetch<GroupedLinks[]>('/api/footer-links', {
-    key: 'footer-links',
+    key: `footer-links-${route.path}`,
     default: () => [],
-    getCachedData: () => undefined,
 })
 
 if (import.meta.client) {
-    onMounted(() => refresh())
     watch(() => route.fullPath, () => refresh())
 }
 </script>
@@ -77,6 +75,7 @@ if (import.meta.client) {
     margin: 0 auto var(--space-5);
     padding-bottom: var(--space-5);
     border-bottom: 1px solid var(--color-border-dark);
+    min-width: 100%;
 }
 
 .footer__group-title {
@@ -132,7 +131,7 @@ if (import.meta.client) {
 
 @media (max-width: 400px) {
     .footer__links {
-        gap: var(--space-4);
+        gap: var(--space-6);
     }
 }
 </style>

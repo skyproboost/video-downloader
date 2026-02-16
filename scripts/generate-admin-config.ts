@@ -54,7 +54,8 @@ ${platforms.map(p => `          - { label: "${p.name}", value: "${p.id}" }`).joi
         default: "en"
         hint: "На каком языке заполняете контент. Переводы создаются автоматически."
         options:
-${languages.map(l => `          - { label: "${l.flag} ${l.name}", value: "${l.code}" }`).join('\n')}
+          - { label: "English", value: "en" }
+          - { label: "Русский", value: "ru" }
 
       - name: meta
         label: "🔍 SEO мета-теги"
@@ -106,7 +107,7 @@ ${languages.map(l => `          - { label: "${l.flag} ${l.name}", value: "${l.co
             required: false
 
           - name: intro
-            label: "Вступительный текст"
+            label: "Подпись под инпутом"
             widget: text
             required: false
 
@@ -132,7 +133,7 @@ ${languages.map(l => `          - { label: "${l.flag} ${l.name}", value: "${l.co
                   - name: title
                     label: "Заголовок блока"
                     widget: string
-                    required: true
+                    required: false
                     hint: "Например: Как скачать видео с Ютуба на компьютер бесплатно?"
 
                   - name: content
