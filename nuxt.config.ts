@@ -281,6 +281,11 @@ export default defineNuxtConfig({
                 prerender: false,
                 robots: false,
                 isr: false,
+                security: {
+                    xssValidator: false,
+                    requestSizeLimiter: false,
+                    rateLimiter: false,
+                },
                 headers: {
                     'Cache-Control': 'no-cache, no-store, must-revalidate',
                     'Pragma': 'no-cache'
