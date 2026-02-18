@@ -257,6 +257,15 @@ export default defineNuxtConfig({
         }
     },
 
+    routeRules: {
+        '/admin/**': {
+            security: { xssValidator: false, requestSizeLimiter: false, rateLimiter: false },
+        },
+        '/api/footer-links': {
+            security: { xssValidator: false },
+        },
+    },
+
     // ═══════════════════════════════════════════
     // NITRO — серверные настройки и кэширование
     // ═══════════════════════════════════════════
@@ -266,36 +275,25 @@ export default defineNuxtConfig({
         routeRules: {
             '/__sitemap__/**': { isr: false, headers: { 'Cache-Control': 'public, max-age=0, s-maxage=3600, stale-while-revalidate=600' } },
 
-            // API — без ISR, скрыт от поисковиков
             '/api/**': {
                 headers: {'X-Robots-Tag': 'noindex, nofollow'},
                 isr: false,
             },
 
-            // Статика — долгий кэш, БЕЗ ISR/SSR
             '/_ipx/**': {headers: staticCacheHeaders, isr: false},
             '/_nuxt/**': {headers: staticCacheHeaders, isr: false},
 
-            // Админка — без кэша, без индексации
             '/admin/**': {
                 prerender: false,
                 robots: false,
                 isr: false,
-                security: {
-                    xssValidator: false,
-                    requestSizeLimiter: false,
-                    rateLimiter: false,
-                },
                 headers: {
                     'Cache-Control': 'no-cache, no-store, must-revalidate',
                     'Pragma': 'no-cache'
                 }
             },
 
-            // Главная — пререндер при билде
             '/': {prerender: true},
-
-            // ВСЕ ОСТАЛЬНЫЕ СТРАНИЦЫ — ISR (кэш на 1 час)
             '/**': {isr: 3600},
         },
     },
