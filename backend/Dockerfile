@@ -20,6 +20,8 @@ RUN uv sync --no-dev
 COPY . /app/src/
 RUN uv build .
 
-CMD uv run --no-dev alembic upgrade head && \
-    uv run --no-dev python -m app deploy && \
-    uv run --no-dev python -m app run
+# TODO: restore when DB is needed
+# CMD uv run --no-dev alembic upgrade head && \
+#     uv run --no-dev python -m app deploy && \
+#     uv run --no-dev python -m app run
+CMD uv run --no-dev python -m app run

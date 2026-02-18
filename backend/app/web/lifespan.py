@@ -3,7 +3,8 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.db.base import database
+# TODO: restore when DB is needed
+# from app.db.base import database
 from app.services.redis.lifespan import init_redis, shutdown_redis
 from app.tasks.broker import broker
 
@@ -23,7 +24,8 @@ async def lifespan_setup(
     """
 
     app.middleware_stack = None
-    await database.connect()
+    # TODO: restore when DB is needed
+    # await database.connect()
     init_redis(app)
     if not broker.is_worker_process:
         await broker.startup()
@@ -32,5 +34,6 @@ async def lifespan_setup(
     yield
     if not broker.is_worker_process:
         await broker.shutdown()
-    await database.disconnect()
+    # TODO: restore when DB is needed
+    # await database.disconnect()
     await shutdown_redis(app)

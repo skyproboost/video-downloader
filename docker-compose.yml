@@ -1,51 +1,45 @@
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: downloader-app:${VERSION:-latest}
+    container_name: downloader-app
+    hostname: downloader-app
+    restart: always
+    environment:
+      NODE_ENV: production
+      NUXT_PUBLIC_SITE_URL: ${SITE_URL:-http://localhost:3000}
+    ports:
+      - 3000:3000
+    healthcheck:
+      test: wget -qO- http://localhost:3000 || exit 1
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      - default
+
   api: &backend_app
     build:
       context: ./backend
-      dockerfile: ./Dockerfile
+      dockerfile: Dockerfile
     image: downloader-api:${VERSION:-latest}
     container_name: downloader-api
     hostname: downloader-api
     restart: always
     env_file:
-      - .env
+      - backend/.env
     depends_on:
-      db:
-        condition: service_healthy
       redis:
         condition: service_healthy
     ports:
-      - ${PORT}:${PORT}
+      - ${PORT:-8000}:${PORT:-8000}
     volumes:
       - ./logs:/app/logs
       - downloads:/tmp/downloads
     healthcheck:
-      test: curl localhost:${PORT}/api/health
-      interval: 2s
-      timeout: 3s
-      retries: 40
-    networks:
-      - default
-
-  db:
-    image: postgres:17.2-alpine
-    hostname: downloader-db
-    container_name: downloader-db
-    env_file:
-      - .env
-    environment:
-      POSTGRES_PASSWORD: ${DB_PASS} 
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_DB: ${DB_BASE}
-      PGPORT: ${DB_PORT}
-    volumes:
-      - downloader-db-data:/var/lib/postgresql/data
-      - ./backend/db-init-scripts:/docker-entrypoint-initdb.d:ro  # To create RO user
-    ports:
-      - ${DB_PORT}:${DB_PORT}
-    restart: always
-    healthcheck:
-      test: pg_isready -d ${DB_BASE}
+      test: curl localhost:${PORT:-8000}/api/health
       interval: 2s
       timeout: 3s
       retries: 40
@@ -73,14 +67,12 @@ services:
     container_name: downloader-worker
     build:
       context: ./backend
-      dockerfile: ./Dockerfile
+      dockerfile: Dockerfile
     command: uv run -- taskiq worker app.tasks.broker:broker app.tasks
     env_file:
-      - .env
+      - backend/.env
     restart: always
     depends_on:
-      db:
-        condition: service_healthy
       redis:
         condition: service_healthy
     volumes:
@@ -90,14 +82,12 @@ services:
     container_name: downloader-scheduler
     build:
       context: ./backend
-      dockerfile: ./Dockerfile
+      dockerfile: Dockerfile
     command: uv run -- taskiq scheduler app.tasks.broker:scheduler app.tasks
     env_file:
-      - .env
+      - backend/.env
     restart: always
     depends_on:
-      db:
-        condition: service_healthy
       redis:
         condition: service_healthy
     volumes:
@@ -105,8 +95,6 @@ services:
 
 
 volumes:
-  downloader-db-data:
-    external: true
   downloads:
 
 networks:

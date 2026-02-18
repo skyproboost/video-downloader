@@ -1,13 +1,21 @@
 # ═══════════════════════════════════════════════════════════════════════════
-# GitHub Actions — Zero-Downtime Deploy
+# GitHub Actions — Docker Compose Deploy via Tailscale
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# Секреты в GitHub (Settings → Secrets → Actions):
-#   - VDS_HOST      — IP сервера
-#   - VDS_USER      — SSH пользователь
-#   - VDS_SSH_KEY   — приватный SSH ключ
-#   - VDS_PORT      — порт SSH (обычно 22)
-#   - SITE_URL      — https://your-domain.com (для билда Nuxt)
+# Secrets in GitHub (Settings → Secrets → Actions):
+#   - TS_OAUTH_CLIENT_ID     — Tailscale OAuth client ID
+#   - TS_OAUTH_SECRET        — Tailscale OAuth client secret
+#   - VDS_HOST               — Server's Tailscale IP or MagicDNS hostname
+#   - VDS_USER               — SSH user on the server
+#   - VDS_SSH_KEY            — Private SSH key
+#   - SITE_URL               — https://your-domain.com (for Nuxt build)
+#
+# Tailscale setup:
+#   1. Create an OAuth client at https://login.tailscale.com/admin/settings/oauth
+#      with "Devices: Write" scope and a tag (e.g. tag:ci)
+#   2. Add an ACL rule allowing tag:ci to access your server over SSH (port 22)
+#   3. Set VDS_HOST to the server's Tailscale IP (e.g. 100.x.y.z) or
+#      MagicDNS name (e.g. my-server)
 #
 # ═══════════════════════════════════════════════════════════════════════════
 
@@ -16,7 +24,7 @@ name: 🚀 Deploy
 on:
   push:
     branches: [main, master]
-  workflow_dispatch:  # Ручной запуск
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -24,120 +32,79 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🔐 Deploy via SSH
+      - name: 🔌 Connect to Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - name: 🔐 Deploy via SSH over Tailscale
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VDS_HOST }}
           username: ${{ secrets.VDS_USER }}
           key: ${{ secrets.VDS_SSH_KEY }}
-          port: ${{ secrets.VDS_PORT }}
+          port: 22
           script_stop: true
           script: |
             set -e
+
+            APP_DIR="/home/debian/video-downloader"
 
             echo "═══════════════════════════════════════════════════════"
             echo "🚀 DEPLOYMENT STARTED"
             echo "═══════════════════════════════════════════════════════"
 
-            APP_DIR="/var/www/video-downloader"
-            BLUE_DIR="/var/www/video-downloader-blue"
-            GREEN_DIR="/var/www/video-downloader-green"
-
             # ─────────────────────────────────────────────────────────
-            # 1. Определяем куда деплоить (blue ↔ green)
+            # 1. Clone or update repository
             # ─────────────────────────────────────────────────────────
-            if [ -L "$APP_DIR" ]; then
-              CURRENT=$(readlink -f "$APP_DIR")
-            else
-              CURRENT=""
-            fi
-
-            if [ "$CURRENT" = "$BLUE_DIR" ]; then
-              TARGET_DIR="$GREEN_DIR"
-              TARGET_NAME="green"
-            else
-              TARGET_DIR="$BLUE_DIR"
-              TARGET_NAME="blue"
-            fi
-
-            echo "📍 Active: $(basename "$CURRENT" 2>/dev/null || echo 'none')"
-            echo "🎯 Deploy to: $TARGET_NAME"
-
-            # ─────────────────────────────────────────────────────────
-            # 2. Готовим директорию
-            # ─────────────────────────────────────────────────────────
-            if [ ! -d "$TARGET_DIR/.git" ]; then
+            if [ ! -d "$APP_DIR/.git" ]; then
               echo "📁 Cloning repository..."
-              rm -rf "$TARGET_DIR"
-              git clone "$(cd "$CURRENT" 2>/dev/null && git remote get-url origin)" "$TARGET_DIR"
+              git clone "$(cd "$APP_DIR" 2>/dev/null && git remote get-url origin || echo 'REPO_URL_MISSING')" "$APP_DIR"
             fi
 
-            cd "$TARGET_DIR"
+            cd "$APP_DIR"
 
-            # ─────────────────────────────────────────────────────────
-            # 3. Получаем код
-            # ─────────────────────────────────────────────────────────
             echo "📥 Pulling latest code..."
             git fetch origin
             git reset --hard origin/main || git reset --hard origin/master
             echo "   Commit: $(git rev-parse --short HEAD)"
 
             # ─────────────────────────────────────────────────────────
-            # 4. ENV для билда (ВАЖНО для Nuxt!)
+            # 2. ENV
             # ─────────────────────────────────────────────────────────
-            echo "⚙️ Creating .env..."
-            cat > .env << 'ENVFILE'
-            NODE_ENV=production
-            NUXT_PUBLIC_SITE_URL=${{ secrets.SITE_URL }}
-            ENVFILE
+            echo "⚙️ Writing .env..."
+            cat > .env << EOF
+            SITE_URL=${{ secrets.SITE_URL }}
+            EOF
 
             # ─────────────────────────────────────────────────────────
-            # 5. Установка зависимостей
+            # 3. Build & restart
             # ─────────────────────────────────────────────────────────
-            echo "📦 Installing dependencies..."
-            npm ci --prefer-offline
+            echo "🔨 Building and starting containers..."
+            docker compose up --build -d --remove-orphans
 
             # ─────────────────────────────────────────────────────────
-            # 6. Генерация конфигов + Билд
+            # 4. Cleanup old images
             # ─────────────────────────────────────────────────────────
-            echo "🔧 Generating admin config..."
-            npx tsx scripts/generate-admin-config.ts
-            mkdir -p logs
-
-            echo "🔨 Building Nuxt..."
-            npm run build
+            echo "🧹 Pruning old images..."
+            docker image prune -f
 
             # ─────────────────────────────────────────────────────────
-            # 7. Переключение (атомарно!)
-            # ─────────────────────────────────────────────────────────
-            echo "🔄 Switching symlink..."
-            ln -sfn "$TARGET_DIR" "${APP_DIR}.tmp"
-            mv -Tf "${APP_DIR}.tmp" "$APP_DIR"
-
-            # ─────────────────────────────────────────────────────────
-            # 8. Перезапуск PM2 (graceful)
-            # ─────────────────────────────────────────────────────────
-            echo "♻️ Reloading PM2..."
-            cd "$APP_DIR"
-            pm2 reload ecosystem.config.cjs --env production --update-env || \
-            pm2 start ecosystem.config.cjs --env production
-            pm2 save
-
-            # ─────────────────────────────────────────────────────────
-            # 9. Health check
+            # 5. Health check
             # ─────────────────────────────────────────────────────────
             echo "🏥 Health check..."
-            sleep 3
+            sleep 5
             if curl -sf http://localhost:3000 > /dev/null; then
-              echo "✅ Site is UP"
+              echo "✅ Frontend is UP"
             else
-              echo "⚠️ Site may have issues, check logs"
+              echo "⚠️ Frontend may have issues, check logs"
             fi
 
             echo ""
             echo "═══════════════════════════════════════════════════════"
             echo "✅ DEPLOYMENT COMPLETE"
-            echo "   Active: $TARGET_NAME"
             echo "   Commit: $(git rev-parse --short HEAD)"
             echo "═══════════════════════════════════════════════════════"
-            pm2 status
+            docker compose ps
