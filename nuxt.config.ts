@@ -294,7 +294,7 @@ export default defineNuxtConfig({
             },
 
             '/': {prerender: true},
-            '/**': {isr: 3600},
+            '/**': {isr: 600 },
         },
     },
 
