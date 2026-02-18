@@ -210,6 +210,7 @@ export default defineNuxtConfig({
         xssValidator: {
             stripIgnoreTag: true,
             stripIgnoreTagBody: ['script', 'style'],
+            exclude: ['/admin'],
             css: false,
             escapeHtml: true,
         },
