@@ -3,6 +3,7 @@ from app.utils.common import verify_api_key
 from app.services.redis.rate_limit import rate_limit_download
 from app.tasks.download_tasks import download_video as download_video_task
 import yt_dlp
+from loguru import logger
 
 router = APIRouter(tags=["download"])
 
@@ -11,21 +12,25 @@ router = APIRouter(tags=["download"])
 async def download_video_link(url: str) -> dict:
     """Get direct video URL without downloading."""
 
-    ydl_opts = {
-        "format": "best[vcodec!=none][acodec!=none]/best*",
-        "quiet": True,
-    }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(url, download=False)
+    try:
+        ydl_opts = {
+            "format": "best[vcodec!=none][acodec!=none]/best*",
+            "quiet": True,
+        }
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=False)
 
-    return {
-        "url": info["url"],
-        "title": info.get("title"),
-        "duration": info.get("duration"),
-        "thumbnail": info.get("thumbnail"),
-        "ext": info.get("ext"),
-        "http_headers": info.get("http_headers"),
-    }
+        return {
+            "url": info["url"],
+            "title": info.get("title"),
+            "duration": info.get("duration"),
+            "thumbnail": info.get("thumbnail"),
+            "ext": info.get("ext"),
+            "http_headers": info.get("http_headers"),
+        }
+    except Exception as exc:
+        logger.error(f"Failed to get download link: {str(exc)}")
+        raise
 
 
 @router.post("/download", dependencies=[Depends(verify_api_key)])
