@@ -264,6 +264,8 @@ export default defineNuxtConfig({
     nitro: {
         compressPublicAssets: true,
         routeRules: {
+            '/__sitemap__/**': { isr: false, headers: { 'Cache-Control': 'public, max-age=0, s-maxage=3600, stale-while-revalidate=600' } },
+
             // API — без ISR, скрыт от поисковиков
             '/api/**': {
                 headers: {'X-Robots-Tag': 'noindex, nofollow'},
