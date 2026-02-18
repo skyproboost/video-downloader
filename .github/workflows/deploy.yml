@@ -50,7 +50,6 @@ jobs:
           script: |
             bash << 'EOF'
             set -e
-
             APP_DIR="/home/debian/video-downloader"
 
             echo "═══════════════════════════════════════════════════════"
