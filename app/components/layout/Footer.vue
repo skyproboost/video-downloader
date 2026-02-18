@@ -45,16 +45,11 @@ interface GroupedLinks {
 
 const localePath = useLocalePath()
 const currentYear = new Date().getFullYear()
-const route = useRoute()
 
-const { data: groupedLinks, refresh } = await useFetch<GroupedLinks[]>('/api/footer-links', {
-    key: `footer-links-${route.path}`,
+const { data: groupedLinks } = await useFetch<GroupedLinks[]>('/api/footer-links', {
+    key: 'footer-links',
     default: () => [],
 })
-
-if (import.meta.client) {
-    watch(() => route.fullPath, () => refresh())
-}
 </script>
 
 <style scoped>

@@ -83,7 +83,7 @@ const config = useRuntimeConfig()
 
 const slug = route.params.slug as string
 const siteUrl = config.public.siteUrl as string || 'localhost:3000'
-const siteName = 'VideoDownloader'
+const siteName = 'aDownloader'
 
 // Игнорируем запросы к файлам
 if (/^(_|api)|\.(js|json|css|map|ico|png|jpg|svg|webp|txt|xml)$/i.test(slug)) {
