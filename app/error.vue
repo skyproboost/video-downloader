@@ -26,12 +26,12 @@
 <script setup lang="ts">
 import type { NuxtError } from '#app'
 import { defaultLanguage } from '@/../config/languages'
-import { languageCodes } from '@/../config/languages'
 
 const props = defineProps<{ error: NuxtError }>()
 
 const i18n = tryUseI18n()
 const t = i18n?.t ?? ((key: string) => key)
+const currentLocale = i18n?.locale?.value
 
 const code = computed(() => props.error?.statusCode || 500)
 const is404 = computed(() => code.value === 404)
@@ -47,12 +47,25 @@ const errorDescription = computed(() =>
 const backHomeText = computed(() => t('errors.backHome'))
 const retryText = computed(() => t('errors.retry'))
 
-// Определяем локаль из текущего URL
+// Определяем локаль из i18n или URL
 const homeUrl = computed(() => {
-    const path = import.meta.client ? window.location.pathname : useRequestURL().pathname
-    const firstSegment = path.split('/')[1] || ''
-    const isLocale = languageCodes.includes(firstSegment) && firstSegment !== defaultLanguage
-    return isLocale ? `/${firstSegment}` : '/'
+    // Если i18n определил локаль
+    if (currentLocale && currentLocale !== defaultLanguage) {
+        return `/${currentLocale}`
+    }
+
+    // Fallback: берём из URL
+    let pathname = '/'
+    try {
+        pathname = import.meta.client ? window.location.pathname : useRequestURL().pathname
+    } catch {
+        return '/'
+    }
+    const firstSegment = pathname.split('/')[1] || ''
+    if (/^[a-z]{2,3}$/.test(firstSegment) && firstSegment !== defaultLanguage) {
+        return `/${firstSegment}`
+    }
+    return '/'
 })
 
 const handleRetry = () => {
