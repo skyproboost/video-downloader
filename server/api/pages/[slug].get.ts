@@ -16,7 +16,13 @@ interface PageContent {
     intro?: string
     how_to?: {
         title: string
-        steps: Array<{
+        blocks?: Array<{
+            title?: string
+            content: string
+            image?: string
+            imageAlt?: string
+        }>
+        steps?: Array<{
             title: string
             description: string
             image?: string
@@ -52,16 +58,29 @@ interface PageData {
     _hashes?: Record<string, any>
 }
 
-// Вычисляем путь один раз при старте сервера
-const ROOT_DIR = process.cwd().endsWith('.output')
-    ? resolve(process.cwd(), '..')
-    : process.cwd()
+// ═══════════════════════════════════════════════════
+// Определяем корень проекта — работает и в dev, и в prod
+// В dev: process.cwd() = /project
+// В prod: process.cwd() = /project/.output/server, нужно подняться на 2 уровня
+// ═══════════════════════════════════════════════════
+function resolveProjectRoot(): string {
+    const cwd = process.cwd()
 
-const PAGES_DIR = join(ROOT_DIR, 'content', 'pages')
+    // Если cwd содержит .output — отрезаем всё начиная с .output
+    const outputIdx = cwd.indexOf('.output')
+    if (outputIdx !== -1) {
+        return cwd.substring(0, outputIdx).replace(/[\\/]+$/, '')
+    }
+
+    return cwd
+}
+
+const PROJECT_ROOT = resolveProjectRoot()
+const PAGES_DIR = join(PROJECT_ROOT, 'content', 'pages')
 
 // Кэш в памяти
 const cache = new Map<string, { data: PageData; timestamp: number }>()
-const CACHE_TTL = 30 * 1000  // 30 секунд
+const CACHE_TTL = 30 * 1000
 const isDev = process.env.NODE_ENV !== 'production'
 
 // Валидация slug
@@ -70,7 +89,7 @@ const IGNORED_EXTENSIONS = /\.(js|json|css|map|ico|png|jpg|svg|webp|txt|xml)$/i
 
 export default defineEventHandler(async (event) => {
     // Защита от внешних запросов в production
-    if (process.env.NODE_ENV === 'production') {
+    if (!isDev) {
         const secFetch = getRequestHeader(event, 'sec-fetch-site')
         if (secFetch === 'cross-site') {
             throw createError({ statusCode: 403, message: 'Forbidden' })
@@ -100,7 +119,6 @@ export default defineEventHandler(async (event) => {
     if (!isDev) {
         const cached = cache.get(slug)
         if (cached && (now - cached.timestamp) < CACHE_TTL) {
-            // Проверяем статус даже из кэша
             if (cached.data._status === 'translating') {
                 throw createError({
                     statusCode: 404,
@@ -125,9 +143,7 @@ export default defineEventHandler(async (event) => {
         const content = await readFile(filePath, 'utf-8')
         const page = parse(content) as PageData
 
-        // ═══════════════════════════════════════════════════════════
-        // ПРОВЕРКА: страница ещё переводится?
-        // ═══════════════════════════════════════════════════════════
+        // Проверка: страница ещё переводится?
         if (page._status === 'translating') {
             throw createError({
                 statusCode: 404,
@@ -149,7 +165,7 @@ export default defineEventHandler(async (event) => {
 
         return page
     } catch (e) {
-        // Если это наша ошибка (page is being prepared) — пробрасываем
+        // Если это наша ошибка — пробрасываем
         if (e && typeof e === 'object' && 'statusCode' in e) {
             throw e
         }

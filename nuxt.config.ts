@@ -1,5 +1,7 @@
 import {languages, defaultLanguage} from './config/languages'
 import cssPurge from 'vite-plugin-purgecss'
+import { resolve } from 'node:path'
+import { cp } from 'node:fs/promises'
 
 const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 const isProduction = process.env.NODE_ENV === 'production'
@@ -239,6 +241,20 @@ export default defineNuxtConfig({
         treeshakeClientOnly: true,
         asyncContext: true,
         typedPages: true,
+    },
+
+    hooks: {
+        async 'nitro:build:public-assets'() {
+            const src = resolve(__dirname, 'content/pages')
+            const dest = resolve(__dirname, '.output/content/pages')
+
+            try {
+                await cp(src, dest, { recursive: true })
+                console.log('✅ content/pages скопированы в .output')
+            } catch (e) {
+                console.error('❌ Ошибка копирования content/pages:', e)
+            }
+        }
     },
 
     // ═══════════════════════════════════════════
