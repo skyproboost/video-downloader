@@ -24,7 +24,7 @@
             <div class="footer__bottom">
                 <p class="footer__description">{{ $t('footer.description') }}</p>
                 <p class="footer__copy">
-                    © {{ currentYear }} VideoDownloader. {{ $t('footer.rights') }}
+                    © {{ currentYear }} aDownloader. {{ $t('footer.rights') }}
                 </p>
             </div>
         </div>
