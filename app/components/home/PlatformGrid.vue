@@ -5,6 +5,7 @@
                 v-for="platform in filteredPlatforms"
                 :key="platform.id"
                 :to="localePath(`/${platform.id}`)"
+                :title="platform.id"
                 :prefetch="false"
                 :class="['platform-grid__card', `platform-grid__card--${platform.id}`]"
             >

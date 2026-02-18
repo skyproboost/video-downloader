@@ -12,6 +12,7 @@
                         <li v-for="link in group.links" :key="link.slug">
                             <NuxtLink
                                 :to="localePath(`/${link.slug}`)"
+                                :title="link.slug"
                                 class="footer__link"
                             >
                                 {{ link.text }}

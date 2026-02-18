@@ -91,6 +91,7 @@
                             :key="lang.code"
                             :to="switchLocalePath(lang.code)"
                             class="lang__option"
+                            :title="lang.name"
                             :class="{ 'lang__option--active': lang.code === currentLang?.code }"
                             @click.prevent="switchLang(lang.code)"
                         >
