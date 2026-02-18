@@ -7,7 +7,7 @@
             <p class="error-description">{{ errorDescription }}</p>
 
             <div class="error-actions">
-                <a href="/" class="error-link error-link--primary" @click.prevent="handleBack">
+                <a :href="homeUrl" class="error-link error-link--primary">
                     {{ backHomeText }}
                 </a>
                 <a
@@ -25,40 +25,37 @@
 
 <script setup lang="ts">
 import type { NuxtError } from '#app'
+import { defaultLanguage } from '@/../config/languages'
+import { languageCodes } from '@/../config/languages'
 
 const props = defineProps<{ error: NuxtError }>()
 
-// Fallback тексты если i18n не загрузился
-const fallbacks = {
-    backHome: 'Back to Home',
-    retry: 'Try again',
-    404: { title: 'Page Not Found', description: 'The page you are looking for does not exist.' },
-    500: { title: 'Server Error', description: 'Something went wrong. Please try again later.' }
-}
-
-// Безопасный доступ к i18n
 const i18n = tryUseI18n()
-const t = i18n?.t ?? (() => null)
+const t = i18n?.t ?? ((key: string) => key)
 
 const code = computed(() => props.error?.statusCode || 500)
 const is404 = computed(() => code.value === 404)
 
-const errorTitle = computed(() => {
-    const key = is404.value ? 'errors.404.title' : 'errors.500.title'
-    return t(key) ?? (is404.value ? fallbacks[404].title : fallbacks[500].title)
+const errorTitle = computed(() =>
+    t(is404.value ? 'errors.404.title' : 'errors.500.title')
+)
+
+const errorDescription = computed(() =>
+    t(is404.value ? 'errors.404.description' : 'errors.500.description')
+)
+
+const backHomeText = computed(() => t('errors.backHome'))
+const retryText = computed(() => t('errors.retry'))
+
+// Определяем локаль из текущего URL
+const homeUrl = computed(() => {
+    const path = import.meta.client ? window.location.pathname : useRequestURL().pathname
+    const firstSegment = path.split('/')[1] || ''
+    const isLocale = languageCodes.includes(firstSegment) && firstSegment !== defaultLanguage
+    return isLocale ? `/${firstSegment}` : '/'
 })
 
-const errorDescription = computed(() => {
-    const key = is404.value ? 'errors.404.description' : 'errors.500.description'
-    return t(key) ?? (is404.value ? fallbacks[404].description : fallbacks[500].description)
-})
-
-const backHomeText = computed(() => t('errors.backHome') ?? fallbacks.backHome)
-const retryText = computed(() => t('errors.retry') ?? fallbacks.retry)
-
-const handleBack = () => clearError({ redirect: '/' })
 const handleRetry = () => {
-    clearError()
     window.location.reload()
 }
 
