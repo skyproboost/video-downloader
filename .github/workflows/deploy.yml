@@ -47,9 +47,10 @@ jobs:
           key: ${{ secrets.VDS_SSH_KEY }}
           port: 22
           script_stop: true
+          interpreter: /bin/bash
           script: |
-            bash << 'EOF'
             set -e
+
             APP_DIR="/home/debian/video-downloader"
 
             echo "═══════════════════════════════════════════════════════"
@@ -99,5 +100,3 @@ jobs:
             echo "✅ DEPLOYMENT COMPLETE"
             echo "   Commit: $(git rev-parse --short HEAD)"
             echo "═══════════════════════════════════════════════════════"
-
-            EOF
