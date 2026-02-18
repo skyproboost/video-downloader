@@ -39,16 +39,18 @@ jobs:
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
 
-      - name: 🔐 Deploy via SSH over Tailscale
-        uses: appleboy/ssh-action@v1.0.3
+      - name: 🔑 Load SSH key
+        uses: webfactory/ssh-agent@v0.9.0
         with:
-          host: ${{ secrets.VDS_HOST }}
-          username: ${{ secrets.VDS_USER }}
-          key: ${{ secrets.VDS_SSH_KEY }}
-          port: 22
-          script_stop: true
-          interpreter: /bin/bash
-          script: |
+          ssh-private-key: ${{ secrets.VDS_SSH_KEY }}
+
+      - name: 🔐 Deploy via SSH over Tailscale
+        env:
+          VDS_HOST: ${{ secrets.VDS_HOST }}
+          VDS_USER: ${{ secrets.VDS_USER }}
+          SITE_URL: ${{ secrets.SITE_URL }}
+        run: |
+          ssh -o StrictHostKeyChecking=no ${VDS_USER}@${VDS_HOST} bash -s <<'DEPLOY_SCRIPT'
             set -e
             APP_DIR="/home/debian/video-downloader"
 
@@ -99,3 +101,4 @@ jobs:
             echo "✅ DEPLOYMENT COMPLETE"
             echo "   Commit: $(git rev-parse --short HEAD)"
             echo "═══════════════════════════════════════════════════════"
+          DEPLOY_SCRIPT
