@@ -19,6 +19,7 @@ interface SitemapUrl {
     changefreq: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never'
     priority: number
     images?: SitemapImage[]
+    _sitemap?: string
 }
 
 interface PageData {
@@ -33,11 +34,16 @@ interface PageData {
 // КОНФИГУРАЦИЯ
 // ═══════════════════════════════════════════════════════════════
 
-const CACHE_TTL = 5 * 60 * 1000 // 5 минут
+const CACHE_TTL = 5 * 60 * 1000
 const IMAGE_REGEX = /\.(?:jpe?g|png|gif|webp|avif|svg)$/i
 const isDev = process.env.NODE_ENV !== 'production'
 
 let cache: { data: SitemapUrl[]; timestamp: number } | null = null
+
+// Маппинг code → iso для имён sitemap'ов (en-US.xml, ru-RU.xml)
+// @nuxtjs/sitemap + i18n именует файлы по iso коду локали
+import { languages } from '@/../config/languages'
+const codeToIso = Object.fromEntries(languages.map(l => [l.code, l.iso]))
 
 // ═══════════════════════════════════════════════════════════════
 // УТИЛИТЫ
@@ -47,18 +53,10 @@ function formatDate(date: Date): string {
     return date.toISOString().split('T')[0]
 }
 
-function buildUrl(baseUrl: string, locale: string, slug?: string): string {
-    const parts = [baseUrl]
-
-    if (locale !== defaultLanguage) {
-        parts.push(locale)
-    }
-
-    if (slug) {
-        parts.push(slug)
-    }
-
-    return parts.join('/').replace(/\/+/g, '/').replace(':/', '://')
+function buildUrl(locale: string, slug?: string): string {
+    const parts = locale === defaultLanguage ? [''] : ['', locale]
+    if (slug) parts.push(slug)
+    return parts.join('/') || '/'
 }
 
 function collectImages(obj: unknown, baseUrl: string, images: Set<string>): void {
@@ -81,7 +79,6 @@ function collectImages(obj: unknown, baseUrl: string, images: Set<string>): void
 function getPagesDir(): string {
     const cwd = process.cwd()
 
-    // В production .output может быть cwd
     if (cwd.endsWith('.output') || cwd.includes('.output')) {
         return resolve(cwd, '..', 'content/pages')
     }
@@ -101,7 +98,6 @@ async function processPage(filePath: string, baseUrl: string): Promise<SitemapUr
 
     const page = parse(content) as PageData
 
-    // Пропускаем страницы без slug или в процессе перевода
     if (!page?.slug || page._status === 'translating') {
         return []
     }
@@ -109,7 +105,6 @@ async function processPage(filePath: string, baseUrl: string): Promise<SitemapUr
     const lastmod = formatDate(stats.mtime)
     const images = new Set<string>()
 
-    // Собираем картинки
     if (page.meta?.ogImage) {
         const og = page.meta.ogImage
         images.add(og.startsWith('/') ? `${baseUrl}${og}` : og)
@@ -118,10 +113,8 @@ async function processPage(filePath: string, baseUrl: string): Promise<SitemapUr
     collectImages(page.pageContent, baseUrl, images)
 
     if (page.translations) {
-        for (const lang of languageCodes) {
-            const trans = page.translations[lang]
+        for (const trans of Object.values(page.translations)) {
             if (!trans) continue
-
             if (trans.meta?.ogImage) {
                 const og = trans.meta.ogImage
                 images.add(og.startsWith('/') ? `${baseUrl}${og}` : og)
@@ -135,12 +128,13 @@ async function processPage(filePath: string, baseUrl: string): Promise<SitemapUr
         ? [...images].map(loc => ({ loc, title }))
         : undefined
 
-    // Генерируем URL для всех языков
+    // URL для каждой локали, привязанный к своему sitemap через _sitemap
     return languageCodes.map(locale => ({
-        loc: buildUrl(baseUrl, locale, page.slug),
+        loc: buildUrl(locale, page.slug),
         lastmod,
         changefreq: 'weekly' as const,
         priority: 0.8,
+        _sitemap: codeToIso[locale] || locale,
         ...(sitemapImages && { images: sitemapImages }),
     }))
 }
@@ -154,12 +148,13 @@ async function generateSitemap(): Promise<SitemapUrl[]> {
     const today = formatDate(new Date())
     const pagesDir = getPagesDir()
 
-    // Главные страницы
+    // Главные страницы — каждая в свой sitemap
     const homeUrls: SitemapUrl[] = languageCodes.map(locale => ({
-        loc: buildUrl(baseUrl, locale),
+        loc: buildUrl(locale),
         lastmod: today,
         changefreq: 'daily' as const,
         priority: 1.0,
+        _sitemap: codeToIso[locale] || locale,
     }))
 
     try {
@@ -176,7 +171,6 @@ async function generateSitemap(): Promise<SitemapUrl[]> {
             return homeUrls
         }
 
-        // Параллельная обработка
         const results = await Promise.all(
             ymlFiles.map(file =>
                 processPage(join(pagesDir, file), baseUrl).catch(err => {
@@ -186,31 +180,18 @@ async function generateSitemap(): Promise<SitemapUrl[]> {
             )
         )
 
-        const pageUrls = results.flat()
+        const allUrls = [...homeUrls, ...results.flat()]
 
-        // Объединяем и дедуплицируем по loc
-        const allUrls = [...homeUrls, ...pageUrls]
-        const seen = new Set<string>()
-        const uniqueUrls = allUrls.filter(url => {
-            if (seen.has(url.loc)) {
-                console.warn(`⚠️ Sitemap: duplicate URL removed: ${url.loc}`)
-                return false
-            }
-            seen.add(url.loc)
-            return true
-        })
-
-        // Сортировка: сначала по приоритету (desc), потом по URL (asc)
-        uniqueUrls.sort((a, b) => {
+        allUrls.sort((a, b) => {
             if (b.priority !== a.priority) return b.priority - a.priority
             return a.loc.localeCompare(b.loc)
         })
 
         if (isDev) {
-            console.log(`✅ Sitemap: generated ${uniqueUrls.length} URLs`)
+            console.log(`✅ Sitemap: generated ${allUrls.length} URLs across ${languageCodes.length} locales`)
         }
 
-        return uniqueUrls
+        return allUrls
     } catch (e) {
         console.error('❌ Sitemap error:', e)
         return homeUrls
@@ -222,7 +203,6 @@ async function generateSitemap(): Promise<SitemapUrl[]> {
 // ═══════════════════════════════════════════════════════════════
 
 export default defineEventHandler(async (): Promise<SitemapUrl[]> => {
-    // В dev всегда генерируем заново для удобства
     if (isDev) {
         return generateSitemap()
     }

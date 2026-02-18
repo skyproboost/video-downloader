@@ -4,7 +4,7 @@
             <NuxtLink
                 v-for="platform in filteredPlatforms"
                 :key="platform.id"
-                :to="localePath(`/${platform.id}-downloader`)"
+                :to="localePath(`/${platform.id}`)"
                 :prefetch="false"
                 :class="['platform-grid__card', `platform-grid__card--${platform.id}`]"
             >
@@ -25,8 +25,7 @@ const props = defineProps<{
 const localePath = useLocalePath()
 
 const filteredPlatforms = computed(() => {
-    if (!props.currentPlatform) return platforms
-    return platforms.filter(p => p.id !== props.currentPlatform)
+    return platforms.filter(p => p.id !== 'other' && p.id !== props.currentPlatform)
 })
 </script>
 

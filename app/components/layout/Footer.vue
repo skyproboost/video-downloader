@@ -1,7 +1,6 @@
 <template>
     <footer class="footer">
         <div class="container __footer-inner">
-            <!-- Ссылки по платформам -->
             <div v-if="groupedLinks?.length" class="footer__links">
                 <div
                     v-for="group in groupedLinks"
@@ -22,7 +21,6 @@
                 </div>
             </div>
 
-            <!-- Нижняя часть -->
             <div class="footer__bottom">
                 <p class="footer__description">{{ $t('footer.description') }}</p>
                 <p class="footer__copy">
@@ -47,11 +45,16 @@ interface GroupedLinks {
 
 const localePath = useLocalePath()
 const currentYear = new Date().getFullYear()
+const route = useRoute()
 
-const { data: groupedLinks } = await useFetch<GroupedLinks[]>('/api/footer-links', {
-    key: 'footer-links',
+const { data: groupedLinks, refresh } = await useFetch<GroupedLinks[]>('/api/footer-links', {
+    key: `footer-links-${route.path}`,
     default: () => [],
 })
+
+if (import.meta.client) {
+    watch(() => route.fullPath, () => refresh())
+}
 </script>
 
 <style scoped>
@@ -65,14 +68,14 @@ const { data: groupedLinks } = await useFetch<GroupedLinks[]>('/api/footer-links
 }
 
 .footer__links {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: flex-start;
-    gap: var(--space-10);
-    margin-bottom: var(--space-5);
+    display: grid;
+    grid-template-columns: repeat(6, auto);
+    gap: var(--space-8);
+    width: fit-content;
+    margin: 0 auto var(--space-5);
     padding-bottom: var(--space-5);
     border-bottom: 1px solid var(--color-border-dark);
+    min-width: 100%;
 }
 
 .footer__group-title {
@@ -120,9 +123,15 @@ const { data: groupedLinks } = await useFetch<GroupedLinks[]>('/api/footer-links
     opacity: 0.7;
 }
 
+@media (max-width: 768px) {
+    .footer__links {
+        grid-template-columns: repeat(4, auto);
+    }
+}
+
 @media (max-width: 400px) {
     .footer__links {
-        gap: var(--space-8);
+        gap: var(--space-6);
     }
 }
 </style>

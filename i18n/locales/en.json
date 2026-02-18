@@ -1,4 +1,7 @@
 {
+  "header": {
+    "search": "Search"
+  },
   "home": {
     "title": "Free speed Video Downloader",
     "subtitle": "Download videos from YouTube, Instagram, TikTok and more",
@@ -42,7 +45,17 @@
   "form": {
     "placeholder": "Paste video URL here...",
     "download": "Download",
+    "success": "Video ready for download!",
     "supported": "Supported platforms: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+  },
+  "error": {
+    "invalidUrl": "Invalid link. Please try again.",
+    "notFound": "Nothing found at this link. Check the URL and try again.",
+    "rateLimited": "Too many requests. Try again in {seconds} seconds.",
+    "tooManyRequests": "Too many requests. Please wait a minute.",
+    "serverError": "Server error. Please try again later.",
+    "network": "Connection error. Check your internet and try again.",
+    "unknown": "Something went wrong. Please try again."
   },
   "faq": {
     "title": "Frequently Asked Questions"

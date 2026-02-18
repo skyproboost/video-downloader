@@ -4,7 +4,8 @@
             <div class="container">
                 <h1 class="main-section__title">{{ $t('home.title') }}</h1>
                 <p class="main-section__subtitle">{{ $t('home.subtitle') }}</p>
-                <HomePlatformGrid />
+                <ToolDownloadForm />
+                <HomePlatformGrid class="main-section__platforms" />
             </div>
         </section>
 
@@ -55,25 +56,121 @@
 </template>
 
 <script setup lang="ts">
+import { languages, defaultLanguage } from '@/../config/languages'
+
 const { t, locale } = useI18n()
 const config = useRuntimeConfig()
-const localePath = useLocalePath()
 
-const siteUrl = computed(() => config.public.siteUrl || 'https://yoursite.com')
-const canonicalUrl = computed(() => `${siteUrl.value}${localePath('/')}`)
+const siteUrl = (config.public.siteUrl as string || 'https://yoursite.com').replace(/\/$/, '')
+const siteName = 'aDownloader'
+
+const localeMap: Record<string, string> = Object.fromEntries(
+    languages.map(l => [l.code, l.iso.replace('-', '_')])
+)
+
+const pageUrl = computed(() => {
+    const prefix = locale.value === defaultLanguage ? '' : `/${locale.value}`
+    return `${siteUrl}${prefix}/`
+})
+
+const ogImageUrl = `${siteUrl}/images/main.png`
 
 useSeoMeta({
-    title: t('home.meta.title'),
-    description: t('home.meta.description'),
-    ogTitle: t('home.meta.title'),
-    ogDescription: t('home.meta.description'),
-    ogUrl: canonicalUrl.value,
+    title: () => t('home.meta.title'),
+    description: () => t('home.meta.description'),
+    keywords: () => t('home.meta.keywords', ''),
+    author: siteName,
+
+    // Open Graph
+    ogTitle: () => t('home.meta.title'),
+    ogDescription: () => t('home.meta.description'),
+    ogImage: ogImageUrl,
+    ogImageWidth: 1200,
+    ogImageHeight: 630,
+    ogImageType: 'image/png',
+    ogImageAlt: () => t('home.meta.title'),
+    ogType: 'website',
+    ogUrl: () => pageUrl.value,
+    ogSiteName: siteName,
+    ogLocale: () => localeMap[locale.value] || 'en_US',
+
+    // Twitter
     twitterCard: 'summary_large_image',
+    twitterTitle: () => t('home.meta.title'),
+    twitterDescription: () => t('home.meta.description'),
+    twitterImage: ogImageUrl,
+    twitterImageAlt: () => t('home.meta.title'),
 })
 
 useHead({
     htmlAttrs: { lang: locale.value },
-    link: [{ rel: 'canonical', href: canonicalUrl.value }],
+    link: () => {
+        const links: Array<{ rel: string; href: string; hreflang?: string }> = [
+            { rel: 'canonical', href: pageUrl.value },
+        ]
+
+        // hreflang для всех языков
+        for (const lang of languages) {
+            const prefix = lang.code === defaultLanguage ? '' : `/${lang.code}`
+            links.push({
+                rel: 'alternate',
+                hreflang: lang.iso,
+                href: `${siteUrl}${prefix}/`,
+            })
+        }
+
+        // x-default → дефолтный язык
+        links.push({
+            rel: 'alternate',
+            hreflang: 'x-default',
+            href: `${siteUrl}/`,
+        })
+
+        return links
+    },
+    script: () => {
+        return [
+            // WebSite schema — помогает с sitelinks в поиске
+            {
+                type: 'application/ld+json',
+                innerHTML: JSON.stringify({
+                    '@context': 'https://schema.org',
+                    '@type': 'WebSite',
+                    name: siteName,
+                    url: siteUrl,
+                    description: t('home.meta.description'),
+                    inLanguage: locale.value,
+                    potentialAction: {
+                        '@type': 'SearchAction',
+                        target: {
+                            '@type': 'EntryPoint',
+                            urlTemplate: `${siteUrl}/?url={search_term_string}`,
+                        },
+                        'query-input': 'required name=search_term_string',
+                    },
+                }),
+            },
+            // WebApplication schema
+            {
+                type: 'application/ld+json',
+                innerHTML: JSON.stringify({
+                    '@context': 'https://schema.org',
+                    '@type': 'WebApplication',
+                    name: siteName,
+                    description: t('home.meta.description'),
+                    url: pageUrl.value,
+                    applicationCategory: 'MultimediaApplication',
+                    operatingSystem: 'Any',
+                    browserRequirements: 'Requires JavaScript',
+                    offers: {
+                        '@type': 'Offer',
+                        price: '0',
+                        priceCurrency: 'USD',
+                    },
+                }),
+            },
+        ]
+    },
 })
 </script>
 

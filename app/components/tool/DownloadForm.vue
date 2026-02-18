@@ -14,66 +14,183 @@
                 :placeholder="$t('form.placeholder')"
                 class="url-input"
                 @keyup.enter="handleDownload"
+                @input="clearError"
             />
             <button
                 class="download-btn"
-                :disabled="!url || isLoading"
+                :disabled="isButtonDisabled"
                 @click="handleDownload"
             >
-                <span v-if="isLoading" class="spinner"/>
-                <template v-else>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                        <polyline points="7 10 12 15 17 10"/>
-                        <line x1="12" y1="15" x2="12" y2="3"/>
-                    </svg>
-                    <span class="btn-text">{{ $t('form.download') }}</span>
-                </template>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                <span class="btn-text">{{ $t('form.download') }}</span>
             </button>
         </div>
 
         <p v-if="error" class="error-message">{{ error }}</p>
 
         <div v-if="result" class="result">
-            <p>✅ {{ $t('form.success') || 'Video ready for download!' }}</p>
+            <p>✅ {{ $t('form.success') }}</p>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-const {t} = useI18n()
+const { t } = useI18n()
 
 const url = ref('')
-const isLoading = ref(false)
+const isCooldown = ref(false)
 const result = ref(false)
 const error = ref('')
 
-const handleDownload = async () => {
-    if (!url.value) return
+const URL_MIN_LENGTH = 10
+const URL_MAX_LENGTH = 2048
+const MIN_COOLDOWN = 2000
+const MAX_SUBMITS = 5
+const SUBMIT_WINDOW = 60_000
 
-    error.value = ''
-    isLoading.value = true
-    result.value = false
+const URL_REGEX = /^https?:\/\/[a-zA-Z0-9]([a-zA-Z0-9\-]*[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+([\/\w\-._~:?#\[\]@!$&'()*+,;=%]*)?$/
 
-    // Простая валидация URL
+const BLOCKED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '[::1]']
+
+const BLOCKED_PATTERNS = [
+    /^(\d{1,3}\.){3}\d{1,3}$/,
+    /^\[?[0-9a-f:]+\]?$/i,
+    /\.(local|internal|test|invalid)$/,
+]
+
+const DANGEROUS_PATTERNS = [
+    /javascript:/i,
+    /data:/i,
+    /vbscript:/i,
+    /<script/i,
+    /%3Cscript/i,
+    /\.\.\//,
+    /\/\/\//,
+]
+
+let submitTimestamps: number[] = []
+let lastSubmit = 0
+
+function validateUrl(raw: string): string | null {
+    const trimmed = raw.trim()
+
+    if (!trimmed || trimmed.length < URL_MIN_LENGTH) return 'empty'
+    if (trimmed.length > URL_MAX_LENGTH) return t('error.invalidUrl')
+    if (DANGEROUS_PATTERNS.some(p => p.test(trimmed))) return t('error.invalidUrl')
+    if (!URL_REGEX.test(trimmed)) return t('error.invalidUrl')
+
     try {
-        const urlObj = new URL(url.value)
-        if (!urlObj.protocol.startsWith('http')) {
-            throw new Error('Invalid protocol')
-        }
+        const { hostname, protocol } = new URL(trimmed)
+        if (!protocol.startsWith('http')) return t('error.invalidUrl')
+
+        const host = hostname.replace(/^www\./, '')
+        if (BLOCKED_HOSTS.includes(host)) return t('error.invalidUrl')
+        if (BLOCKED_PATTERNS.some(p => p.test(host))) return t('error.invalidUrl')
+        if (!host.includes('.')) return t('error.invalidUrl')
     } catch {
-        error.value = t('form.errorInvalidUrl') || 'Ссылка недействительна. Попробуйте еще раз.'
-        isLoading.value = false
-        return
+        return t('error.invalidUrl')
     }
 
-    // Имитация запроса (потом заменишь на реальный API)
-    await new Promise((r) => setTimeout(r, 1500))
+    return null
+}
 
-    // Временно показываем ошибку для демо
-    error.value = t('form.errorInvalidUrl') || 'Ссылка недействительна. Попробуйте еще раз.'
-    isLoading.value = false
+function checkRateLimit(): string | null {
+    const now = Date.now()
+    submitTimestamps = submitTimestamps.filter(ts => now - ts < SUBMIT_WINDOW)
+    if (submitTimestamps.length >= MAX_SUBMITS) return t('error.tooManyRequests')
+    return null
+}
+
+const isUrlValid = computed(() => {
+    const v = validateUrl(url.value.trim())
+    return v === null
+})
+
+const isButtonDisabled = computed(() => !isUrlValid.value || isCooldown.value)
+
+function clearError() {
+    if (error.value) error.value = ''
+}
+
+async function handleApiRequest(link: string): Promise<void> {
+    try {
+        await $fetch('/api/download', {
+            method: 'POST',
+            body: { url: link },
+        })
+        result.value = true
+    } catch (err: any) {
+        const status = err?.response?.status ?? err?.statusCode
+
+        if (status === 404) {
+            throw { handled: true, message: t('error.notFound') }
+        }
+
+        if (status === 429) {
+            const retryAfter = Math.ceil(Number(err?.response?._data?.retryAfter ?? err?.data?.retryAfter ?? 60))
+            throw { handled: true, message: t('error.rateLimited', { seconds: retryAfter }) }
+        }
+
+        if (status >= 500) {
+            throw { handled: true, message: t('error.serverError') }
+        }
+
+        if (status) {
+            throw { handled: true, message: t('error.unknown') }
+        }
+
+        // No status = network/fetch error — rethrow as-is for outer catch
+        throw err
+    }
+}
+
+const handleDownload = async () => {
+    if (isCooldown.value || !isUrlValid.value) return
+
+    const trimmed = url.value.trim()
+    url.value = trimmed
+
+    const ratErr = checkRateLimit()
+    if (ratErr) { error.value = ratErr; return }
+
+    const valErr = validateUrl(trimmed)
+    if (valErr && valErr !== 'empty') { error.value = valErr; return }
+
+    const now = Date.now()
+    lastSubmit = now
+    submitTimestamps.push(now)
+
+    error.value = ''
+    isCooldown.value = true
+    result.value = false
+
+    const startTime = Date.now()
+
+    try {
+        await handleApiRequest(trimmed)
+    } catch (err: any) {
+        if (err?.handled) {
+            error.value = err.message
+        } else if (err instanceof TypeError || err?.name === 'TypeError') {
+            // Network error, no connection, CORS, DNS failure
+            error.value = t('error.network')
+        } else {
+            error.value = t('error.unknown')
+        }
+    }
+
+    // Enforce minimum cooldown
+    const elapsed = Date.now() - startTime
+    if (elapsed < MIN_COOLDOWN) {
+        await new Promise((r) => setTimeout(r, MIN_COOLDOWN - elapsed))
+    }
+
+    isCooldown.value = false
 }
 </script>
 
@@ -149,26 +266,11 @@ const handleDownload = async () => {
     cursor: not-allowed;
 }
 
-.spinner {
-    display: inline-block;
-    width: 1.125rem;
-    height: 1.125rem;
-    border: 2px solid white;
-    border-top-color: transparent;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
 .error-message {
     margin-top: var(--space-3);
-    color: var(--color-error);
+    color: #ff6565;
     font-size: var(--text-sm);
+    font-weight: bold;
     text-align: center;
 }
 
@@ -181,7 +283,6 @@ const handleDownload = async () => {
     text-align: center;
 }
 
-/* Mobile */
 @media (max-width: 540px) {
     .input-wrapper {
         flex-direction: column;

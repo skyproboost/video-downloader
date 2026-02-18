@@ -11,7 +11,7 @@
                     <NuxtLink
                         v-for="p in otherPlatforms"
                         :key="p.id"
-                        :to="localePath(`/${p.id}-downloader`)"
+                        :to="localePath(`/${p.id}`)"
                         class="platforms__card"
                     >
                         <span class="platforms__card-name">{{ p.name }}</span>

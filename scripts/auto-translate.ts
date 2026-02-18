@@ -11,28 +11,47 @@ import { languageCodes } from '../config/languages'
 const DEEPL_API_KEY = '94886d77-fa04-4568-91db-dbda3212f1d9:fx'
 const DEEPL_API_URL = 'https://api-free.deepl.com/v2'
 
-const DEEPL_SPECIAL_CODES: Record<string, string> = {
-    'pt': 'PT-PT',
-    'zh': 'ZH-HANS',
+// DeepL использует разные коды для source и target языков
+const DEEPL_SOURCE_CODES: Record<string, string> = {
     'no': 'NB',
+}
+const DEEPL_TARGET_CODES: Record<string, string> = {
+    'pt': 'PT-PT', 'zh': 'ZH-HANS', 'no': 'NB', 'en': 'EN-US',
 }
 
 const SKIP_TRANSLATION_KEYS = [
     'image', 'ogImage', 'src', 'url', 'href', 'icon',
-    'platform', 'slug', 'footerLinkText', 'imageAlt', 'ogImageAlt'
+    'platform', 'slug', 'footerLinkText'
 ]
 
 const CONTENT_DIR = path.resolve(process.cwd(), 'content/pages')
-const STATUS_FILE = path.resolve(process.cwd(), 'public/admin/status.json')
-const QUEUE_FILE = path.resolve(process.cwd(), 'public/admin/queue.json')
+const ADMIN_DIR = path.resolve(process.cwd(), 'public/admin')
+const STATUS_FILE = path.join(ADMIN_DIR, 'status.json')
+const QUEUE_FILE = path.join(ADMIN_DIR, 'queue.json')
+const RETRY_FILE = path.join(ADMIN_DIR, 'retry.json')
+const FAILED_FILE = path.join(ADMIN_DIR, 'failed.json')
 
-const TRANSLATE_DELAY = 100
+// ── Задержки и retry ──
+const TRANSLATE_DELAY = 15_000          // 15 сек между запросами к DeepL
+const RATE_LIMIT_RETRIES = 3
+const RATE_LIMIT_BACKOFF = [30, 60, 120]
+const BATCH_SIZE = 50                   // Макс. строк в одном запросе к DeepL
+
+const RETRY_INTERVAL = 3 * 60 * 1000
+const MAX_RETRIES = 20
 let requestCount = 0
+let pageCharCount = 0
 const SHOW_USAGE_EVERY = 20
 
 // ═══════════════════════════════════════════════════════════════
 // ТИПЫ
 // ═══════════════════════════════════════════════════════════════
+
+class TranslationError extends Error {
+    constructor(msg: string, public statusCode?: number) {
+        super(msg); this.name = 'TranslationError'
+    }
+}
 
 interface PageData {
     slug: string
@@ -41,415 +60,571 @@ interface PageData {
     footerLinkText?: string
     meta: Record<string, any>
     pageContent: Record<string, any>
-    translations?: Record<string, {
-        meta: Record<string, any>
-        pageContent: Record<string, any>
-    }>
+    translations?: Record<string, { meta: Record<string, any>; pageContent: Record<string, any> }>
     _status?: 'translating' | 'ready'
-    _hashes?: {
-        _slug: string
-        _contentHash: string
-        fields: Record<string, string>
-    }
+    _translationPending?: boolean
+    _hashes?: { _slug: string; _contentHash: string; fields: Record<string, string> }
 }
 
 interface QueueItem {
-    file: string
-    slug: string
-    force: boolean
+    file: string; slug: string; force: boolean
     addedAt: string
     status: 'pending' | 'processing' | 'done' | 'error'
     error?: string
 }
 
-interface QueueState {
-    items: QueueItem[]
-    processing: boolean
-    currentFile: string | null
+interface QueueState { items: QueueItem[]; processing: boolean; currentFile: string | null }
+
+interface RetryItem {
+    file: string; slug: string
+    failedAt: string; nextRetryAt: string
+    retryCount: number; lastError: string; scenario: string
 }
+interface RetryState { items: RetryItem[] }
+
+interface FailedItem {
+    file: string; slug: string
+    failedAt: string; exhaustedAt: string
+    totalAttempts: number; lastError: string; scenario: string
+}
+interface FailedState { items: FailedItem[] }
 
 interface FieldChange {
-    path: string
-    type: 'added' | 'changed' | 'deleted'
-    value?: any
-    needsTranslation: boolean
+    path: string; type: 'added' | 'changed' | 'deleted'
+    value?: any; needsTranslation: boolean
 }
 
-interface DeepLUsage {
-    character_count: number
-    character_limit: number
+interface TranslatableItem { path: string; text: string }
+
+// ═══════════════════════════════════════════════════════════════
+// LIVE PROCESSING STATE
+// ═══════════════════════════════════════════════════════════════
+
+let liveProcessing: {
+    slug: string
+    scenario: string
+    stage: string
+    currentLang?: string
+    langsTotal: number
+    langsDone: number
+    fieldsTotal?: number
+    fieldsDone?: number
+} | null = null
+
+let lastStatusBroadcast = 0
+
+function broadcastStatus(): void {
+    const now = Date.now()
+    if (now - lastStatusBroadcast < 500) return
+    lastStatusBroadcast = now
+    writeFullStatus()
+}
+
+function writeFullStatus(): void {
+    const queue = loadQueue()
+    const retry = loadRetry()
+    const failed = loadFailed()
+
+    const pending = queue.items.filter(i => i.status === 'pending')
+    const processing = queue.items.find(i => i.status === 'processing')
+    const errors = queue.items.filter(i => i.status === 'error')
+
+    let status: string = 'idle'
+    let message = 'Ожидание изменений'
+
+    if (processing || liveProcessing) {
+        status = 'translating'
+        const slug = liveProcessing?.slug || processing?.slug || '?'
+        const stage = liveProcessing?.stage || 'processing'
+        if (stage === 'translating' && liveProcessing?.currentLang) {
+            message = `Перевод: ${slug} → ${liveProcessing.currentLang}`
+            if (liveProcessing.fieldsTotal) {
+                message += ` (${liveProcessing.fieldsDone || 0}/${liveProcessing.fieldsTotal})`
+            }
+        } else {
+            message = `Перевод: ${slug}`
+        }
+        if (pending.length > 0) message += ` (+${pending.length} в очереди)`
+    } else if (pending.length > 0) {
+        status = 'translating'
+        message = `В очереди: ${pending.length}`
+    }
+
+    if (errors.length > 0 && status !== 'translating') {
+        status = 'error'
+        message = `Ошибки: ${errors.map(e => e.slug).join(', ')}`
+    }
+
+    let nextRetryIn: number | null = null
+    if (retry.items.length > 0) {
+        const nearest = Math.min(...retry.items.map(i => new Date(i.nextRetryAt).getTime()))
+        nextRetryIn = Math.max(0, Math.round((nearest - Date.now()) / 1000))
+    }
+
+    writeJson(STATUS_FILE, {
+        status, message,
+        processing: liveProcessing ? {
+            slug: liveProcessing.slug,
+            scenario: liveProcessing.scenario,
+            stage: liveProcessing.stage,
+            currentLang: liveProcessing.currentLang || null,
+            langsTotal: liveProcessing.langsTotal,
+            langsDone: liveProcessing.langsDone,
+            fieldsTotal: liveProcessing.fieldsTotal || null,
+            fieldsDone: liveProcessing.fieldsDone || null,
+        } : null,
+        queue: {
+            total: queue.items.length,
+            pending: pending.length,
+            items: pending.map(i => ({ slug: i.slug })),
+        },
+        retry: {
+            count: retry.items.length,
+            nextRetryIn,
+            interval: RETRY_INTERVAL / 1000,
+            maxRetries: MAX_RETRIES,
+            items: retry.items.map(i => ({
+                slug: i.slug,
+                lastError: i.lastError.substring(0, 100),
+                retryCount: i.retryCount,
+                maxRetries: MAX_RETRIES,
+                nextRetryAt: i.nextRetryAt,
+                scenario: i.scenario,
+            })),
+        },
+        failed: {
+            count: failed.items.length,
+            fixCommand: 'npx tsx scripts/auto-translate.ts --fix-failed',
+            items: failed.items.map(i => ({
+                slug: i.slug,
+                lastError: i.lastError.substring(0, 100),
+                totalAttempts: i.totalAttempts,
+                exhaustedAt: i.exhaustedAt,
+                scenario: i.scenario,
+            })),
+        },
+        updatedAt: new Date().toISOString(),
+    })
 }
 
 // ═══════════════════════════════════════════════════════════════
 // УТИЛИТЫ
 // ═══════════════════════════════════════════════════════════════
 
-function deepClone<T>(obj: T): T {
-    return JSON.parse(JSON.stringify(obj))
-}
+function deepClone<T>(obj: T): T { return JSON.parse(JSON.stringify(obj)) }
 
 function hash(value: any): string {
     const str = typeof value === 'object' ? JSON.stringify(value) : String(value ?? '')
     return crypto.createHash('md5').update(str).digest('hex').substring(0, 12)
 }
 
-function sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms))
-}
+function sleep(ms: number): Promise<void> { return new Promise(r => setTimeout(r, ms)) }
+function shouldTranslate(key: string): boolean { return !SKIP_TRANSLATION_KEYS.includes(key) }
+function toDeepLSource(lang: string): string { return DEEPL_SOURCE_CODES[lang.toLowerCase()] || lang.toUpperCase() }
+function toDeepLTarget(lang: string): string { return DEEPL_TARGET_CODES[lang.toLowerCase()] || lang.toUpperCase() }
+function ensureDir(fp: string): void { fs.mkdirSync(path.dirname(fp), { recursive: true }) }
 
-function shouldTranslate(key: string): boolean {
-    return !SKIP_TRANSLATION_KEYS.includes(key)
+function readJsonSafe<T>(fp: string, fb: T): T {
+    try { if (fs.existsSync(fp)) return JSON.parse(fs.readFileSync(fp, 'utf-8')) } catch {} return fb
 }
+function writeJson(fp: string, data: any): void { ensureDir(fp); fs.writeFileSync(fp, JSON.stringify(data, null, 2)) }
 
-function toDeepLLang(lang: string): string {
-    const lower = lang.toLowerCase()
-    return DEEPL_SPECIAL_CODES[lower] || lang.toUpperCase()
+function formatTime(sec: number): string {
+    if (sec < 60) return `${sec}с`
+    const m = Math.floor(sec / 60), s = sec % 60
+    return s > 0 ? `${m}м ${s}с` : `${m}м`
 }
 
 // ═══════════════════════════════════════════════════════════════
-// CACHE WARMING (прогрев ISR кэша)
+// CACHE WARMING
 // ═══════════════════════════════════════════════════════════════
 
 async function warmCache(slug: string): Promise<void> {
-    const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+    const url = process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000'
     try {
-        await fetch(`${siteUrl}/${slug}`, {
-            signal: AbortSignal.timeout(5000),
-            headers: { 'X-Cache-Warm': '1' }
-        })
+        await fetch(`${url}/${slug}`, { signal: AbortSignal.timeout(5000), headers: { 'X-Cache-Warm': '1' } })
         console.log(`  🔥 Cache warmed: ${slug}`)
-    } catch {
-        // Игнорируем — сервер может быть не запущен
-    }
+    } catch {}
 }
 
 // ═══════════════════════════════════════════════════════════════
 // DeepL API
 // ═══════════════════════════════════════════════════════════════
 
-async function getDeepLUsage(): Promise<DeepLUsage | null> {
+async function getDeepLUsage(): Promise<{ character_count: number; character_limit: number } | null> {
     try {
-        const res = await fetch(`${DEEPL_API_URL}/usage`, {
-            headers: { 'Authorization': `DeepL-Auth-Key ${DEEPL_API_KEY}` }
-        })
-        if (!res.ok) return null
-        return await res.json()
-    } catch {
-        return null
-    }
+        const r = await fetch(`${DEEPL_API_URL}/usage`, { headers: { 'Authorization': `DeepL-Auth-Key ${DEEPL_API_KEY}` } })
+        return r.ok ? await r.json() : null
+    } catch { return null }
 }
 
 async function showUsageInfo(force = false): Promise<void> {
     if (!force && requestCount % SHOW_USAGE_EVERY !== 0) return
+    const u = await getDeepLUsage()
+    if (u) {
+        const pct = ((u.character_count / u.character_limit) * 100).toFixed(1)
+        console.log(`\n  📊 DeepL: ${u.character_count.toLocaleString()}/${u.character_limit.toLocaleString()} (${pct}%) | Осталось: ${(u.character_limit - u.character_count).toLocaleString()}`)
+    }
+}
 
+async function showPageUsage(slug: string): Promise<void> {
+    if (pageCharCount === 0) return
     const usage = await getDeepLUsage()
-    if (usage) {
-        const used = usage.character_count.toLocaleString()
-        const limit = usage.character_limit.toLocaleString()
-        const percent = ((usage.character_count / usage.character_limit) * 100).toFixed(1)
-        const remaining = (usage.character_limit - usage.character_count).toLocaleString()
-        console.log(`\n  📊 DeepL: ${used}/${limit} символов (${percent}%) | Осталось: ${remaining}`)
-    }
+    if (!usage) { console.log(`\n  📈 Страница "${slug}": ${pageCharCount.toLocaleString()} символов`); return }
+    const remaining = usage.character_limit - usage.character_count
+    const pagePct = ((pageCharCount / usage.character_limit) * 100).toFixed(2)
+    const pagesLeft = pageCharCount > 0 ? Math.floor(remaining / pageCharCount) : 0
+    console.log(`\n  📈 Страница "${slug}":`)
+    console.log(`     Потрачено: ${pageCharCount.toLocaleString()} символов (${pagePct}% от лимита)`)
+    console.log(`     Осталось:  ${remaining.toLocaleString()} символов`)
+    console.log(`     ≈ ${pagesLeft} таких же страниц можно ещё перевести`)
 }
 
-async function translateText(text: string, from: string, to: string): Promise<string> {
-    if (!text || typeof text !== 'string') return text
-    if (from === to) return text
-    if (text.startsWith('/') || text.startsWith('http')) return text
-    if (text.trim().length === 0) return text
+// ═══════════════════════════════════════════════════════════════
+// СБОР ПЕРЕВОДИМЫХ СТРОК
+// ═══════════════════════════════════════════════════════════════
 
-    const sourceLang = toDeepLLang(from)
-    const targetLang = toDeepLLang(to)
-
-    try {
-        const res = await fetch(`${DEEPL_API_URL}/translate`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `DeepL-Auth-Key ${DEEPL_API_KEY}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                text: [text],
-                source_lang: sourceLang,
-                target_lang: targetLang,
-            }),
-            signal: AbortSignal.timeout(30000)
+function collectTranslatable(obj: any, prefix = ''): TranslatableItem[] {
+    const r: TranslatableItem[] = []
+    if (typeof obj === 'string') {
+        if (obj && !obj.startsWith('/') && !obj.startsWith('http') && obj.trim().length > 0) {
+            r.push({ path: prefix, text: obj })
+        }
+    } else if (Array.isArray(obj)) {
+        obj.forEach((item, i) => {
+            const p = prefix ? `${prefix}[${i}]` : `[${i}]`
+            r.push(...collectTranslatable(item, p))
         })
-
-        if (!res.ok) {
-            const errorText = await res.text()
-            console.warn(`\n    ⚠️ DeepL error ${res.status}: ${errorText}`)
-
-            if (res.status === 456) {
-                console.error('\n    ❌ DeepL quota exceeded!')
-                await showUsageInfo(true)
-            }
-            return text
+    } else if (typeof obj === 'object' && obj !== null) {
+        for (const [k, v] of Object.entries(obj)) {
+            const p = prefix ? `${prefix}.${k}` : k
+            if (shouldTranslate(k)) r.push(...collectTranslatable(v, p))
         }
-
-        const data = await res.json()
-        requestCount++
-
-        await showUsageInfo()
-        await sleep(TRANSLATE_DELAY)
-
-        if (data.translations?.[0]?.text) {
-            return data.translations[0].text
-        }
-
-        return text
-    } catch (err) {
-        console.warn(`\n    ⚠️ DeepL failed: ${err instanceof Error ? err.message : 'unknown'}`)
-        return text
     }
+    return r
 }
 
-async function translateValue(value: any, from: string, to: string): Promise<any> {
-    if (typeof value === 'string') {
-        return translateText(value, from, to)
-    }
-
-    if (Array.isArray(value)) {
-        const result = []
-        for (const item of value) {
-            result.push(await translateValue(item, from, to))
-        }
-        return result
-    }
-
-    if (typeof value === 'object' && value !== null) {
-        const result: Record<string, any> = {}
-        for (const [key, val] of Object.entries(value)) {
-            result[key] = shouldTranslate(key)
-                ? await translateValue(val, from, to)
-                : deepClone(val)
-        }
-        return result
-    }
-
-    return value
+function countTranslatableStrings(obj: any): number {
+    return collectTranslatable(obj).length
 }
 
-async function translateObject(obj: any, from: string, to: string): Promise<any> {
-    return translateValue(obj, from, to)
+function showEstimate(totalStrings: number, totalLangs: number): void {
+    const batches = Math.ceil(totalStrings / BATCH_SIZE)
+    const totalRequests = batches * totalLangs
+    const totalSec = Math.ceil(totalRequests * TRANSLATE_DELAY / 1000)
+    console.log(`  ⏱️  ${totalStrings} строк × ${totalLangs} яз. = ${totalRequests} запрос(ов), ~${formatTime(totalSec)}`)
 }
 
 // ═══════════════════════════════════════════════════════════════
-// РАБОТА С ПУТЯМИ В ОБЪЕКТЕ
+// BATCH ПЕРЕВОД (DeepL принимает массив text[])
 // ═══════════════════════════════════════════════════════════════
 
-function flatten(obj: any, prefix = ''): Record<string, any> {
-    const result: Record<string, any> = {}
-    if (obj === null || obj === undefined) return result
+async function batchTranslateTexts(texts: string[], from: string, to: string): Promise<string[]> {
+    if (texts.length === 0) return []
+    if (from === to) return [...texts]
 
-    for (const [key, value] of Object.entries(obj)) {
-        const currentPath = prefix ? `${prefix}.${key}` : key
+    const results: string[] = []
 
-        if (Array.isArray(value)) {
-            result[`${currentPath}.__isArray`] = true
-            result[`${currentPath}.__length`] = value.length
-            value.forEach((item, i) => {
-                if (typeof item === 'object' && item !== null) {
-                    Object.assign(result, flatten(item, `${currentPath}[${i}]`))
-                } else {
-                    result[`${currentPath}[${i}]`] = item
+    for (let ci = 0; ci < texts.length; ci += BATCH_SIZE) {
+        const chunk = texts.slice(ci, ci + BATCH_SIZE)
+
+        for (let attempt = 0; attempt <= RATE_LIMIT_RETRIES; attempt++) {
+            try {
+                const res = await fetch(`${DEEPL_API_URL}/translate`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `DeepL-Auth-Key ${DEEPL_API_KEY}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: chunk, source_lang: toDeepLSource(from), target_lang: toDeepLTarget(to) }),
+                    signal: AbortSignal.timeout(120_000)
+                })
+
+                if (res.status === 429) {
+                    if (attempt >= RATE_LIMIT_RETRIES) {
+                        throw new TranslationError(`DeepL 429: rate limit (${RATE_LIMIT_RETRIES} retries exhausted)`, 429)
+                    }
+                    const waitSec = RATE_LIMIT_BACKOFF[attempt] || 120
+                    console.warn(`\n    ⏳ DeepL 429 — ждём ${waitSec}с (попытка ${attempt + 1}/${RATE_LIMIT_RETRIES})...`)
+                    await sleep(waitSec * 1000)
+                    continue
                 }
-            })
-        } else if (typeof value === 'object' && value !== null) {
-            Object.assign(result, flatten(value, currentPath))
-        } else {
-            result[currentPath] = value
+
+                if (!res.ok) {
+                    const body = await res.text().catch(() => '')
+                    const short = body.includes('<html') ? (body.match(/<title>(.*?)<\/title>/)?.[1] || `HTTP ${res.status}`) : body.substring(0, 120)
+                    console.warn(`\n    ⚠️ DeepL ${res.status}: ${short}`)
+                    if (res.status === 456) { console.error('\n    ❌ DeepL quota!'); await showUsageInfo(true) }
+                    throw new TranslationError(`DeepL ${res.status}: ${short}`, res.status)
+                }
+
+                const data = await res.json()
+                if (!data.translations || data.translations.length !== chunk.length) {
+                    throw new TranslationError(`DeepL: ожидалось ${chunk.length} переводов, получено ${data.translations?.length || 0}`)
+                }
+
+                const charsInChunk = chunk.reduce((s, t) => s + t.length, 0)
+                pageCharCount += charsInChunk
+                requestCount++
+                await showUsageInfo()
+
+                results.push(...data.translations.map((t: any) => t.text))
+
+                // Пауза после запроса
+                await sleep(TRANSLATE_DELAY)
+                break
+
+            } catch (err) {
+                if (err instanceof TranslationError) throw err
+                throw new TranslationError(`DeepL batch failed: ${err instanceof Error ? err.message : 'unknown'}`)
+            }
         }
+    }
+
+    return results
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ВЫСОКОУРОВНЕВЫЕ ФУНКЦИИ ПЕРЕВОДА
+// ═══════════════════════════════════════════════════════════════
+
+/** Перевод объекта {meta, pageContent} одним батчем на один язык */
+async function translateSourceData(
+    sourceData: { meta: any; pageContent: any },
+    from: string,
+    to: string
+): Promise<{ meta: any; pageContent: any }> {
+    if (from === to) return deepClone(sourceData)
+
+    const items = collectTranslatable(sourceData)
+    if (items.length === 0) return deepClone(sourceData)
+
+    const translated = await batchTranslateTexts(items.map(i => i.text), from, to)
+
+    const result = deepClone(sourceData)
+    for (let i = 0; i < items.length; i++) {
+        setByPath(result, items[i].path, translated[i])
     }
     return result
 }
 
-function getByPath(obj: any, pathStr: string): any {
-    const parts = pathStr.split(/\.|\[(\d+)\]/).filter(Boolean)
-    let current = obj
-    for (const part of parts) {
-        if (current === undefined || current === null) return undefined
-        current = current[part]
-    }
-    return current
-}
+/** Перевод списка изменённых полей одним батчем на один язык */
+async function translateChangedFields(
+    changes: FieldChange[],
+    from: string,
+    to: string
+): Promise<Map<string, any>> {
+    // Собираем все строки из всех изменённых полей
+    const items: TranslatableItem[] = []
+    const fieldBounds: { fieldIdx: number; start: number; count: number }[] = []
 
-function setByPath(obj: any, pathStr: string, value: any): void {
-    const parts = pathStr.split(/\.|\[(\d+)\]/).filter(Boolean)
-    let current = obj
-
-    for (let i = 0; i < parts.length - 1; i++) {
-        const part = parts[i]
-        const nextPart = parts[i + 1]
-
-        if (!(part in current)) {
-            current[part] = /^\d+$/.test(nextPart) ? [] : {}
-        }
-        current = current[part]
+    for (let fi = 0; fi < changes.length; fi++) {
+        const c = changes[fi]
+        const fieldItems = collectTranslatable(c.value, c.path)
+        fieldBounds.push({ fieldIdx: fi, start: items.length, count: fieldItems.length })
+        items.push(...fieldItems)
     }
 
-    const lastPart = parts[parts.length - 1]
-    current[lastPart] = value
-}
+    if (items.length === 0) return new Map()
 
-function deleteByPath(obj: any, pathStr: string): void {
-    const parts = pathStr.split(/\.|\[(\d+)\]/).filter(Boolean)
-    let current = obj
+    const translated = await batchTranslateTexts(items.map(i => i.text), from, to)
 
-    for (let i = 0; i < parts.length - 1; i++) {
-        if (current === undefined || current === null) return
-        current = current[parts[i]]
-    }
+    // Собираем результат: для каждого изменённого поля восстанавливаем переведённое значение
+    const result = new Map<string, any>()
 
-    const lastPart = parts[parts.length - 1]
-    if (current && lastPart in current) {
-        if (Array.isArray(current)) {
-            current.splice(Number(lastPart), 1)
+    for (const { fieldIdx, start, count } of fieldBounds) {
+        const c = changes[fieldIdx]
+        if (count === 1 && items[start].path === c.path) {
+            // Простое строковое поле
+            result.set(c.path, translated[start])
         } else {
-            delete current[lastPart]
+            // Составное поле (объект/массив) — восстанавливаем структуру
+            const clone = deepClone(c.value)
+            for (let i = 0; i < count; i++) {
+                const fullPath = items[start + i].path
+                // Убираем базовый путь чтобы получить относительный
+                const relPath = fullPath.startsWith(c.path + '.') ? fullPath.slice(c.path.length + 1)
+                    : fullPath.startsWith(c.path + '[') ? fullPath.slice(c.path.length)
+                        : fullPath
+                setByPath(clone, relPath, translated[start + i])
+            }
+            result.set(c.path, clone)
         }
     }
-}
 
-function getFieldKey(pathStr: string): string {
-    const match = pathStr.match(/\.([^.\[]+)$|\[(\d+)\]\.([^.\[]+)$|^([^.\[]+)$/)
-    return match?.[1] || match?.[3] || match?.[4] || pathStr.split('.').pop() || ''
+    return result
 }
 
 // ═══════════════════════════════════════════════════════════════
-// ХЭШИРОВАНИЕ
+// ПУТИ В ОБЪЕКТЕ
 // ═══════════════════════════════════════════════════════════════
 
-function computeContentHash(meta: any, pageContent: any): string {
-    return hash({ meta, pageContent })
+function flatten(obj: any, prefix = ''): Record<string, any> {
+    const r: Record<string, any> = {}
+    if (obj == null) return r
+    for (const [k, v] of Object.entries(obj)) {
+        const p = prefix ? `${prefix}.${k}` : k
+        if (Array.isArray(v)) {
+            r[`${p}.__isArray`] = true; r[`${p}.__length`] = v.length
+            v.forEach((item, i) => { typeof item === 'object' && item !== null ? Object.assign(r, flatten(item, `${p}[${i}]`)) : r[`${p}[${i}]`] = item })
+        } else if (typeof v === 'object' && v !== null) { Object.assign(r, flatten(v, p)) }
+        else r[p] = v
+    }
+    return r
 }
+
+function getByPath(obj: any, p: string): any {
+    const parts = p.split(/\.|\[(\d+)\]/).filter(Boolean)
+    let c = obj; for (const x of parts) { if (c == null) return undefined; c = c[x] }; return c
+}
+
+function setByPath(obj: any, p: string, val: any): void {
+    const parts = p.split(/\.|\[(\d+)\]/).filter(Boolean); let c = obj
+    for (let i = 0; i < parts.length - 1; i++) { const x = parts[i], nx = parts[i+1]; if (!(x in c)) c[x] = /^\d+$/.test(nx) ? [] : {}; c = c[x] }
+    c[parts[parts.length - 1]] = val
+}
+
+function getFieldKey(p: string): string {
+    const m = p.match(/\.([^.\[]+)$|\[(\d+)\]\.([^.\[]+)$|^([^.\[]+)$/)
+    return m?.[1] || m?.[3] || m?.[4] || p.split('.').pop() || ''
+}
+
+function syncStructure(src: any, tgt: any): void {
+    if (!src || !tgt || typeof src !== 'object' || typeof tgt !== 'object') return
+    if (Array.isArray(src)) {
+        if (!Array.isArray(tgt)) return
+        while (tgt.length > src.length) tgt.pop()
+        for (let i = 0; i < Math.min(src.length, tgt.length); i++) {
+            if (src[i] && tgt[i] && typeof src[i] === 'object') syncStructure(src[i], tgt[i])
+        }
+        return
+    }
+    for (const k of Object.keys(tgt)) { if (!(k in src)) delete tgt[k] }
+    for (const k of Object.keys(src)) { if (k in tgt && typeof src[k] === 'object' && src[k] !== null) syncStructure(src[k], tgt[k]) }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ХЭШИРОВАНИЕ + СЦЕНАРИИ
+// ═══════════════════════════════════════════════════════════════
+
+function computeContentHash(meta: any, pc: any): string { return hash({ meta, pageContent: pc }) }
 
 function computeFieldHashes(data: any): Record<string, string> {
-    const flat = flatten(data)
-    const hashes: Record<string, string> = {}
-
-    for (const [path, value] of Object.entries(flat)) {
-        if (path.endsWith('.__isArray') || path.endsWith('.__length')) continue
-        if (value !== undefined && value !== null && value !== '') {
-            hashes[path] = hash(value)
-        }
-    }
-    return hashes
+    const flat = flatten(data); const h: Record<string, string> = {}
+    for (const [p, v] of Object.entries(flat)) { if (!p.endsWith('.__isArray') && !p.endsWith('.__length') && v != null && v !== '') h[p] = hash(v) }
+    return h
 }
 
-// ═══════════════════════════════════════════════════════════════
-// ОПРЕДЕЛЕНИЕ СЦЕНАРИЯ И ИЗМЕНЕНИЙ
-// ═══════════════════════════════════════════════════════════════
+type Scenario = 'new' | 'duplicated' | 'corrupted' | 'missing-langs' | 'unchanged' | 'incremental'
 
-type PageScenario = 'new' | 'duplicated' | 'corrupted' | 'unchanged' | 'incremental'
-
-function detectScenario(page: PageData): PageScenario {
-    const hasHashes = !!page._hashes?.fields
-    const hasTranslations = !!page.translations
-
-    const hasAllTranslations = languageCodes.every(lang => {
-        const t = page.translations?.[lang]
-        return t?.meta?.title && t?.pageContent?.mainTitle
-    })
-
-    if (!hasHashes && !hasTranslations) return 'new'
-    if (hasHashes && page._hashes!._slug !== page.slug) return 'duplicated'
-    if (!hasAllTranslations) return 'corrupted'
-
-    const currentContentHash = computeContentHash(page.meta, page.pageContent)
-    if (hasHashes && page._hashes!._contentHash === currentContentHash) return 'unchanged'
-
+function detectScenario(page: PageData): Scenario {
+    if (page._translationPending) return 'corrupted'
+    const hasH = !!page._hashes?.fields, hasTr = !!page.translations
+    if (!hasH && !hasTr) return 'new'
+    if (hasH && page._hashes!._slug !== page.slug) return 'duplicated'
+    const missing: string[] = [], broken: string[] = []
+    for (const l of languageCodes) {
+        const t = page.translations?.[l]
+        if (!t?.meta || !t?.pageContent) missing.push(l)
+        else if (!t.meta.title || !t.pageContent.mainTitle) broken.push(l)
+    }
+    if (broken.length > 0) return 'corrupted'
+    if (missing.length > 0) return 'missing-langs'
+    const cur = computeContentHash(page.meta, page.pageContent)
+    if (hasH && page._hashes!._contentHash === cur) return 'unchanged'
     return 'incremental'
 }
 
-function detectFieldChanges(
-    currentHashes: Record<string, string>,
-    savedHashes: Record<string, string>,
-    sourceData: any
-): FieldChange[] {
-    const changes: FieldChange[] = []
-
-    for (const [path, currentHash] of Object.entries(currentHashes)) {
-        const savedHash = savedHashes[path]
-        const fieldKey = getFieldKey(path)
-        const needsTranslation = shouldTranslate(fieldKey)
-
-        if (!savedHash) {
-            changes.push({ path, type: 'added', value: getByPath(sourceData, path), needsTranslation })
-        } else if (savedHash !== currentHash) {
-            changes.push({ path, type: 'changed', value: getByPath(sourceData, path), needsTranslation })
-        }
+function detectFieldChanges(curH: Record<string, string>, savedH: Record<string, string>, src: any): FieldChange[] {
+    const ch: FieldChange[] = []
+    for (const [p, h] of Object.entries(curH)) {
+        const s = savedH[p], fk = getFieldKey(p), nt = shouldTranslate(fk)
+        if (!s) ch.push({ path: p, type: 'added', value: getByPath(src, p), needsTranslation: nt })
+        else if (s !== h) ch.push({ path: p, type: 'changed', value: getByPath(src, p), needsTranslation: nt })
     }
-
-    for (const path of Object.keys(savedHashes)) {
-        if (!(path in currentHashes)) {
-            changes.push({ path, type: 'deleted', needsTranslation: false })
-        }
-    }
-
-    return changes
+    for (const p of Object.keys(savedH)) { if (!(p in curH)) ch.push({ path: p, type: 'deleted', needsTranslation: false }) }
+    return ch
 }
 
 // ═══════════════════════════════════════════════════════════════
-// СИНХРОНИЗАЦИЯ ПЕРЕВОДОВ
+// ХЭЛПЕРЫ ПЕРЕВОДОВ
 // ═══════════════════════════════════════════════════════════════
 
 function ensureTranslationStructure(page: PageData): void {
     if (!page.translations) page.translations = {}
-
-    for (const lang of languageCodes) {
-        if (!page.translations[lang]) {
-            page.translations[lang] = { meta: {}, pageContent: {} }
-        }
-        if (!page.translations[lang].meta) page.translations[lang].meta = {}
-        if (!page.translations[lang].pageContent) page.translations[lang].pageContent = {}
+    // Включаем srcLang — он может не быть в languageCodes
+    const srcLang = page.source_lang || 'en'
+    const allLangs = new Set([...languageCodes, srcLang])
+    for (const l of allLangs) {
+        if (!page.translations[l]) page.translations[l] = { meta: {}, pageContent: {} }
+        if (!page.translations[l].meta) page.translations[l].meta = {}
+        if (!page.translations[l].pageContent) page.translations[l].pageContent = {}
     }
 }
 
-function syncNonTranslatableField(page: PageData, path: string, value: any): void {
-    for (const lang of languageCodes) {
-        setByPath(page.translations![lang], path, deepClone(value))
-    }
-}
-
-async function syncTranslatableField(
-    page: PageData, path: string, value: any, srcLang: string
-): Promise<void> {
-    const targets = languageCodes.filter(l => l !== srcLang)
-    setByPath(page.translations![srcLang], path, deepClone(value))
-
-    for (const lang of targets) {
-        const translated = await translateValue(value, srcLang, lang)
-        setByPath(page.translations![lang], path, translated)
-    }
-}
-
-function removeDeletedField(page: PageData, path: string): void {
-    for (const lang of languageCodes) {
-        deleteByPath(page.translations![lang], path)
-    }
+function syncNonTranslatableField(page: PageData, p: string, val: any): void {
+    for (const l of languageCodes) setByPath(page.translations![l], p, deepClone(val))
 }
 
 // ═══════════════════════════════════════════════════════════════
-// СОХРАНЕНИЕ ФАЙЛА
+// ФАЙЛЫ
 // ═══════════════════════════════════════════════════════════════
 
-let isSavingFile = false
 const recentlySaved = new Set<string>()
+function markAsSaving(fp: string): void {
+    const fn = path.basename(fp); recentlySaved.add(fn)
+    setTimeout(() => recentlySaved.delete(fn), 5000)
+}
+function savePageFile(fp: string, page: PageData): void { markAsSaving(fp); fs.writeFileSync(fp, stringify(page)) }
+function getFileMtime(fp: string): number { try { return fs.statSync(fp).mtimeMs } catch { return 0 } }
 
-function markAsSaving(filePath: string): void {
-    isSavingFile = true
-    const fileName = path.basename(filePath)
-    recentlySaved.add(fileName)
-    setTimeout(() => {
-        recentlySaved.delete(fileName)
-        isSavingFile = false
-    }, 3000)
+// ═══════════════════════════════════════════════════════════════
+// BUSY SET (module-level)
+// ═══════════════════════════════════════════════════════════════
+
+const busy = new Set<string>()
+
+// ═══════════════════════════════════════════════════════════════
+// RETRY + FAILED
+// ═══════════════════════════════════════════════════════════════
+
+function loadRetry(): RetryState { return readJsonSafe(RETRY_FILE, { items: [] }) }
+function saveRetry(s: RetryState): void { writeJson(RETRY_FILE, s) }
+function loadFailed(): FailedState { return readJsonSafe(FAILED_FILE, { items: [] }) }
+function saveFailed(s: FailedState): void { writeJson(FAILED_FILE, s) }
+
+function isInRetry(slug: string): boolean { return loadRetry().items.some(i => i.slug === slug) }
+
+function addToRetry(file: string, slug: string, error: string, scenario: string): void {
+    const retry = loadRetry()
+    const existing = retry.items.find(i => i.slug === slug)
+    const count = existing ? existing.retryCount + 1 : 1
+    retry.items = retry.items.filter(i => i.slug !== slug)
+
+    if (count > MAX_RETRIES) {
+        console.log(`  ⛔ ${slug}: ${MAX_RETRIES} попыток исчерпано → failed.json`)
+        const failed = loadFailed()
+        failed.items = failed.items.filter(i => i.slug !== slug)
+        failed.items.push({ file, slug, failedAt: existing?.failedAt || new Date().toISOString(), exhaustedAt: new Date().toISOString(), totalAttempts: count, lastError: error, scenario })
+        saveFailed(failed); saveRetry(retry); return
+    }
+
+    retry.items.push({ file, slug, failedAt: existing?.failedAt || new Date().toISOString(), nextRetryAt: new Date(Date.now() + RETRY_INTERVAL).toISOString(), retryCount: count, lastError: error, scenario })
+    console.log(`  🔄 ${slug}: retry ${count}/${MAX_RETRIES} через 3 мин`)
+    saveRetry(retry)
 }
 
-function savePageFile(filePath: string, page: PageData): void {
-    markAsSaving(filePath)
-    fs.writeFileSync(filePath, stringify(page))
+function removeFromRetry(slug: string): void {
+    const r = loadRetry(); const had = r.items.length
+    r.items = r.items.filter(i => i.slug !== slug)
+    if (r.items.length !== had) { saveRetry(r); console.log(`  ✅ ${slug}: убран из retry`) }
+}
+
+function removeFromFailed(slug: string): void {
+    const f = loadFailed(); const had = f.items.length
+    f.items = f.items.filter(i => i.slug !== slug)
+    if (f.items.length !== had) { saveFailed(f); console.log(`  ✅ ${slug}: убран из failed`) }
+}
+
+function getRetryDue(): RetryItem[] {
+    return loadRetry().items.filter(i => new Date(i.nextRetryAt).getTime() <= Date.now())
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -462,261 +637,288 @@ async function processPage(filePath: string, force = false): Promise<boolean> {
 
     console.log(`\n${'─'.repeat(50)}`)
     console.log(`📄 ${fileName}`)
+    pageCharCount = 0
 
-    try {
-        const content = fs.readFileSync(filePath, 'utf-8')
-        const page = parse(content) as PageData
+    const content = fs.readFileSync(filePath, 'utf-8')
+    const page = parse(content) as PageData
+    const mtimeBefore = getFileMtime(filePath)
 
-        if (!page.meta || !page.pageContent) {
-            console.log('  ⏭️  Skip: no meta or pageContent')
+    if (!page.meta || !page.pageContent) { console.log('  ⏭️  Skip: no meta/pageContent'); return false }
+    if (!page.slug) page.slug = fileSlug
+
+    // ── Переименование при несовпадении slug ──
+    if (page.slug !== fileSlug) {
+        const newPath = path.join(path.dirname(filePath), `${page.slug}.yml`)
+        if (fs.existsSync(newPath)) {
+            console.log(`  ❌ ${page.slug}.yml уже существует!`)
+            if (/^.+-\d+\.yml$/.test(fileName)) { console.log(`  🗑️  Удаляю дубликат`); fs.unlinkSync(filePath) }
             return false
         }
+        console.log(`  📝 Rename: ${fileName} → ${page.slug}.yml`)
+        fs.renameSync(filePath, newPath); filePath = newPath
+    }
 
-        if (!page.slug) page.slug = fileSlug
+    const srcLang = page.source_lang || 'en'
+    const sourceData = { meta: page.meta, pageContent: page.pageContent }
+    const scenario = force ? 'new' : detectScenario(page)
+    console.log(`  📋 Scenario: ${scenario}`)
 
-        if (page.slug !== fileSlug) {
-            const newFilePath = path.join(path.dirname(filePath), `${page.slug}.yml`)
+    const fullBackup = deepClone(page)
+    const targets = languageCodes.filter(l => l !== srcLang)
 
-            if (fs.existsSync(newFilePath)) {
-                console.log(`  ❌ Error: File ${page.slug}.yml already exists!`)
-                console.log(`  💡 Change slug in ${fileName} to something unique`)
+    // ═════════════════════════════════════════════════════════
+    // ПОЛНЫЙ ПЕРЕВОД (new / duplicated / corrupted)
+    // ═════════════════════════════════════════════════════════
+    if (['new', 'duplicated', 'corrupted'].includes(scenario)) {
+        const reasons: Record<string, string> = { 'new': '🆕 Новая', 'duplicated': '📋 Дубликат', 'corrupted': '🔧 Битая/pending' }
+        console.log(`  ${reasons[scenario]} → Полный перевод`)
+        await showUsageInfo(true)
 
-                if (/^.+-\d+\.yml$/.test(fileName)) {
-                    console.log(`  🗑️  Removing duplicate file: ${fileName}`)
-                    fs.unlinkSync(filePath)
-                }
-                return false
-            }
+        const strCount = countTranslatableStrings(sourceData)
+        showEstimate(strCount, targets.length)
 
-            console.log(`  📝 Renaming: ${fileName} → ${page.slug}.yml`)
-            fs.renameSync(filePath, newFilePath)
-            filePath = newFilePath
-        }
-
-        const srcLang = page.source_lang || 'en'
-        const sourceData = { meta: page.meta, pageContent: page.pageContent }
-        const scenario = force ? 'new' : detectScenario(page)
-        console.log(`  📋 Scenario: ${scenario}`)
-
-        // ═══════════════════════════════════════════════════════════
-        // ПОЛНЫЙ ПЕРЕВОД
-        // ═══════════════════════════════════════════════════════════
-        if (['new', 'duplicated', 'corrupted'].includes(scenario)) {
-            const reason = {
-                'new': '🆕 New page',
-                'duplicated': '📋 Duplicated page detected',
-                'corrupted': '🔧 Missing/corrupted translations'
-            }[scenario]
-
-            console.log(`  ${reason} → Full translation`)
-
-            await showUsageInfo(true)
-
+        const isRetryAttempt = isInRetry(page.slug)
+        if (scenario === 'new' && !isRetryAttempt) {
             page._status = 'translating'
             savePageFile(filePath, page)
-            console.log('  🔒 Page hidden until translation complete')
+            console.log('  🔒 Скрыта до завершения')
+        }
 
-            page.translations = {}
-            ensureTranslationStructure(page)
-            page.translations[srcLang] = deepClone(sourceData)
+        liveProcessing = { slug: page.slug, scenario, stage: 'translating', langsTotal: targets.length, langsDone: 0, fieldsTotal: strCount }
+        broadcastStatus()
 
-            const targets = languageCodes.filter(l => l !== srcLang)
-            for (const lang of targets) {
-                process.stdout.write(`  → ${lang}...`)
-                page.translations[lang] = {
-                    meta: await translateObject(deepClone(sourceData.meta), srcLang, lang),
-                    pageContent: await translateObject(deepClone(sourceData.pageContent), srcLang, lang),
-                }
+        const newTranslations: Record<string, any> = {}
+        newTranslations[srcLang] = deepClone(sourceData)
+        let failed = false
+
+        for (let li = 0; li < targets.length; li++) {
+            const lang = targets[li]
+            process.stdout.write(`  → ${lang} (${strCount} строк)...`)
+            liveProcessing.currentLang = lang; liveProcessing.langsDone = li
+            broadcastStatus()
+
+            try {
+                newTranslations[lang] = await translateSourceData(sourceData, srcLang, lang)
+                liveProcessing.fieldsDone = strCount
                 console.log(' ✓')
+            } catch (err) {
+                console.log(' ✗')
+                console.error(`  ❌ ${err instanceof TranslationError ? err.message : err}`)
+                failed = true; break
             }
-
-            page._status = 'ready'
-            page._hashes = {
-                _slug: page.slug,
-                _contentHash: computeContentHash(page.meta, page.pageContent),
-                fields: computeFieldHashes(sourceData)
-            }
-
-            savePageFile(filePath, page)
-            console.log('  🔓 Page published!')
-
-            await warmCache(page.slug)
-            await showUsageInfo(true)
-            return true
         }
 
-        // ═══════════════════════════════════════════════════════════
-        // БЕЗ ИЗМЕНЕНИЙ
-        // ═══════════════════════════════════════════════════════════
-        if (scenario === 'unchanged') {
-            console.log('  ⏭️  No changes detected')
-            return false
+        liveProcessing = null
+
+        if (failed) {
+            console.log('  ↩️ Откат: файл без изменений')
+            savePageFile(filePath, fullBackup)
+            broadcastStatus()
+            throw new TranslationError(`Full translation failed (${scenario})`)
         }
 
-        // ═══════════════════════════════════════════════════════════
-        // ИНКРЕМЕНТАЛЬНОЕ ОБНОВЛЕНИЕ
-        // ═══════════════════════════════════════════════════════════
-        const currentHashes = computeFieldHashes(sourceData)
-        const savedHashes = page._hashes?.fields || {}
-        const changes = detectFieldChanges(currentHashes, savedHashes, sourceData)
+        page.translations = newTranslations
+        ensureTranslationStructure(page)
+        delete page._translationPending
+        page._status = 'ready'
+        page._hashes = { _slug: page.slug, _contentHash: computeContentHash(page.meta, page.pageContent), fields: computeFieldHashes(sourceData) }
+        savePageFile(filePath, page)
+        console.log('  🔓 Опубликовано!')
+        await warmCache(page.slug)
+        await showPageUsage(page.slug)
+        await showUsageInfo(true)
+        broadcastStatus()
+        return true
+    }
 
-        if (changes.length === 0) {
-            console.log('  ⏭️  No field changes')
-            page._hashes = {
-                _slug: page.slug,
-                _contentHash: computeContentHash(page.meta, page.pageContent),
-                fields: currentHashes
+    // ═════════════════════════════════════════════════════════
+    // ДОБАВЛЕНИЕ НЕДОСТАЮЩИХ ЯЗЫКОВ (missing-langs)
+    // ═════════════════════════════════════════════════════════
+    if (scenario === 'missing-langs') {
+        const missing = languageCodes.filter(l => {
+            const t = page.translations?.[l]
+            return !t?.meta || !t?.pageContent || !t.meta.title || !t.pageContent.mainTitle
+        })
+        console.log(`  🌍 Языки: ${missing.join(', ')}`)
+
+        const strCount = countTranslatableStrings(sourceData)
+        const langsToTranslate = missing.filter(l => l !== srcLang).length
+        showEstimate(strCount, langsToTranslate)
+
+        liveProcessing = { slug: page.slug, scenario, stage: 'translating', langsTotal: missing.length, langsDone: 0, fieldsTotal: strCount }
+        broadcastStatus()
+
+        const newLangData: Record<string, any> = {}
+        let failed = false
+
+        for (let li = 0; li < missing.length; li++) {
+            const lang = missing[li]
+            process.stdout.write(`  → ${lang} (${strCount} строк)...`)
+            liveProcessing.currentLang = lang; liveProcessing.langsDone = li
+            broadcastStatus()
+
+            try {
+                newLangData[lang] = await translateSourceData(sourceData, srcLang, lang)
+                liveProcessing.fieldsDone = strCount
+                console.log(' ✓')
+            } catch (err) {
+                console.log(' ✗'); failed = true; break
             }
-            savePageFile(filePath, page)
-            return false
         }
 
-        const toTranslate = changes.filter(c => c.type !== 'deleted' && c.needsTranslation)
-        const toSync = changes.filter(c => c.type !== 'deleted' && !c.needsTranslation)
-        const toDelete = changes.filter(c => c.type === 'deleted')
+        liveProcessing = null
 
-        console.log(`  📝 Changes: ${toTranslate.length} translate, ${toSync.length} sync, ${toDelete.length} delete`)
+        if (failed) {
+            console.log('  ↩️ Откат: существующие переводы не затронуты')
+            savePageFile(filePath, fullBackup)
+            broadcastStatus()
+            throw new TranslationError('Missing langs failed')
+        }
 
         ensureTranslationStructure(page)
+        for (const [l, d] of Object.entries(newLangData)) page.translations![l] = d
+        delete page._translationPending
+        page._hashes = { _slug: page.slug, _contentHash: computeContentHash(page.meta, page.pageContent), fields: computeFieldHashes(sourceData) }
+        savePageFile(filePath, page)
+        console.log('  ✅ Языки добавлены!')
+        await warmCache(page.slug)
+        await showPageUsage(page.slug)
+        broadcastStatus()
+        return true
+    }
 
-        for (const change of toDelete) {
-            removeDeletedField(page, change.path)
+    // ═════════════════════════════════════════════════════════
+    // БЕЗ ИЗМЕНЕНИЙ
+    // ═════════════════════════════════════════════════════════
+    if (scenario === 'unchanged') { console.log('  ⏭️  Без изменений'); return false }
+
+    // ═════════════════════════════════════════════════════════
+    // ИНКРЕМЕНТАЛЬНОЕ ОБНОВЛЕНИЕ
+    // ═════════════════════════════════════════════════════════
+    const currentHashes = computeFieldHashes(sourceData)
+    const savedHashes = page._hashes?.fields || {}
+    const changes = detectFieldChanges(currentHashes, savedHashes, sourceData)
+
+    if (changes.length === 0) {
+        console.log('  ⏭️  Нет изменений полей')
+        page._hashes = { _slug: page.slug, _contentHash: computeContentHash(page.meta, page.pageContent), fields: currentHashes }
+        savePageFile(filePath, page); return false
+    }
+
+    const toTranslate = changes.filter(c => c.type !== 'deleted' && c.needsTranslation)
+    const toSync = changes.filter(c => c.type !== 'deleted' && !c.needsTranslation)
+    const toDelete = changes.filter(c => c.type === 'deleted')
+
+    // Считаем реальное кол-во строк для батча
+    let totalStringsToTranslate = 0
+    for (const c of toTranslate) totalStringsToTranslate += collectTranslatable(c.value, c.path).length
+
+    console.log(`  📝 Изменения: ${toTranslate.length} полей (${totalStringsToTranslate} строк), ${toSync.length} sync, ${toDelete.length} удалено`)
+
+    if (totalStringsToTranslate > 0) {
+        showEstimate(totalStringsToTranslate, targets.length)
+    }
+
+    liveProcessing = { slug: page.slug, scenario, stage: 'translating', langsTotal: targets.length, langsDone: 0, fieldsTotal: totalStringsToTranslate, fieldsDone: 0 }
+    broadcastStatus()
+
+    ensureTranslationStructure(page)
+
+    // Удаления
+    for (const c of toDelete) {
+        for (const l of languageCodes) {
+            const parts = c.path.split(/\.|\[(\d+)\]/).filter(Boolean)
+            let cur: any = page.translations![l]
+            for (let i = 0; i < parts.length - 1; i++) { if (!cur || typeof cur !== 'object') break; cur = cur[parts[i]] }
+            if (cur && typeof cur === 'object') { const last = parts[parts.length - 1]; if (last in cur) delete cur[last] }
         }
-        if (toDelete.length > 0) console.log(`  🗑️  Deleted ${toDelete.length} field(s)`)
+    }
+    if (toDelete.length > 0) console.log(`  🗑️  Удалено ${toDelete.length}`)
 
-        for (const change of toSync) {
-            syncNonTranslatableField(page, change.path, change.value)
-        }
-        if (toSync.length > 0) console.log(`  🔗 Synced ${toSync.length} field(s)`)
+    // Sync структуры массивов
+    for (const l of languageCodes) syncStructure(sourceData, page.translations![l])
 
-        if (toTranslate.length > 0) {
-            const targets = languageCodes.filter(l => l !== srcLang)
+    // Sync непереводимых
+    for (const c of toSync) syncNonTranslatableField(page, c.path, c.value)
+    if (toSync.length > 0) console.log(`  🔗 Synced ${toSync.length}`)
 
-            for (const lang of targets) {
-                process.stdout.write(`  → ${lang}: `)
+    // Перевод батчем
+    if (toTranslate.length > 0) {
+        let failed = false
+        try {
+            for (let li = 0; li < targets.length; li++) {
+                const lang = targets[li]
+                process.stdout.write(`  → ${lang} (${totalStringsToTranslate} строк)...`)
+                liveProcessing.currentLang = lang; liveProcessing.langsDone = li; liveProcessing.fieldsDone = 0
+                broadcastStatus()
 
-                for (const change of toTranslate) {
-                    const translated = await translateValue(change.value, srcLang, lang)
-                    setByPath(page.translations![lang], change.path, translated)
-                    process.stdout.write('.')
+                const translated = await translateChangedFields(toTranslate, srcLang, lang)
+                for (const [p, val] of translated) {
+                    setByPath(page.translations![lang], p, val)
                 }
+                liveProcessing.fieldsDone = totalStringsToTranslate
                 console.log(' ✓')
             }
-
-            for (const change of toTranslate) {
-                setByPath(page.translations![srcLang], change.path, deepClone(change.value))
-            }
-
-            console.log(`  📝 Translated ${toTranslate.length} field(s)`)
+            // Source lang
+            for (const c of toTranslate) setByPath(page.translations![srcLang], c.path, deepClone(c.value))
+            console.log(`  📝 Переведено ${toTranslate.length} поле(й) (${totalStringsToTranslate} строк)`)
+        } catch (err) {
+            failed = true; console.log(' ✗')
+            console.error(`\n  ❌ ${err instanceof TranslationError ? err.message : err}`)
         }
 
-        page._hashes = {
-            _slug: page.slug,
-            _contentHash: computeContentHash(page.meta, page.pageContent),
-            fields: currentHashes
+        if (failed) {
+            liveProcessing = null
+            console.log('  ↩️ Полный откат')
+            savePageFile(filePath, fullBackup)
+            broadcastStatus()
+            throw new TranslationError('Incremental translation failed')
         }
-
-        savePageFile(filePath, page)
-        console.log('  ✅ Saved!')
-
-        await warmCache(page.slug)
-        return true
-
-    } catch (error) {
-        console.error(`  ❌ Error: ${error}`)
-        throw error
     }
+
+    liveProcessing = null
+
+    const mtimeAfter = getFileMtime(filePath)
+    if (mtimeAfter !== mtimeBefore && !recentlySaved.has(path.basename(filePath))) {
+        console.log('  ⚠️ Файл изменён во время перевода! Пропуск.')
+        broadcastStatus()
+        return false
+    }
+
+    page._hashes = { _slug: page.slug, _contentHash: computeContentHash(page.meta, page.pageContent), fields: currentHashes }
+    delete page._translationPending
+    savePageFile(filePath, page)
+    console.log('  ✅ Сохранено!')
+    await warmCache(page.slug)
+    await showPageUsage(page.slug)
+    broadcastStatus()
+    return true
 }
 
 // ═══════════════════════════════════════════════════════════════
 // ОЧЕРЕДЬ
 // ═══════════════════════════════════════════════════════════════
 
-function loadQueue(): QueueState {
-    try {
-        if (fs.existsSync(QUEUE_FILE)) {
-            return JSON.parse(fs.readFileSync(QUEUE_FILE, 'utf-8'))
-        }
-    } catch {}
-    return { items: [], processing: false, currentFile: null }
-}
-
-function saveQueue(queue: QueueState): void {
-    fs.mkdirSync(path.dirname(QUEUE_FILE), { recursive: true })
-    fs.writeFileSync(QUEUE_FILE, JSON.stringify(queue, null, 2))
-    updateStatus(queue)
-}
-
-function updateStatus(queue: QueueState): void {
-    const pending = queue.items.filter(i => i.status === 'pending').length
-    const processing = queue.items.find(i => i.status === 'processing')
-    const done = queue.items.filter(i => i.status === 'done').length
-    const errors = queue.items.filter(i => i.status === 'error')
-
-    let status: 'idle' | 'translating' | 'error' = 'idle'
-    let message = 'Ожидание изменений'
-
-    if (processing) {
-        status = 'translating'
-        message = `Перевод: ${processing.slug}`
-        if (pending > 0) message += ` (+${pending} в очереди)`
-    } else if (pending > 0) {
-        status = 'translating'
-        message = `В очереди: ${pending}`
-    }
-
-    if (errors.length > 0) {
-        status = 'error'
-        message = `Ошибки: ${errors.map(e => e.slug).join(', ')}`
-    }
-
-    fs.mkdirSync(path.dirname(STATUS_FILE), { recursive: true })
-    fs.writeFileSync(STATUS_FILE, JSON.stringify({
-        status,
-        message,
-        queue: { pending, processing: processing?.slug || null, done, errors: errors.length },
-        updatedAt: new Date().toISOString()
-    }, null, 2))
-}
+function loadQueue(): QueueState { return readJsonSafe(QUEUE_FILE, { items: [], processing: false, currentFile: null }) }
+function saveQueue(q: QueueState): void { writeJson(QUEUE_FILE, q); writeFullStatus() }
 
 function addToQueue(file: string, force = false): boolean {
-    const queue = loadQueue()
-    const slug = path.basename(file, '.yml')
-
-    const existing = queue.items.find(
-        i => i.file === file && (i.status === 'pending' || i.status === 'processing')
-    )
-
-    if (existing) {
-        if (force && !existing.force) {
-            existing.force = true
-            saveQueue(queue)
-            console.log(`  🔄 Updated in queue: ${slug} (force)`)
-        }
-        return false
-    }
-
-    queue.items.push({
-        file,
-        slug,
-        force,
-        addedAt: new Date().toISOString(),
-        status: 'pending'
-    })
-
+    const q = loadQueue(), slug = path.basename(file, '.yml')
+    const ex = q.items.find(i => i.file === file && (i.status === 'pending' || i.status === 'processing'))
+    if (ex) { if (force && !ex.force) { ex.force = true; saveQueue(q) }; return false }
+    q.items.push({ file, slug, force, addedAt: new Date().toISOString(), status: 'pending' })
     console.log(`  ➕ Queue: ${slug}${force ? ' (force)' : ''}`)
-    saveQueue(queue)
-    return true
+    saveQueue(q); return true
 }
 
-function cleanQueue(queue: QueueState): QueueState {
-    const fiveMinAgo = Date.now() - 5 * 60 * 1000
-    queue.items = queue.items.filter(item => {
-        if (item.status === 'pending' || item.status === 'processing') return true
-        if (item.status === 'done') return false
-        return new Date(item.addedAt).getTime() > fiveMinAgo
+function cleanQueue(q: QueueState): QueueState {
+    const ago = Date.now() - 5 * 60 * 1000
+    q.items = q.items.filter(i => {
+        if (i.status === 'pending' || i.status === 'processing') return true
+        if (i.status === 'done') return false
+        return new Date(i.addedAt).getTime() > ago
     })
-    return queue
+    return q
 }
 
 let isProcessing = false
@@ -724,58 +926,96 @@ let isProcessing = false
 async function processQueue(): Promise<void> {
     if (isProcessing) return
     isProcessing = true
-
-    const startTime = Date.now()
-    let processed = 0
-    let errors = 0
+    const t0 = Date.now(); let ok = 0, errs = 0
 
     try {
         while (true) {
-            let queue = cleanQueue(loadQueue())
-            const next = queue.items.find(i => i.status === 'pending')
+            let q = cleanQueue(loadQueue())
+            const next = q.items.find(i => i.status === 'pending')
+            if (!next) { q.processing = false; q.currentFile = null; saveQueue(q); break }
 
-            if (!next) {
-                queue.processing = false
-                queue.currentFile = null
-                saveQueue(queue)
-                break
-            }
+            next.status = 'processing'; q.processing = true; q.currentFile = next.file
+            saveQueue(q)
 
-            next.status = 'processing'
-            queue.processing = true
-            queue.currentFile = next.file
-            saveQueue(queue)
+            let scenario = 'unknown'
+            try { const pg = parse(fs.readFileSync(next.file, 'utf-8')) as PageData; scenario = next.force ? 'new' : (pg.meta && pg.pageContent ? detectScenario(pg) : 'unknown') } catch {}
 
             try {
                 const changed = await processPage(next.file, next.force)
                 next.status = 'done'
-                if (changed) processed++
+                if (changed) { ok++; removeFromRetry(next.slug); removeFromFailed(next.slug) }
             } catch (e) {
-                next.status = 'error'
-                next.error = String(e)
-                errors++
+                next.status = 'error'; next.error = String(e); errs++
+                addToRetry(next.file, next.slug, String(e), scenario)
             }
 
-            queue = loadQueue()
-            const item = queue.items.find(i => i.file === next.file && i.status === 'processing')
-            if (item) {
-                item.status = next.status
-                item.error = next.error
-            }
-            saveQueue(queue)
+            q = loadQueue()
+            const item = q.items.find(i => i.file === next.file && i.status === 'processing')
+            if (item) { item.status = next.status; item.error = next.error }
+            saveQueue(q)
         }
     } finally {
-        isProcessing = false
+        isProcessing = false; liveProcessing = null
         saveQueue(cleanQueue(loadQueue()))
-
-        const duration = ((Date.now() - startTime) / 1000).toFixed(1)
-        if (processed > 0 || errors > 0) {
+        const dur = ((Date.now() - t0) / 1000).toFixed(1)
+        if (ok > 0 || errs > 0) {
             console.log(`\n${'═'.repeat(50)}`)
-            console.log(`📊 Result: ✅ ${processed} translated | ❌ ${errors} errors | ⏱️ ${duration}s`)
+            console.log(`📊 Итог: ✅ ${ok} | ❌ ${errs} | ⏱️ ${dur}s`)
             await showUsageInfo(true)
             console.log('═'.repeat(50))
         }
     }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RETRY + FIX
+// ═══════════════════════════════════════════════════════════════
+
+async function processRetries(): Promise<void> {
+    const due = getRetryDue()
+    if (due.length === 0) return
+    console.log(`\n🔄 Retry: ${due.length} стр.`)
+
+    for (const item of due) {
+        const q = loadQueue()
+        if (q.items.some(i => i.slug === item.slug && (i.status === 'pending' || i.status === 'processing'))) continue
+        if (!fs.existsSync(item.file)) { removeFromRetry(item.slug); continue }
+        const fileName = path.basename(item.file)
+        busy.add(fileName)
+        addToQueue(item.file, false)
+    }
+
+    await processQueue()
+
+    for (const item of due) busy.delete(path.basename(item.file))
+}
+
+async function fixFailed(): Promise<void> {
+    const failed = loadFailed()
+    if (failed.items.length === 0) { console.log('\n✅ Нет failed-страниц!\n'); return }
+
+    console.log(`\n${'═'.repeat(50)}`)
+    console.log(`🔧 FIX FAILED: ${failed.items.length} стр.`)
+    await showUsageInfo(true)
+    console.log('═'.repeat(50))
+
+    let fixed = 0, still = 0
+    for (const item of [...failed.items]) {
+        if (!fs.existsSync(item.file)) { removeFromFailed(item.slug); continue }
+        console.log(`\n  🔧 ${item.slug} (было ${item.totalAttempts} попыток)`)
+        const fileName = path.basename(item.file)
+        busy.add(fileName)
+        try {
+            const changed = await processPage(item.file, true)
+            if (changed) { fixed++; removeFromFailed(item.slug); removeFromRetry(item.slug) }
+        } catch (e) { still++; console.error(`  ❌ Всё ещё ошибка: ${e}`) }
+        busy.delete(fileName)
+    }
+
+    console.log(`\n${'═'.repeat(50)}`)
+    console.log(`📊 Fix: ✅ ${fixed} | ❌ ${still}`)
+    await showUsageInfo(true)
+    console.log('═'.repeat(50))
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -784,73 +1024,153 @@ async function processQueue(): Promise<void> {
 
 async function processAll(force = false): Promise<void> {
     const files = fs.readdirSync(CONTENT_DIR).filter(f => f.endsWith('.yml'))
+    console.log(`\n${'═'.repeat(50)}`)
+    console.log(`📁 Файлов: ${files.length} | ${force ? 'FORCE' : 'incremental'}`)
+    console.log(`⏱️  Задержка между запросами: ${TRANSLATE_DELAY / 1000}с`)
+    await showUsageInfo(true)
+    console.log('═'.repeat(50))
+    if (force) { saveRetry({ items: [] }); saveFailed({ items: [] }) }
+    for (const f of files) addToQueue(path.join(CONTENT_DIR, f), force)
+    await processQueue()
+    console.log('\n🎉 Готово!\n')
+}
+
+async function syncLanguages(): Promise<void> {
+    const files = fs.readdirSync(CONTENT_DIR).filter(f => f.endsWith('.yml'))
+    const langSet = new Set(languageCodes)
 
     console.log(`\n${'═'.repeat(50)}`)
-    console.log(`📁 Files: ${files.length} | Mode: ${force ? 'FORCE' : 'incremental'}`)
-    console.log(`🔤 Translator: DeepL API`)
-
+    console.log(`🌍 SYNC LANGUAGES: ${languageCodes.join(', ')}`)
+    console.log(`⏱️  Задержка между запросами: ${TRANSLATE_DELAY / 1000}с`)
     await showUsageInfo(true)
     console.log('═'.repeat(50))
 
-    for (const file of files) {
-        addToQueue(path.join(CONTENT_DIR, file), force)
+    let toAdd = 0, cleaned = 0
+
+    for (const f of files) {
+        const fp = path.join(CONTENT_DIR, f)
+        const pg = parse(fs.readFileSync(fp, 'utf-8')) as PageData
+        if (!pg.meta || !pg.pageContent) continue
+
+        let fileChanged = false
+
+        // ── Удаление лишних языков ──
+        if (pg.translations) {
+            const extraLangs = Object.keys(pg.translations).filter(l => !langSet.has(l))
+            if (extraLangs.length > 0) {
+                for (const l of extraLangs) delete pg.translations[l]
+                console.log(`  🗑️  ${f}: удалены языки ${extraLangs.join(', ')}`)
+                fileChanged = true; cleaned++
+            }
+        }
+
+        // ── Сохраняем если были только удаления ──
+        if (fileChanged && !pg.translations) {
+            // Все языки удалены — обновляем хэши и сохраняем
+            const sourceData = { meta: pg.meta, pageContent: pg.pageContent }
+            pg._hashes = { _slug: pg.slug, _contentHash: computeContentHash(pg.meta, pg.pageContent), fields: computeFieldHashes(sourceData) }
+            savePageFile(fp, pg)
+        }
+
+        // ── Проверка недостающих языков ──
+        if (!pg.translations && languageCodes.length > 0) {
+            // Нет переводов вообще — нужен полный перевод
+            if (fileChanged) savePageFile(fp, pg)
+            addToQueue(fp, false); toAdd++; continue
+        }
+
+        const miss = languageCodes.filter(l => {
+            const t = pg.translations?.[l]
+            return !t?.meta || !t?.pageContent || !t.meta.title || !t.pageContent.mainTitle
+        })
+
+        if (miss.length > 0) {
+            if (fileChanged) savePageFile(fp, pg)
+            addToQueue(fp, false); toAdd++; continue
+        }
+
+        // ── Только удаления, без добавлений ──
+        if (fileChanged) {
+            const sourceData = { meta: pg.meta, pageContent: pg.pageContent }
+            pg._hashes = { _slug: pg.slug, _contentHash: computeContentHash(pg.meta, pg.pageContent), fields: computeFieldHashes(sourceData) }
+            savePageFile(fp, pg)
+        } else {
+            console.log(`  ✓ ${f}`)
+        }
     }
 
-    await processQueue()
-    console.log('\n🎉 Done!\n')
+    if (toAdd > 0) await processQueue()
+
+    console.log(`\n${'═'.repeat(50)}`)
+    console.log(`📊 Sync: 🗑️ ${cleaned} очищено | 🌍 ${toAdd} на перевод`)
+    console.log('═'.repeat(50))
 }
 
 async function watch(): Promise<void> {
     console.log(`\n${'═'.repeat(50)}`)
     console.log('👀 WATCH MODE')
     console.log(`📁 ${CONTENT_DIR}`)
-    console.log(`🌍 Languages: ${languageCodes.join(', ')}`)
-    console.log(`🔤 Translator: DeepL API`)
-
+    console.log(`🌍 ${languageCodes.join(', ')}`)
+    console.log(`⏱️  Задержка: ${TRANSLATE_DELAY / 1000}с | Retry: ${RETRY_INTERVAL / 60000} мин / макс. ${MAX_RETRIES}`)
+    console.log(`📦 Batch: до ${BATCH_SIZE} строк за запрос`)
     await showUsageInfo(true)
     console.log('═'.repeat(50) + '\n')
 
     saveQueue({ items: [], processing: false, currentFile: null })
+    writeFullStatus()
 
-    const debounceTimers = new Map<string, NodeJS.Timeout>()
-    const processingFiles = new Set<string>()
+    const debounce = new Map<string, NodeJS.Timeout>()
 
-    fs.watch(CONTENT_DIR, async (eventType, fileName) => {
-        if (!fileName?.endsWith('.yml')) return
-        if (recentlySaved.has(fileName)) return
-        if (processingFiles.has(fileName)) return
+    const retryTimer = setInterval(async () => {
+        if (isProcessing) return
+        const due = getRetryDue()
+        if (due.length > 0) { await processRetries(); writeFullStatus(); console.log('\n👀 Watching...') }
+        else writeFullStatus()
+    }, 30_000)
 
-        const queue = loadQueue()
-        const alreadyInQueue = queue.items.some(
-            i => i.slug === fileName.replace('.yml', '') &&
-                (i.status === 'pending' || i.status === 'processing')
-        )
-        if (alreadyInQueue) return
+    fs.watch(CONTENT_DIR, async (_, fileName) => {
+        if (!fileName?.endsWith('.yml') || recentlySaved.has(fileName) || busy.has(fileName)) return
 
-        clearTimeout(debounceTimers.get(fileName))
-        debounceTimers.set(fileName, setTimeout(async () => {
-            debounceTimers.delete(fileName)
+        const slug = fileName.replace('.yml', '')
+        const q = loadQueue()
+        if (q.items.some(i => i.slug === slug && (i.status === 'pending' || i.status === 'processing'))) return
 
-            if (recentlySaved.has(fileName) || processingFiles.has(fileName)) return
+        clearTimeout(debounce.get(fileName))
+        debounce.set(fileName, setTimeout(async () => {
+            debounce.delete(fileName)
+            if (recentlySaved.has(fileName) || busy.has(fileName)) return
 
-            const filePath = path.join(CONTENT_DIR, fileName)
-            if (!fs.existsSync(filePath)) {
-                console.log(`\n🗑️  Deleted: ${fileName}`)
-                return
+            const fp = path.join(CONTENT_DIR, fileName)
+            if (!fs.existsSync(fp)) {
+                console.log(`\n🗑️  Удалён: ${fileName}`)
+                removeFromRetry(slug); removeFromFailed(slug); writeFullStatus(); return
             }
 
-            console.log(`\n📝 Changed: ${fileName}`)
-            processingFiles.add(fileName)
+            console.log(`\n📝 Изменён: ${fileName}`)
+            busy.add(fileName)
 
-            addToQueue(filePath, false)
+            removeFromRetry(slug)
+            removeFromFailed(slug)
+
+            addToQueue(fp, false)
             await processQueue()
+            busy.delete(fileName)
 
-            processingFiles.delete(fileName)
+            // Recheck
+            try {
+                const pg = parse(fs.readFileSync(fp, 'utf-8')) as PageData
+                if (pg._hashes && computeContentHash(pg.meta, pg.pageContent) !== pg._hashes._contentHash) {
+                    console.log(`  🔄 Файл изменён во время обработки → повтор`)
+                    addToQueue(fp, false); await processQueue()
+                }
+            } catch {}
+
             console.log('\n👀 Watching...')
         }, 3000))
     })
 
-    console.log('👀 Watching for changes...\n')
+    console.log('👀 Watching...\n')
+    process.on('SIGINT', () => { clearInterval(retryTimer); console.log('\n👋 Stopped.'); process.exit(0) })
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -860,49 +1180,45 @@ async function watch(): Promise<void> {
 const args = process.argv.slice(2)
 const hasForce = args.includes('--force')
 
-if (args.includes('--watch')) {
-    watch()
-} else if (args.includes('--all')) {
-    processAll(hasForce)
-} else if (args.includes('--status')) {
-    const queue = loadQueue()
-    console.log(`\n📊 Queue: ${queue.items.length} items`)
-    const icons = { pending: '⏳', processing: '🔄', done: '✅', error: '❌' }
-    queue.items.forEach(i => console.log(`  ${icons[i.status]} ${i.slug}`))
+if (args.includes('--watch')) { watch() }
+else if (args.includes('--sync-langs')) { syncLanguages() }
+else if (args.includes('--all')) { processAll(hasForce) }
+else if (args.includes('--retry')) { processRetries().then(() => console.log('\n🎉 Done.\n')) }
+else if (args.includes('--fix-failed')) { fixFailed() }
+else if (args.includes('--status')) {
+    const q = loadQueue(), r = loadRetry(), f = loadFailed()
+    const ic = { pending: '⏳', processing: '🔄', done: '✅', error: '❌' } as const
+    console.log(`\n📊 Очередь: ${q.items.length}`)
+    q.items.forEach(i => console.log(`  ${ic[i.status]} ${i.slug}`))
+    if (r.items.length) { console.log(`\n🔄 Retry: ${r.items.length}`); r.items.forEach(i => { const s = Math.max(0, Math.round((new Date(i.nextRetryAt).getTime() - Date.now()) / 1000)); console.log(`  🔁 ${i.slug} (${i.retryCount}/${MAX_RETRIES}) через ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`) }) }
+    if (f.items.length) { console.log(`\n⛔ Failed: ${f.items.length}`); f.items.forEach(i => console.log(`  💀 ${i.slug} (${i.totalAttempts} попыток)`)); console.log(`\n  💡 npx tsx scripts/auto-translate.ts --fix-failed`) }
     showUsageInfo(true)
-} else if (args.includes('--usage')) {
-    showUsageInfo(true).then(() => console.log(''))
-} else {
+} else if (args.includes('--usage')) { showUsageInfo(true).then(() => console.log('')) }
+else {
     const slug = args.find(a => !a.startsWith('--'))
     if (!slug) {
         console.log(`
-📖 Auto-Translate v2 (DeepL)
+📖 Auto-Translate v6 (DeepL Batch)
 
-Usage:
-  npx tsx scripts/auto-translate.ts --watch          Watch for changes
-  npx tsx scripts/auto-translate.ts --all            Translate all (incremental)
-  npx tsx scripts/auto-translate.ts --all --force    Translate all (force)
-  npx tsx scripts/auto-translate.ts <slug>           Translate one page
-  npx tsx scripts/auto-translate.ts <slug> --force   Force translate one page
-  npx tsx scripts/auto-translate.ts --status         Show queue status
-  npx tsx scripts/auto-translate.ts --usage          Show DeepL usage/limits
+Команды:
+  --watch              Watch + авто-retry каждые 3 мин
+  --all                Все страницы (инкрементально)
+  --all --force        Все с нуля (сбрасывает retry/failed)
+  --sync-langs         Добавить новые языки
+  --retry              Ручной retry неудачных
+  --fix-failed         Перевести выпавшие страницы
+  <slug>               Одна страница
+  <slug> --force       Одна страница с нуля
+  --status             Полный статус
+  --usage              Лимиты DeepL
 
-Scenarios handled:
-  🆕 New page        → Full translation
-  📋 Duplicated      → Detected by slug mismatch → Full translation  
-  🔧 Corrupted       → Missing translations → Full translation
-  📝 Changed         → Incremental update (only changed fields)
-  ⏭️  Unchanged       → Skip
-`)
-        process.exit(1)
+Batch: до ${BATCH_SIZE} строк за 1 запрос к DeepL
+Задержка: ${TRANSLATE_DELAY / 1000}с между запросами
+429 retry: ${RATE_LIMIT_RETRIES}x (${RATE_LIMIT_BACKOFF.join('с, ')}с)
+Retry: каждые ${RETRY_INTERVAL/60000} мин, макс ${MAX_RETRIES} попыток → failed.json → --fix-failed
+`); process.exit(1)
     }
-
-    const filePath = path.resolve(CONTENT_DIR, `${slug}.yml`)
-    if (!fs.existsSync(filePath)) {
-        console.error(`❌ Not found: ${filePath}`)
-        process.exit(1)
-    }
-
-    addToQueue(filePath, hasForce)
-    processQueue()
+    const fp = path.resolve(CONTENT_DIR, `${slug}.yml`)
+    if (!fs.existsSync(fp)) { console.error(`❌ Не найдено: ${fp}`); process.exit(1) }
+    addToQueue(fp, hasForce); processQueue()
 }

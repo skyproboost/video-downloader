@@ -1,0 +1,1406 @@
+footerLinkText: YouTube
+translations:
+  ru:
+    meta:
+      title: Скачать видео с Youtube
+      description: Скачать видео с YouTube  бесплатно и быстро или извлечь аудио.
+        Загрузка без регистрации, без ограничений скорости. Сохраняйте ролики
+        для офлайн-просмотра всего за несколько секунд.
+      keywords: Скачать видео ютуб
+      ogImage: /images/main.png
+      ogImageAlt: Скачать видео с ютуб
+    pageContent:
+      mainTitle: Скачать видео с YouTube
+      subtitle: "Скачивайте видео с любых платформ:  YouTube, TikTok, Instagram, VK,
+        RuTube, Reddit, Twitch и многих других быстро и без ограничений."
+      intro: Скачивайте видео с YouTube быстро и бесплатно в высоком качестве без
+        регистрации и ограничений.
+      how_to:
+        title: Как скачать видео с YouTube
+        blocks:
+          - title: ""
+            content: >-
+              YouTube это самый большой видеохостинг в этом мире, и преобладает
+              по популярности в большинстве стран. Тем не менее скачать видео на
+              ютубе не так просто как кажется, сервис не отдает напрямую
+              пользователю возможность загрузить видео для персонального
+              использования. 
+
+
+              aDownloader предлагает полноценный и бесплатный сервис для
+              загрузки видео с Youtube в различных форматах, от низкого
+              разрешение 360, 480, 720 HD пикселей, также и в высоком разрешении
+              и хорошем качестве 1080p FullHD, 2K, 4k 8k, вертикальные видео
+              Shorts. Также можно и преобразовать в аудио и скачать файл для
+              прослушивания и использования в форматах mp3, wav, m4a, для
+              различных целей. 
+
+
+              aDownloader сервис у которого основная цель скачивать видео с
+              Youtube в котором удобный интерфейс и очень высокая скорость, это
+              будет работать на вашем компьютере и на телефоне, что может
+              позволять просматривать в оффлайн режиме или извлечь аудио для
+              офлайн прослушивания. 
+
+              Мы делаем надежный и быстрый сервис для загрузки. 
+          - title: Скопируйте ссылку для скачивания видео с Youtube?
+            content: "Чтобы начать загрузку, сначала необходимо скопировать ссылку на нужное
+              видео. Это можно сделать двумя способами. Первый это скопировать
+              ссылку напрямую из адресной строки браузера: просто выделите URL
+              страницы с видео и нажмите «Копировать»."
+            image: /images/1.png
+            imageAlt: Скачать видео с YouTube
+          - imageAlt: Скачать видео с YouTube
+            content: Второй способ это воспользоваться кнопкой «Поделиться», которая обычно
+              находится под видео. Нажмите её и выберите пункт «Копировать
+              ссылку».
+            image: /images/2.png
+          - content: >-
+              После того как ссылка на видео успешно скопирована, перейдите на
+              сайт adownloader.org  и найдите специальное поле для ввода ссылки
+              на любой странице. Аккуратно вставьте скопированный URL в это
+              поле  это можно сделать с помощью комбинации клавиш Ctrl + V (или
+              Cmd + V на Mac) либо через меню «Вставить» на мобильном
+              устройстве.
+
+              Убедитесь, что ссылка вставлена полностью и без лишних символов,
+              после чего нажмите кнопку загрузки.
+            image: /images/main.png
+            imageAlt: Скачать видео с YouTube
+          - content: >-
+              Сервис автоматически обработает ссылку, определит доступные
+              форматы и предложит варианты качества. Вам останется выбрать
+              подходящее разрешение или формат файла и сохранить видео на своё
+              устройство
+
+
+              На мобильных телефонах процесс полностью аналогичный. Откройте
+              видео в приложении или мобильном браузере, нажмите кнопку
+              «Поделиться» и выберите «Копировать ссылку». Затем перейдите на
+              сайт adownloader.org в браузере, вставьте ссылку в поле загрузки и
+              начните скачивание  так же быстро и удобно, как и на компьютере.
+            image: /images/3.png
+            imageAlt: Скачать видео с YouTube
+      features:
+        items:
+          - icon: ⚡
+            title: Быстро и бесплатно
+            description: Скачивайте видео мгновенно без регистрации и бесплатно.
+          - title: Поддержка HD и 4K
+            description: Доступны все разрешения от аудио mp3 до Full HD и 4K.
+            icon: "🎥 "
+          - title: Работа с разными платформами
+            description: Поддержка YouTube, TikTok, Instagram, VK, Reddit и других сервисов.
+            icon: "🌍 "
+          - icon: "📱 "
+            title: Подходит для всех устройств
+            description: Работает на компьютерах, смартфонах и планшетах без установки
+              программ.
+          - title: Извлечение аудио
+            icon: "🔊 "
+            description: Возможность скачать только звук в удобном формате.
+          - title: Мгновенная обработка ссылки
+            description: Сервис автоматически определяет формат и предлагает лучшие варианты
+              качества для скачивания.
+            icon: "🚀 "
+        title: Преимущества
+      faq:
+        - question: Нужно ли устанавливать программу, чтобы скачать видео онлайн?
+          answer: Нет, чтобы скачать видео бесплатно, не нужно устанавливать программы или
+            приложения. Наш онлайн-сервис работает прямо в браузере и позволяет
+            быстро загрузить видео по ссылке без дополнительной установки
+            приложения.
+        - question: В каком качестве можно скачать видео с YouTube и других платформ?
+          answer: "Вы можете скачать видео в формате MP4 в различных разрешениях: 360p,
+            480p, 720p, 1080p,SD, HD, Full HD, 2K и 4K. Доступные варианты
+            качества зависят от исходного видео. А также аудио и звуки из
+            видео."
+        - question: Можно ли скачать видео в формате MP3 (только аудио/звук)?
+          answer: Да, сервис позволяет скачать аудио из видео и сохранить его в удобном
+            формате для прослушивания офлайн — без потери качества.
+        - question: Можно ли скачать видео на телефон (Android и iPhone)?
+          answer: Да, вы можете скачать видео на телефон через браузер без приложений.
+            Сервис полностью адаптирован для Android, iPhone и планшетов.
+        - question: Есть ли ограничения на бесплатное скачивание видео?
+          answer: Нет, скачивание видео онлайн доступно без лимитов по количеству и без
+            платной подписки.
+        - question: Нужно ли регистрироваться, чтобы скачать видео?
+          answer: Нет, регистрация не требуется. Просто вставьте ссылку на видео в поле
+            загрузки и скачайте файл бесплатно и без создания аккаунта.
+  en:
+    meta:
+      title: Download video from Youtube
+      description: Download videos from YouTube free and fast or extract audio.
+        Download with no registration, no speed limits. Save clips for offline
+        viewing in just seconds.
+      keywords: Download youtube video
+      ogImage: /images/main.png
+      ogImageAlt: Скачать видео с ютуб
+    pageContent:
+      mainTitle: Download video from YouTube
+      subtitle: "Download videos from any platform: YouTube, TikTok, Instagram, VK,
+        RuTube, Reddit, Twitch and many others quickly and without
+        restrictions."
+      intro: Download videos from YouTube fast and free in high quality without
+        registration and restrictions.
+      how_to:
+        title: How to download videos from YouTube
+        blocks:
+          - title: ""
+            content: >-
+              YouTube is the biggest video hosting service in this world, and
+              dominates in popularity in most countries. However, downloading
+              videos on YouTube is not as easy as it seems, the service does not
+              directly give the user the opportunity to download videos for
+              personal use.
+
+
+              aDownloader offers a complete and free service to download videos
+              from Youtube in various formats, from low resolution 360, 480, 720
+              HD pixels, also in high resolution and good quality 1080p FullHD,
+              2K, 4k 8k, vertical video Shorts. You can also and convert to
+              audio and download the file for listening and use in mp3, wav, m4a
+              formats, for various purposes.
+
+
+              aDownloader is a service with the main purpose of downloading
+              videos from Youtube with a user-friendly interface and very high
+              speed, it will work on your computer and on your phone, which can
+              allow you to view offline or extract audio for offline listening.
+
+              We make a reliable and fast service for downloading.
+          - title: Copy the link to download a Youtube video?
+            content: 'To start downloading, you must first copy the link to the desired
+              video. This can be done in two ways. The first is to copy the link
+              directly from the browser address bar: just highlight the URL of
+              the page with the video and click "Copy".'
+            image: /images/1.png
+            imageAlt: Download video from YouTube
+          - imageAlt: Download video from YouTube
+            content: The second way is to use the "Share" button, which is usually found
+              below the video. Click it and select "Copy link".
+            image: /images/2.png
+          - content: >-
+              Once the video link has been successfully copied, go to
+              adownloader.org and find the special field for entering the link
+              on any page. Carefully paste the copied URL into this field, which
+              can be done using Ctrl + V (or Cmd + V on a Mac) or via the
+              "Paste" menu on your mobile device.
+
+              Make sure that the link is pasted completely and without extra
+              characters, then click the download button.
+            image: /images/main.png
+            imageAlt: Download video from YouTube
+          - content: >-
+              The service will automatically process the link, determine the
+              available formats and offer quality options. You will be left to
+              choose a suitable resolution or file format and save the video to
+              your device
+
+
+              On cell phones, the process is completely similar. Open the video
+              in the app or mobile browser, tap the "Share" button and select
+              "Copy Link." Then go to adownloader.org in your browser, paste the
+              link into the download field and start downloading as quickly and
+              conveniently as you would on a computer.
+            image: /images/3.png
+            imageAlt: Download video from YouTube
+      features:
+        items:
+          - icon: ⚡
+            title: Fast and free
+            description: Download videos instantly without registration and for free.
+          - title: HD and 4K support
+            description: All resolutions from audio mp3 to Full HD and 4K are available.
+            icon: "🎥 "
+          - title: Working with different platforms
+            description: Support for YouTube, TikTok, Instagram, VK, Reddit and other
+              services.
+            icon: "🌍 "
+          - icon: "📱 "
+            title: Suitable for all devices
+            description: Works on computers, smartphones and tablets without installing
+              programs.
+          - title: Audio extraction
+            icon: "🔊 "
+            description: Ability to download just the audio in a convenient format.
+          - title: Instant link processing
+            description: The service automatically detects the format and offers the best
+              quality options for downloading.
+            icon: "🚀 "
+        title: Advantages
+      faq:
+        - question: Do I need to install a program to download videos online?
+          answer: No, you don't need to install programs or apps to download videos for
+            free. Our online service works right in your browser and allows you
+            to quickly download videos from a link without installing an app.
+        - question: In what quality can I download videos from YouTube and other
+            platforms?
+          answer: "You can download videos in MP4 format in different resolutions: 360p,
+            480p, 720p, 1080p,SD, HD, Full HD, 2K and 4K. The available quality
+            options depend on the source video. As well as audio and sounds from
+            the video."
+        - question: Is it possible to download videos in MP3 format (audio/sound only)?
+          answer: Yes, the service allows you to download audio from a video and save it
+            in a convenient format for offline listening - without quality loss.
+        - question: Can I download videos to my phone (Android and iPhone)?
+          answer: Yes, you can download videos to your phone through your browser without
+            apps. The service is fully adapted for Android, iPhone and tablets.
+        - question: Are there any restrictions on free video downloads?
+          answer: No, online video downloads are available with no quantity limits and no
+            paid subscription.
+        - question: Do I have to register to download the video?
+          answer: No, no registration is required. Just paste the link to the video in the
+            download box and download the file for free and without creating an
+            account.
+  de:
+    meta:
+      title: Video von Youtube herunterladen
+      description: Videos von YouTube kostenlos und schnell herunterladen oder Audio
+        extrahieren. Herunterladen ohne Registrierung, ohne
+        Geschwindigkeitsbegrenzung. Speichern Sie Clips für die Offline-Ansicht
+        in nur wenigen Sekunden.
+      keywords: Youtube-Video herunterladen
+      ogImage: /images/main.png
+      ogImageAlt: Скачать видео с ютуб
+    pageContent:
+      mainTitle: Video von YouTube herunterladen
+      subtitle: "Laden Sie Videos von jeder Plattform herunter: YouTube, TikTok,
+        Instagram, VK, RuTube, Reddit, Twitch und viele andere schnell und ohne
+        Einschränkungen."
+      intro: Laden Sie YouTube-Videos schnell und kostenlos in hoher Qualität ohne
+        Registrierung und Einschränkungen herunter.
+      how_to:
+        title: Wie man Videos von YouTube herunterlädt
+        blocks:
+          - title: ""
+            content: >-
+              YouTube ist der größte Video-Hosting-Dienst der Welt und erfreut
+              sich in den meisten Ländern größter Beliebtheit. Das Herunterladen
+              von Videos auf YouTube ist jedoch nicht so einfach, wie es
+              scheint. Der Dienst bietet dem Nutzer nicht direkt die
+              Möglichkeit, Videos für den persönlichen Gebrauch herunterzuladen.
+
+
+              aDownloader bietet einen vollständigen und kostenlosen Service zum
+              Herunterladen von Videos von Youtube in verschiedenen Formaten,
+              von niedriger Auflösung 360, 480, 720 HD Pixel, auch in hoher
+              Auflösung und guter Qualität 1080p FullHD, 2K, 4k 8k, vertikale
+              Video Shorts. Sie können auch und konvertieren in Audio und laden
+              Sie die Datei zum Anhören und Verwendung in mp3, wav, m4a-Formate,
+              für verschiedene Zwecke.
+
+
+              aDownloader ist ein Dienst mit dem Hauptzweck des Herunterladens
+              von Videos von Youtube mit einer benutzerfreundlichen
+              Schnittstelle und sehr hoher Geschwindigkeit, wird es auf Ihrem
+              Computer und auf Ihrem Telefon, die Sie offline ansehen oder
+              extrahieren Sie Audio für Offline-Hören ermöglichen kann
+              funktionieren.
+
+              Wir machen einen zuverlässigen und schnellen Service für das
+              Herunterladen.
+          - title: Kopieren Sie den Link zum Herunterladen eines Youtube-Videos?
+            content: 'Um mit dem Herunterladen zu beginnen, müssen Sie zunächst den Link zu
+              dem gewünschten Video kopieren. Dies kann auf zwei Arten
+              geschehen. Die erste ist, den Link direkt aus der Adressleiste des
+              Browsers zu kopieren: Markieren Sie einfach die URL der Seite mit
+              dem Video und klicken Sie auf "Kopieren".'
+            image: /images/1.png
+            imageAlt: Video von YouTube herunterladen
+          - imageAlt: Video von YouTube herunterladen
+            content: Die zweite Möglichkeit besteht darin, die Schaltfläche "Teilen" zu
+              verwenden, die sich in der Regel unterhalb des Videos befindet.
+              Klicken Sie darauf und wählen Sie "Link kopieren".
+            image: /images/2.png
+          - content: >-
+              Sobald der Videolink erfolgreich kopiert wurde, gehen Sie zu
+              adownloader.org und suchen Sie das spezielle Feld zur Eingabe des
+              Links auf einer beliebigen Seite. Fügen Sie die kopierte URL
+              vorsichtig in dieses Feld ein, indem Sie Strg + V (bzw. Cmd + V
+              auf einem Mac) oder das Menü "Einfügen" auf Ihrem mobilen Gerät
+              verwenden.
+
+              Achten Sie darauf, dass der Link vollständig und ohne zusätzliche
+              Zeichen eingefügt wird, und klicken Sie dann auf die Schaltfläche
+              "Herunterladen".
+            image: /images/main.png
+            imageAlt: Video von YouTube herunterladen
+          - content: >-
+              Der Dienst verarbeitet den Link automatisch, bestimmt die
+              verfügbaren Formate und bietet Qualitätsoptionen an. Sie müssen
+              dann nur noch die geeignete Auflösung oder das Dateiformat
+              auswählen und das Video auf Ihrem Gerät speichern
+
+
+              Auf Mobiltelefonen ist der Vorgang ganz ähnlich. Öffnen Sie das
+              Video in der App oder im mobilen Browser, tippen Sie auf die
+              Schaltfläche "Teilen" und wählen Sie "Link kopieren". Gehen Sie
+              dann in Ihrem Browser zu adownloader.org, fügen Sie den Link in
+              das Download-Feld ein und starten Sie den Download so schnell und
+              bequem wie auf einem Computer.
+            image: /images/3.png
+            imageAlt: Video von YouTube herunterladen
+      features:
+        items:
+          - icon: ⚡
+            title: Schnell und kostenlos
+            description: Laden Sie Videos sofort, ohne Registrierung und kostenlos herunter.
+          - title: Unterstützung von HD und 4K
+            description: Alle Auflösungen von Audio-mp3 bis Full HD und 4K sind verfügbar.
+            icon: "🎥 "
+          - title: Arbeiten mit verschiedenen Plattformen
+            description: Unterstützung für YouTube, TikTok, Instagram, VK, Reddit und andere
+              Dienste.
+            icon: "🌍 "
+          - icon: "📱 "
+            title: Geeignet für alle Geräte
+            description: Funktioniert auf Computern, Smartphones und Tablets ohne
+              Installation von Software.
+          - title: Audio-Extraktion
+            icon: "🔊 "
+            description: Die Möglichkeit, nur die Audiodateien in einem praktischen Format
+              herunterzuladen.
+          - title: Sofortige Linkverarbeitung
+            description: Der Dienst erkennt automatisch das Format und bietet die besten
+              Qualitätsoptionen zum Herunterladen an.
+            icon: "🚀 "
+        title: Vorteile
+      faq:
+        - question: Muss ich ein Programm installieren, um Videos online herunterzuladen?
+          answer: Nein, Sie brauchen keine Programme oder Apps zu installieren, um Videos
+            kostenlos herunterzuladen. Unser Online-Service funktioniert direkt
+            in Ihrem Browser und ermöglicht es Ihnen, Videos schnell über einen
+            Link herunterzuladen, ohne eine App installieren zu müssen.
+        - question: In welcher Qualität kann ich Videos von YouTube und anderen
+            Plattformen herunterladen?
+          answer: "Sie können Videos im MP4-Format in verschiedenen Auflösungen
+            herunterladen: 360p, 480p, 720p, 1080p, SD, HD, Full HD, 2K und 4K.
+            Die verfügbaren Qualitätsoptionen hängen von der Videoquelle ab.
+            Sowie von Audio und Ton des Videos."
+        - question: Ist es möglich, Videos im MP3-Format (nur Audio/Ton) herunterzuladen?
+          answer: Ja, der Dienst ermöglicht es Ihnen, den Ton eines Videos herunterzuladen
+            und in einem geeigneten Format zu speichern, um ihn offline
+            anzuhören - ohne Qualitätsverlust.
+        - question: Kann ich Videos auf mein Handy (Android und iPhone) herunterladen?
+          answer: Ja, Sie können Videos über Ihren Browser ohne Apps auf Ihr Telefon
+            herunterladen. Der Dienst ist vollständig für Android, iPhone und
+            Tablets angepasst.
+        - question: Gibt es irgendwelche Beschränkungen für kostenlose Video-Downloads?
+          answer: Nein, Online-Video-Downloads sind ohne Mengenbegrenzung und ohne
+            kostenpflichtiges Abonnement möglich.
+        - question: Muss ich mich registrieren, um das Video herunterladen zu können?
+          answer: Nein, es ist keine Registrierung erforderlich. Fügen Sie einfach den
+            Link zum Video in das Download-Feld ein und laden Sie die Datei
+            kostenlos und ohne ein Konto zu erstellen herunter.
+  es:
+    meta:
+      title: Descargar vídeo de Youtube
+      description: Descarga vídeos de YouTube gratis y rápido o extrae audio. Descarga
+        sin registro, sin límites de velocidad. Guarda clips para verlos sin
+        conexión en cuestión de segundos.
+      keywords: Descargar vídeo de youtube
+      ogImage: /images/main.png
+      ogImageAlt: Скачать видео с ютуб
+    pageContent:
+      mainTitle: Descargar vídeo de YouTube
+      subtitle: "Descarga vídeos de cualquier plataforma: YouTube, TikTok, Instagram,
+        VK, RuTube, Reddit, Twitch y muchas otras de forma rápida y sin
+        restricciones."
+      intro: Descarga vídeos de YouTube rápida y gratuitamente en alta calidad sin
+        registro ni restricciones.
+      how_to:
+        title: Cómo descargar vídeos de YouTube
+        blocks:
+          - title: ""
+            content: >-
+              YouTube es el mayor servicio de alojamiento de vídeos del mundo, y
+              domina en popularidad en la mayoría de los países. Sin embargo,
+              descargar vídeos en YouTube no es tan fácil como parece, el
+              servicio no da directamente al usuario la oportunidad de descargar
+              vídeos para uso personal.
+
+
+              aDownloader ofrece un servicio completo y gratuito para descargar
+              vídeos de Youtube en varios formatos, desde baja resolución 360,
+              480, 720 píxeles HD, también en alta resolución y buena calidad
+              1080p FullHD, 2K, 4k 8k, vídeo vertical Shorts. También puede y
+              convertir a audio y descargar el archivo para escuchar y utilizar
+              en formatos mp3, wav, m4a, para diversos fines.
+
+
+              aDownloader es un servicio con el propósito principal de la
+              descarga de vídeos de Youtube con una interfaz fácil de usar y muy
+              alta velocidad, que funcionará en su ordenador y en su teléfono,
+              que le puede permitir ver sin conexión o extraer audio para
+              escuchar sin conexión.
+
+              Hacemos un servicio fiable y rápido para la descarga.
+          - title: ¿Copiar el enlace para descargar un vídeo de Youtube?
+            content: 'Para iniciar la descarga, primero debe copiar el enlace al vídeo
+              deseado. Esto puede hacerse de dos maneras. La primera es copiar
+              el enlace directamente desde la barra de direcciones del
+              navegador: basta con resaltar la URL de la página con el vídeo y
+              hacer clic en "Copiar".'
+            image: /images/1.png
+            imageAlt: Descargar vídeo de YouTube
+          - imageAlt: Descargar vídeo de YouTube
+            content: La segunda forma es utilizar el botón "Compartir", que suele
+              encontrarse debajo del vídeo. Haz clic en él y selecciona "Copiar
+              enlace".
+            image: /images/2.png
+          - content: >-
+              Una vez copiado el enlace del vídeo, ve a adownloader.org y busca
+              el campo especial para introducir el enlace en cualquier página.
+              Pega con cuidado la URL copiada en este campo, lo que puedes hacer
+              utilizando Ctrl + V (o Cmd + V en un Mac) o a través del menú
+              "Pegar" de tu dispositivo móvil.
+
+              Asegúrate de que el enlace se ha pegado completamente y sin
+              caracteres adicionales, y luego haz clic en el botón de descarga.
+            image: /images/main.png
+            imageAlt: Descargar vídeo de YouTube
+          - content: >-
+              El servicio procesará automáticamente el enlace, determinará los
+              formatos disponibles y ofrecerá opciones de calidad. Tendrás que
+              elegir la resolución o el formato de archivo adecuados y guardar
+              el vídeo en tu dispositivo.
+
+
+              En los teléfonos móviles el proceso es completamente similar. Abre
+              el vídeo en la aplicación o en el navegador del móvil, toca el
+              botón "Compartir" y selecciona "Copiar enlace". A continuación, ve
+              a adownloader.org en tu navegador, pega el enlace en el campo de
+              descarga y empieza a descargar tan rápida y cómodamente como lo
+              harías en un ordenador.
+            image: /images/3.png
+            imageAlt: Descargar vídeo de YouTube
+      features:
+        items:
+          - icon: ⚡
+            title: Rápido y gratuito
+            description: Descarga vídeos al instante, sin registro y gratis.
+          - title: Compatible con HD y 4K
+            description: Están disponibles todas las resoluciones, desde mp3 de audio hasta
+              Full HD y 4K.
+            icon: "🎥 "
+          - title: Trabajar con diferentes plataformas
+            description: Soporte para YouTube, TikTok, Instagram, VK, Reddit y otros
+              servicios.
+            icon: "🌍 "
+          - icon: "📱 "
+            title: Apto para todos los dispositivos
+            description: Funciona en ordenadores, smartphones y tabletas sin necesidad de
+              instalar software.
+          - title: Extracción de audio
+            icon: "🔊 "
+            description: Posibilidad de descargar sólo el audio en un formato cómodo.
+          - title: Procesamiento instantáneo de enlaces
+            description: El servicio detecta automáticamente el formato y ofrece las mejores
+              opciones de calidad para la descarga.
+            icon: "🚀 "
+        title: Ventajas
+      faq:
+        - question: ¿Necesito instalar algún programa para descargar vídeos en línea?
+          answer: No, no necesitas instalar ningún programa o aplicación para descargar
+            vídeos gratis. Nuestro servicio en línea funciona directamente en tu
+            navegador y te permite descargar vídeos rápidamente a través de un
+            enlace sin tener que instalar ninguna aplicación.
+        - question: ¿Con qué calidad puedo descargar vídeos de YouTube y otras
+            plataformas?
+          answer: "Puedes descargar vídeos en formato MP4 en diferentes resoluciones:
+            360p, 480p, 720p, 1080p,SD, HD, Full HD, 2K y 4K. Las opciones de
+            calidad disponibles dependen del vídeo de origen. Así como el audio
+            y los sonidos del vídeo."
+        - question: ¿Es posible descargar vídeos en formato MP3 (sólo audio/sonido)?
+          answer: Sí, el servicio permite descargar el audio de un vídeo y guardarlo en un
+            formato cómodo para escucharlo sin conexión, sin pérdida de calidad.
+        - question: ¿Puedo descargar vídeos a mi teléfono (Android y iPhone)?
+          answer: Sí, puedes descargar vídeos a tu teléfono a través de tu navegador sin
+            aplicaciones. El servicio está totalmente adaptado para Android,
+            iPhone y tabletas.
+        - question: ¿Existen restricciones para la descarga gratuita de vídeos?
+          answer: No, las descargas de vídeo en línea están disponibles sin límite de
+            cantidad y sin suscripción de pago.
+        - question: ¿Tengo que registrarme para descargar el vídeo?
+          answer: No, no es necesario registrarse. Solo tienes que pegar el enlace al
+            vídeo en el cuadro de descarga y descargar el archivo gratis y sin
+            crear una cuenta.
+  pt:
+    meta:
+      title: Descarregar o vídeo do Youtube
+      description: Descarregue vídeos do YouTube de forma rápida e gratuita ou extraia
+        áudio. Descarregue sem registo, sem limites de velocidade. Guarde clips
+        para visualização offline em apenas alguns segundos.
+      keywords: Descarregar vídeo do youtube
+      ogImage: /images/main.png
+      ogImageAlt: Скачать видео с ютуб
+    pageContent:
+      mainTitle: Descarregar vídeo do YouTube
+      subtitle: "Descarregue vídeos de qualquer plataforma: YouTube, TikTok,
+        Instagram, VK, RuTube, Reddit, Twitch e muitas outras, rapidamente e sem
+        restrições."
+      intro: Descarregue vídeos do YouTube de forma rápida e gratuita em alta
+        qualidade sem registo e sem restrições.
+      how_to:
+        title: Como transferir vídeos do YouTube
+        blocks:
+          - title: ""
+            content: >-
+              O YouTube é o maior serviço de alojamento de vídeos do mundo e
+              domina a popularidade na maioria dos países. No entanto,
+              descarregar vídeos no YouTube não é tão fácil como parece, pois o
+              serviço não dá diretamente ao utilizador a oportunidade de
+              descarregar vídeos para uso pessoal.
+
+
+              O aDownloader oferece um serviço completo e gratuito para
+              descarregar vídeos do YouTube em vários formatos, desde os de
+              baixa resolução 360, 480, 720 pixéis HD, até aos de alta resolução
+              e boa qualidade 1080p FullHD, 2K, 4k 8k, vídeo vertical Shorts.
+              Pode também converter para áudio e descarregar o ficheiro para
+              ouvir e utilizar nos formatos mp3, wav, m4a, para diversos fins.
+
+
+              O aDownloader é um serviço que tem como principal objetivo
+              descarregar vídeos do Youtube com uma interface de fácil
+              utilização e uma velocidade muito elevada, funciona no seu
+              computador e no seu telemóvel, o que lhe permite ver offline ou
+              extrair o áudio para ouvir offline.
+
+              Criamos um serviço fiável e rápido de descarregamento.
+          - title: Copiar a ligação para transferir um vídeo do Youtube?
+            content: 'Para começar a descarregar, deve primeiro copiar a ligação para o
+              vídeo pretendido. Isto pode ser feito de duas formas. A primeira é
+              copiar a ligação diretamente da barra de endereços do browser:
+              basta selecionar o URL da página com o vídeo e clicar em
+              "Copiar".'
+            image: /images/1.png
+            imageAlt: Descarregar vídeo do YouTube
+          - imageAlt: Descarregar vídeo do YouTube
+            content: A segunda forma é utilizar o botão "Partilhar", que normalmente se
+              encontra por baixo do vídeo. Clique nele e selecione "Copiar
+              ligação".
+            image: /images/2.png
+          - content: >-
+              Quando a hiperligação do vídeo tiver sido copiada com êxito, vá a
+              adownloader.org e encontre o campo especial para introduzir a
+              hiperligação em qualquer página. Cole cuidadosamente o URL copiado
+              neste campo, o que pode ser feito utilizando Ctrl + V (ou Cmd + V
+              num Mac) ou através do menu "Colar" no seu dispositivo móvel.
+
+              Certifique-se de que a hiperligação é colada na totalidade e sem
+              caracteres adicionais e, em seguida, clique no botão de
+              transferência.
+            image: /images/main.png
+            imageAlt: Descarregar vídeo do YouTube
+          - content: >-
+              O serviço processará automaticamente a ligação, determinará os
+              formatos disponíveis e oferecerá opções de qualidade. Resta-lhe
+              escolher a resolução ou o formato de ficheiro adequado e guardar o
+              vídeo no seu dispositivo
+
+
+              Nos telemóveis, o processo é completamente semelhante. Abra o
+              vídeo na aplicação ou no browser do telemóvel, toque no botão
+              "Partilhar" e selecione "Copiar ligação". Em seguida, aceda a
+              adownloader.org no seu browser, cole a ligação no campo de
+              transferência e comece a transferir de forma tão rápida e prática
+              como faria num computador.
+            image: /images/3.png
+            imageAlt: Descarregar vídeo do YouTube
+      features:
+        items:
+          - icon: ⚡
+            title: Rápido e gratuito
+            description: Descarregue vídeos instantaneamente sem registo e de forma
+              gratuita.
+          - title: Suporte HD e 4K
+            description: Estão disponíveis todas as resoluções, desde áudio mp3 a Full HD e
+              4K.
+            icon: "🎥 "
+          - title: Trabalhar com diferentes plataformas
+            description: Suporte para YouTube, TikTok, Instagram, VK, Reddit e outros
+              serviços.
+            icon: "🌍 "
+          - icon: "📱 "
+            title: Adequado para todos os dispositivos
+            description: Funciona em computadores, smartphones e tablets sem instalar
+              software.
+          - title: Extração de áudio
+            icon: "🔊 "
+            description: Possibilidade de descarregar apenas o áudio num formato
+              conveniente.
+          - title: Processamento instantâneo de ligações
+            description: O serviço detecta automaticamente o formato e oferece as melhores
+              opções de qualidade para descarregar.
+            icon: "🚀 "
+        title: Vantagens
+      faq:
+        - question: Preciso de instalar um programa para descarregar vídeos online?
+          answer: Não, não precisa de instalar nenhum programa ou aplicação para
+            descarregar vídeos gratuitamente. O nosso serviço online funciona
+            diretamente no seu navegador e permite-lhe descarregar rapidamente
+            vídeos através de uma ligação sem ter de instalar uma aplicação.
+        - question: Com que qualidade posso descarregar vídeos do YouTube e de outras
+            plataformas?
+          answer: "Pode descarregar vídeos no formato MP4 em diferentes resoluções: 360p,
+            480p, 720p, 1080p,SD, HD, Full HD, 2K e 4K. As opções de qualidade
+            disponíveis dependem do vídeo de origem. Bem como do áudio e dos
+            sons do vídeo."
+        - question: É possível descarregar vídeos em formato MP3 (apenas áudio/som)?
+          answer: Sim, o serviço permite-lhe descarregar o áudio de um vídeo e guardá-lo
+            num formato conveniente para ouvir offline - sem perda de qualidade.
+        - question: Posso transferir vídeos para o meu telemóvel (Android e iPhone)?
+          answer: Sim, pode descarregar vídeos para o seu telemóvel através do seu browser
+            sem aplicações. O serviço está totalmente adaptado para Android,
+            iPhone e tablets.
+        - question: Existem restrições quanto ao descarregamento gratuito de vídeos?
+          answer: Não, os downloads de vídeo online estão disponíveis sem limites de
+            quantidade e sem subscrição paga.
+        - question: Preciso de me registar para descarregar o vídeo?
+          answer: Não, não é necessário qualquer registo. Basta colar a ligação para o
+            vídeo na caixa de transferência e transferir o ficheiro
+            gratuitamente e sem criar uma conta.
+  jv:
+    meta:
+      title: Undhuh video saka YouTube
+      description: Ngundhuh video saka YouTube kanthi gratis lan cepet, utawa njupuk
+        audio. Ngundhuh tanpa registrasi, tanpa watesan kacepetan. Simpen video
+        kanggo ditonton offline mung ing sawetara detik.
+      keywords: Undhuh video YouTube
+      ogImage: /images/main.png
+      ogImageAlt: Скачать видео с ютуб
+    pageContent:
+      mainTitle: Ngundhuh video saka YouTube
+      subtitle: "Undhuh video saka sembarang platform: YouTube, TikTok, Instagram, VK,
+        RuTube, Reddit, Twitch, lan liya-liyane kanthi cepet lan tanpa watesan."
+      intro: Unduh video saka YouTube kanthi cepet lan gratis kanthi kualitas dhuwur
+        tanpa registrasi utawa watesan.
+      how_to:
+        title: Carane ngundhuh video saka YouTube
+        blocks:
+          - title: ""
+            content: >-
+              YouTube iku layanan hosting video paling gedhé ing donya lan
+              paling populer ing akèh negara. Nanging, ngundhuh video saka
+              YouTube ora gampang kaya sing katon, amarga layanan iki ora
+              ngidini pangguna ngundhuh video langsung kanggo panggunaan
+              pribadi. 
+
+
+              aDownloader nawakake layanan lengkap lan gratis kanggo ngundhuh
+              video saka YouTube ing macem-macem format, wiwit resolusi rendah
+              360, 480, 720 HD piksel, nganti resolusi dhuwur lan kualitas apik
+              1080p FullHD, 2K, 4K 8K, lan video Shorts vertikal. Sampeyan uga
+              bisa ngowahi menyang audio lan ngundhuh file kanggo dirungokake
+              lan digunakake ing format mp3, wav, m4a kanggo macem-macem
+              kabutuhan. 
+
+
+              aDownloader iku layanan sing tujuane utama kanggo ngundhuh video
+              saka YouTube. Iki nduweni antarmuka sing gampang lan kacepetan
+              sing dhuwur banget, lan bisa digunakake ing komputer lan ponsel,
+              supaya sampeyan bisa nonton offline utawa nyopot audio kanggo
+              dirungokake offline. Kita nyedhiyakake layanan ngundhuh sing bisa
+              dipercaya lan cepet. 
+          - title: Salin pranala kanggo ngundhuh video saka YouTube?
+            content: 'Kanggo miwiti ngundhuh, sampeyan kudu nyalin pranala video sing
+              sampeyan karepake. Ana loro cara kanggo nindakake iki. Cara
+              kapisan yaiku nyalin pranala langsung saka bar alamat browser:
+              cukup pilih URL kaca sing ana videoné banjur klik "Copy".'
+            image: /images/1.png
+            imageAlt: Ngundhuh video saka YouTube
+          - imageAlt: Ngundhuh video saka YouTube
+            content: Cara kapindho yaiku nggunakake tombol "Share", sing biasane ana ing
+              ngisor video. Klik tombol kasebut banjur pilih "Copy link".
+            image: /images/2.png
+          - content: >-
+              Sawise sampeyan kasil nyalin pranala video, bukak adownloader.org
+              lan goleki kolom khusus kanggo ngetik pranala ing sembarang kaca.
+              Kanthi ati-ati tempel URL sing wis disalin menyang kolom iki.
+              Sampeyan bisa nindakake iki nganggo kombinasi tombol Ctrl + V
+              (utawa Cmd + V ing Mac) utawa liwat menu "Tempel" ing piranti
+              seluler.
+
+              Pasthekake pranala wis ditempel kanthi lengkap lan tanpa aksara
+              tambahan, banjur klik tombol undhuh.
+            image: /images/main.png
+            imageAlt: Ngundhuh video saka YouTube
+          - content: Layanan iki bakal otomatis ngolah pranala, nemtokake format sing
+              kasedhiya, lan nawakake pilihan kualitas. Sampeyan mung kudu milih
+              resolusi utawa format file sing cocog lan nyimpen video menyang
+              piranti sampeyan. Proses iki persis padha ing ponsel. Bukak video
+              ing aplikasi utawa browser seluler, tutul tombol "Share" banjur
+              pilih "Copy link". Banjur bukak adownloader.org ing browser
+              sampeyan, tempel pranala ing kolom undhuhan lan miwiti ngundhuh
+              kanthi cepet lan gampang kaya ing komputer.
+            image: /images/3.png
+            imageAlt: Ngundhuh video saka YouTube
+      features:
+        items:
+          - icon: ⚡
+            title: Cekatan lan gratis
+            description: Undhuh video langsung tanpa ndhaptar lan gratis.
+          - title: Dhukungan HD lan 4K
+            description: Kabeh resolusi kasedhiya, saka audio MP3 nganti Full HD lan 4K.
+            icon: "🎥 "
+          - title: Makarya karo platform sing beda-beda
+            description: Dhukungan kanggo YouTube, TikTok, Instagram, VK, Reddit, lan
+              layanan liyane.
+            icon: "🌍 "
+          - icon: "📱 "
+            title: Cocok kanggo kabèh piranti
+            description: Bisa digunakake ing komputer, smartphone, lan tablet tanpa nginstal
+              piranti lunak apa wae.
+          - title: Ekstraksi audio
+            icon: "🔊 "
+            description: Kamampuan kanggo ngundhuh mung audio ing format sing praktis.
+          - title: Proses pranala instan
+            description: Layanan iki kanthi otomatis ndeteksi format lan nawakake pilihan
+              kualitas paling apik kanggo diundhuh.
+            icon: "🚀 "
+        title: Kauntungan
+      faq:
+        - question: Apa aku kudu nginstal program kanggo ngundhuh video online?
+          answer: Ora, sampeyan ora perlu nginstal program utawa aplikasi apa wae kanggo
+            ngundhuh video gratis. Layanan online kita langsung bisa digunakake
+            ing browser sampeyan lan ngidini sampeyan kanthi cepet ngundhuh
+            video liwat pranala tanpa nginstal aplikasi tambahan apa wae.
+        - question: Kanthi kualitas apa video bisa diundhuh saka YouTube lan platform
+            liyane?
+          answer: "Sampeyan bisa ngundhuh video ing format MP4 kanthi macem-macem
+            resolusi: 360p, 480p, 720p, 1080p, SD, HD, Full HD, 2K, lan 4K.
+            Pilihan kualitas sing kasedhiya gumantung marang video sumber. Audio
+            lan swara saka video uga kasedhiya."
+        - question: Apa bisa ngundhuh video ing format MP3 (mung audio/swara)?
+          answer: Ya, layanan iki ngidini sampeyan ngundhuh audio saka video lan nyimpen
+            ing format sing praktis kanggo didengar offline — tanpa ilang
+            kualitas.
+        - question: Apa aku bisa ngundhuh video menyang ponselku (Android lan iPhone)?
+          answer: Ya, sampeyan bisa ngundhuh video menyang ponsel liwat browser tanpa
+            aplikasi apa wae. Layanan iki cocog banget karo Android, iPhone, lan
+            tablet.
+        - question: Apa ana watesan kanggo ngundhuh video gratis?
+          answer: Ora, ngundhuh video online kasedhiya tanpa watesan jumlah undhuhan lan
+            tanpa langganan mbayar.
+        - question: Apa aku kudu ndaftar kanggo ngundhuh video?
+          answer: Ora, pendaftaran ora perlu. Cukup tempel pranala video ing kolom unggah
+            lan unduh file kasebut kanthi gratis tanpa nggawe akun.
+  tr:
+    meta:
+      title: Videoyu Youtube'dan indirin
+      description: YouTube'dan videoları ücretsiz ve hızlı indirin veya ses çıkarın.
+        Kayıt olmadan, hız sınırı olmadan indirin. Klipleri saniyeler içinde
+        çevrimdışı görüntülemek için kaydedin.
+      keywords: Youtube videosunu indir
+      ogImage: /images/main.png
+      ogImageAlt: Скачать видео с ютуб
+    pageContent:
+      mainTitle: YouTube'dan video indirin
+      subtitle: "Herhangi bir platformdan video indirin: YouTube, TikTok, Instagram,
+        VK, RuTube, Reddit, Twitch ve diğerleri hızlı ve kısıtlama olmadan."
+      intro: YouTube videolarını kayıt ve kısıtlama olmadan yüksek kalitede hızlı ve
+        ücretsiz indirin.
+      how_to:
+        title: YouTube'dan videolar nasıl indirilir
+        blocks:
+          - title: ""
+            content: >-
+              YouTube, bu dünyadaki en büyük video barındırma hizmetidir ve çoğu
+              ülkede popülerliğe hakimdir. Ancak, YouTube'da video indirmek
+              göründüğü kadar kolay değildir, hizmet kullanıcıya kişisel
+              kullanım için doğrudan video indirme fırsatı vermez.
+
+
+              aDownloader, Youtube'dan düşük çözünürlüklü 360, 480, 720 HD
+              pikselden, yüksek çözünürlüklü ve kaliteli 1080p FullHD, 2K, 4k
+              8k, dikey video Shorts'a kadar çeşitli formatlarda video indirmek
+              için eksiksiz ve ücretsiz bir hizmet sunar. Ayrıca sese
+              dönüştürebilir ve dosyayı dinlemek ve çeşitli amaçlar için mp3,
+              wav, m4a formatlarında kullanmak üzere indirebilirsiniz.
+
+
+              aDownloader, kullanıcı dostu bir arayüz ve çok yüksek hız ile
+              Youtube'dan video indirmeyi amaçlayan bir hizmettir,
+              bilgisayarınızda ve telefonunuzda çalışacak, çevrimdışı
+              görüntülemenize veya çevrimdışı dinleme için ses çıkarmanıza izin
+              verebilir.
+
+              İndirme için güvenilir ve hızlı bir hizmet sunuyoruz.
+          - title: Bir Youtube videosunu indirmek için bağlantıyı kopyalayın?
+            content: "İndirmeye başlamak için önce istediğiniz videonun bağlantısını
+              kopyalamanız gerekir. Bu iki şekilde yapılabilir. Birincisi,
+              bağlantıyı doğrudan tarayıcı adres çubuğundan kopyalamaktır:
+              videonun bulunduğu sayfanın URL'sini vurgulayın ve \"Kopyala\" yı
+              tıklayın."
+            image: /images/1.png
+            imageAlt: YouTube'dan video indirin
+          - imageAlt: YouTube'dan video indirin
+            content: İkinci yol, genellikle videonun altında bulunan "Paylaş" düğmesini
+              kullanmaktır. Tıklayın ve "Bağlantıyı kopyala "yı seçin.
+            image: /images/2.png
+          - content: >-
+              Video bağlantısı başarıyla kopyalandıktan sonra, adownloader.org
+              adresine gidin ve herhangi bir sayfadaki bağlantıyı girmek için
+              özel alanı bulun. Kopyalanan URL'yi dikkatlice bu alana
+              yapıştırın; bunu Ctrl + V (veya Mac'te Cmd + V) kullanarak veya
+              mobil cihazınızdaki "Yapıştır" menüsünden yapabilirsiniz.
+
+              Bağlantının tamamen ve fazladan karakter olmadan
+              yapıştırıldığından emin olun, ardından indir düğmesine tıklayın.
+            image: /images/main.png
+            imageAlt: YouTube'dan video indirin
+          - content: >-
+              Hizmet otomatik olarak bağlantıyı işleyecek, mevcut formatları
+              belirleyecek ve kalite seçenekleri sunacaktır. Uygun çözünürlüğü
+              veya dosya biçimini seçmeniz ve videoyu cihazınıza kaydetmeniz
+              için bırakılacaksınız
+
+
+              Cep telefonlarında süreç tamamen benzerdir. Videoyu uygulamada
+              veya mobil tarayıcıda açın, "Paylaş" düğmesine dokunun ve
+              "Bağlantıyı Kopyala "yı seçin. Ardından tarayıcınızda
+              adownloader.org adresine gidin, bağlantıyı indirme alanına
+              yapıştırın ve bilgisayarda yaptığınız gibi hızlı ve kolay bir
+              şekilde indirmeye başlayın.
+            image: /images/3.png
+            imageAlt: YouTube'dan video indirin
+      features:
+        items:
+          - icon: ⚡
+            title: Hızlı ve ücretsiz
+            description: Kayıt olmadan ve ücretsiz olarak videoları anında indirin.
+          - title: HD ve 4K desteği
+            description: Ses mp3'ünden Full HD ve 4K'ya kadar tüm çözünürlükler mevcuttur.
+            icon: "🎥 "
+          - title: Farklı platformlarla çalışma
+            description: YouTube, TikTok, Instagram, VK, Reddit ve diğer hizmetler için
+              destek.
+            icon: "🌍 "
+          - icon: "📱 "
+            title: Tüm cihazlar için uygundur
+            description: Yazılım yüklemeden bilgisayarlarda, akıllı telefonlarda ve
+              tabletlerde çalışır.
+          - title: Ses çıkarma
+            icon: "🔊 "
+            description: Sadece sesi uygun bir formatta indirebilme.
+          - title: Anında bağlantı işleme
+            description: Hizmet, formatı otomatik olarak algılar ve indirme için en iyi
+              kalite seçeneklerini sunar.
+            icon: "🚀 "
+        title: Avantajlar
+      faq:
+        - question: Çevrimiçi video indirmek için bir program yüklemem gerekiyor mu?
+          answer: Hayır, videoları ücretsiz indirmek için herhangi bir program veya
+            uygulama yüklemenize gerek yok. Çevrimiçi hizmetimiz doğrudan
+            tarayıcınızda çalışır ve bir uygulama yüklemenize gerek kalmadan bir
+            bağlantı aracılığıyla videoları hızlı bir şekilde indirmenize olanak
+            tanır.
+        - question: YouTube ve diğer platformlardan hangi kalitede video indirebilirim?
+          answer: "Videoları MP4 formatında farklı çözünürlüklerde indirebilirsiniz: 360p,
+            480p, 720p, 1080p,SD, HD, Full HD, 2K ve 4K. Mevcut kalite
+            seçenekleri kaynak videoya bağlıdır. Videodaki ses ve seslerin yanı
+            sıra."
+        - question: Videoları MP3 formatında (sadece ses/ses) indirmek mümkün mü?
+          answer: Evet, hizmet bir videodan ses indirmenize ve kalite kaybı olmadan
+            çevrimdışı dinlemek için uygun bir formatta kaydetmenize olanak
+            tanır.
+        - question: Videoları telefonuma (Android ve iPhone) indirebilir miyim?
+          answer: Evet, uygulama olmadan tarayıcınız aracılığıyla telefonunuza video
+            indirebilirsiniz. Hizmet Android, iPhone ve tabletler için tamamen
+            uyarlanmıştır.
+        - question: Ücretsiz video indirme konusunda herhangi bir kısıtlama var mı?
+          answer: Hayır, çevrimiçi video indirmeleri herhangi bir miktar sınırı ve ücretli
+            abonelik olmadan kullanılabilir.
+        - question: Videoyu indirmek için kayıt olmam gerekiyor mu?
+          answer: Hayır, kayıt olmanıza gerek yok. Sadece videonun bağlantısını indirme
+            kutusuna yapıştırın ve dosyayı ücretsiz olarak ve bir hesap
+            oluşturmadan indirin.
+  id:
+    meta:
+      title: Unduh video dari Youtube
+      description: Unduh video dari YouTube gratis dan cepat atau ekstrak audio. Unduh
+        tanpa registrasi, tanpa batas kecepatan. Simpan klip untuk ditonton
+        secara offline hanya dalam hitungan detik.
+      keywords: Unduh video youtube
+      ogImage: /images/main.png
+      ogImageAlt: Скачать видео с ютуб
+    pageContent:
+      mainTitle: Unduh video dari YouTube
+      subtitle: "Unduh video dari platform apa pun: YouTube, TikTok, Instagram, VK,
+        RuTube, Reddit, Twitch, dan banyak lagi dengan cepat dan tanpa batasan."
+      intro: Unduh video YouTube dengan cepat dan gratis dalam kualitas tinggi tanpa
+        registrasi dan batasan.
+      how_to:
+        title: Cara mengunduh video dari YouTube
+        blocks:
+          - title: ""
+            content: >-
+              YouTube adalah layanan hosting video terbesar di dunia ini, dan
+              mendominasi popularitas di sebagian besar negara. Namun, mengunduh
+              video di YouTube tidak semudah kelihatannya, layanan ini tidak
+              secara langsung memberikan kesempatan kepada pengguna untuk
+              mengunduh video untuk penggunaan pribadi.
+
+
+              aDownloader menawarkan layanan lengkap dan gratis untuk mengunduh
+              video dari Youtube dalam berbagai format, dari resolusi rendah
+              360, 480, 720 piksel HD, juga dalam resolusi tinggi dan kualitas
+              bagus 1080p FullHD, 2K, 4k 8k, video vertikal Pendek. Anda juga
+              dapat mengonversi ke audio dan mengunduh file untuk didengarkan
+              dan digunakan dalam format mp3, wav, m4a, untuk berbagai
+              keperluan.
+
+
+              aDownloader adalah layanan dengan tujuan utama mengunduh video
+              dari Youtube dengan antarmuka yang ramah pengguna dan kecepatan
+              yang sangat tinggi, ini akan berfungsi di komputer dan di ponsel
+              Anda, yang memungkinkan Anda untuk melihat secara offline atau
+              mengekstrak audio untuk didengarkan secara offline.
+
+              Kami membuat layanan yang andal dan cepat untuk mengunduh.
+          - title: Menyalin tautan untuk mengunduh video Youtube?
+            content: 'Untuk mulai mengunduh, Anda harus menyalin tautan ke video yang
+              diinginkan terlebih dahulu. Ini dapat dilakukan dengan dua cara.
+              Yang pertama adalah menyalin tautan langsung dari bilah alamat
+              browser: cukup sorot URL halaman yang berisi video dan klik
+              "Salin".'
+            image: /images/1.png
+            imageAlt: Unduh video dari YouTube
+          - imageAlt: Unduh video dari YouTube
+            content: Cara kedua adalah dengan menggunakan tombol "Bagikan", yang biasanya
+              ditemukan di bawah video. Klik tombol tersebut dan pilih "Salin
+              tautan".
+            image: /images/2.png
+          - content: >-
+              Setelah tautan video berhasil disalin, buka adownloader.org dan
+              temukan kolom khusus untuk memasukkan tautan di halaman mana pun.
+              Tempelkan URL yang telah disalin dengan hati-hati ke dalam kolom
+              ini, yang dapat dilakukan dengan menggunakan Ctrl + V (atau Cmd +
+              V pada Mac) atau melalui menu "Tempel" pada perangkat seluler
+              Anda.
+
+              Pastikan bahwa tautan tersebut ditempelkan sepenuhnya dan tanpa
+              karakter tambahan, lalu klik tombol unduh.
+            image: /images/main.png
+            imageAlt: Unduh video dari YouTube
+          - content: >-
+              Layanan ini akan secara otomatis memproses tautan, menentukan
+              format yang tersedia dan menawarkan pilihan kualitas. Anda akan
+              dibiarkan memilih resolusi atau format file yang sesuai dan
+              menyimpan video ke perangkat Anda
+
+
+              Pada ponsel, prosesnya sangat mirip. Buka video di aplikasi atau
+              peramban seluler, ketuk tombol "Bagikan" dan pilih "Salin Tautan".
+              Kemudian buka adownloader.org di browser Anda, tempel tautan ke
+              bidang unduhan dan mulailah mengunduh secepat dan senyaman yang
+              Anda lakukan di komputer.
+            image: /images/3.png
+            imageAlt: Unduh video dari YouTube
+      features:
+        items:
+          - icon: ⚡
+            title: Cepat dan gratis
+            description: Unduh video secara instan tanpa registrasi dan gratis.
+          - title: Dukungan HD dan 4K
+            description: Semua resolusi dari audio mp3 hingga Full HD dan 4K tersedia.
+            icon: "🎥 "
+          - title: Bekerja dengan platform yang berbeda
+            description: Dukungan untuk YouTube, TikTok, Instagram, VK, Reddit, dan layanan
+              lainnya.
+            icon: "🌍 "
+          - icon: "📱 "
+            title: Cocok untuk semua perangkat
+            description: Dapat digunakan di komputer, ponsel cerdas, dan tablet tanpa
+              menginstal perangkat lunak.
+          - title: Ekstraksi audio
+            icon: "🔊 "
+            description: Kemampuan untuk mengunduh audio saja dalam format yang nyaman.
+          - title: Pemrosesan tautan instan
+            description: Layanan ini secara otomatis mendeteksi format dan menawarkan opsi
+              kualitas terbaik untuk mengunduh.
+            icon: "🚀 "
+        title: Keuntungan
+      faq:
+        - question: Apakah saya perlu menginstal program untuk mengunduh video online?
+          answer: Tidak, Anda tidak perlu menginstal program atau aplikasi apa pun untuk
+            mengunduh video secara gratis. Layanan online kami bekerja langsung
+            di browser Anda dan memungkinkan Anda mengunduh video dengan cepat
+            melalui tautan tanpa harus menginstal aplikasi.
+        - question: Dalam kualitas apa saya dapat mengunduh video dari YouTube dan
+            platform lainnya?
+          answer: "Anda dapat mengunduh video dalam format MP4 dalam berbagai resolusi:
+            360p, 480p, 720p, 1080p, SD, HD, Full HD, 2K, dan 4K. Pilihan
+            kualitas yang tersedia tergantung pada sumber video. Begitu juga
+            dengan audio dan suara dari video."
+        - question: Apakah saya dapat mengunduh video dalam format MP3 (hanya
+            audio/suara)?
+          answer: Ya, layanan ini memungkinkan Anda mengunduh audio dari video dan
+            menyimpannya dalam format yang nyaman untuk didengarkan secara
+            offline - tanpa kehilangan kualitas.
+        - question: Dapatkah saya mengunduh video ke ponsel saya (Android dan iPhone)?
+          answer: Ya, Anda bisa mengunduh video ke ponsel Anda melalui peramban tanpa
+            aplikasi. Layanan ini sepenuhnya disesuaikan untuk Android, iPhone,
+            dan tablet.
+        - question: Apakah ada pembatasan untuk mengunduh video gratis?
+          answer: Tidak, unduhan video online tersedia tanpa batas jumlah dan tanpa
+            langganan berbayar.
+        - question: Apakah saya perlu mendaftar untuk mengunduh video?
+          answer: Tidak, tidak perlu registrasi. Cukup tempelkan tautan ke video di kotak
+            unduhan dan unduh file secara gratis dan tanpa membuat akun.
+  ja:
+    meta:
+      title: Youtubeからビデオをダウンロード
+      description: YouTubeから無料で高速にビデオをダウンロードしたり、オーディオを抽出します。登録不要、速度制限なしでダウンロード。クリップを保存すれば、わずか数秒でオフライン視聴が可能。
+      keywords: ユーチューブ動画をダウンロード
+      ogImage: /images/main.png
+      ogImageAlt: Скачать видео с ютуб
+    pageContent:
+      mainTitle: YouTubeからビデオをダウンロードする
+      subtitle: YouTube、TikTok、Instagram、VK、RuTube、Reddit、Twitchなど、あらゆるプラットフォームから動画を制限なく素早くダウンロードできます。
+      intro: 登録や制限なしに、YouTubeから動画を高画質で高速かつ無料でダウンロード。
+      how_to:
+        title: YouTubeから動画をダウンロードする方法
+        blocks:
+          - title: ""
+            content: |-
+              YouTubeは世界最大の動画ホスティングサービスであり、ほとんどの国で圧倒的な人気を誇っている。しかし、YouTubeで動画をダウンロードするのは簡単ではない。
+
+              aDownloaderは、低解像度の360、480、720 HDピクセルから、高解像度と良質の1080p FullHD、2K、4K 8K、縦型ビデオShortsでも、様々な形式でYoutubeから動画をダウンロードするための完全かつ無料のサービスを提供しています。また、オーディオに変換し、様々な目的のために、mp3、wav、m4a形式でリスニングや使用のためにファイルをダウンロードすることができます。
+
+              aDownloaderは、ユーザーフレンドリーなインターフェイスと非常に高速でYoutubeから動画をダウンロードすることを主な目的としたサービスで、お使いのコンピュータや携帯電話で動作し、オフラインで表示したり、オフラインで聴くためにオーディオを抽出することができます。
+              私たちは、ダウンロードのための信頼性の高い、高速なサービスを提供します。
+          - title: Youtubeビデオをダウンロードするためにリンクをコピーしますか？
+            content: ダウンロードを開始するには、まず目的のビデオへのリンクをコピーする必要があります。これには2つの方法があります。1つ目は、ブラウザのアドレスバーから直接リンクをコピーする方法です。ビデオのあるページのURLをハイライトし、「コピー」をクリックするだけです。
+            image: /images/1.png
+            imageAlt: YouTubeからビデオをダウンロードする
+          - imageAlt: YouTubeからビデオをダウンロードする
+            content: 2つ目の方法は、通常ビデオの下にある「共有」ボタンを使うことです。それをクリックし、「リンクをコピー」を選択します。
+            image: /images/2.png
+          - content: |-
+              動画リンクのコピーが完了したら、adownloader.orgにアクセスし、任意のページでリンクを入力するための特別なフィールドを見つけます。コピーしたURLをこのフィールドに慎重に貼り付けます。この作業は、Ctrl + V（Macの場合はCmd + V）またはモバイルデバイスの「貼り付け」メニューを使って行います。
+              リンクが完全に、余分な文字なしで貼り付けられていることを確認し、ダウンロードボタンをクリックします。
+            image: /images/main.png
+            imageAlt: YouTubeからビデオをダウンロードする
+          - content: |-
+              サービスは自動的にリンクを処理し、利用可能なフォーマットを特定し、品質オプションを提供します。適切な解像度またはファイル形式を選択し、ビデオをデバイスに保存します。
+
+              携帯電話の場合も、手順はまったく同じです。アプリまたはモバイルブラウザでビデオを開き、「共有」ボタンをタップして「リンクをコピー」を選択します。その後、ブラウザでadownloader.orgにアクセスし、ダウンロードフィールドにリンクを貼り付けると、パソコンと同じように素早く便利にダウンロードを開始することができます。
+            image: /images/3.png
+            imageAlt: YouTubeからビデオをダウンロードする
+      features:
+        items:
+          - icon: ⚡
+            title: 迅速かつ無料
+            description: 登録不要、無料でビデオを即座にダウンロード。
+          - title: HDおよび4K対応
+            description: オーディオMP3からフルHD、4Kまで、すべての解像度に対応しています。
+            icon: "🎥 "
+          - title: 異なるプラットフォームでの作業
+            description: YouTube、TikTok、Instagram、VK、Redditなどのサービスをサポート。
+            icon: "🌍 "
+          - icon: "📱 "
+            title: すべてのデバイスに対応
+            description: ソフトウェアをインストールすることなく、コンピュータ、スマートフォン、タブレットで動作します。
+          - title: 音声抽出
+            icon: "🔊 "
+            description: 便利なフォーマットで音声のみをダウンロードする機能。
+          - title: 即時リンク処理
+            description: このサービスは自動的にフォーマットを検出し、ダウンロードのための最高の品質オプションを提供します。
+            icon: "🚀 "
+        title: メリット
+      faq:
+        - question: オンラインでビデオをダウンロードするには、プログラムをインストールする必要がありますか？
+          answer: いいえ、無料でビデオをダウンロードするためにプログラムやアプリをインストールする必要はありません。私たちのオンラインサービスは、ブラウザ上で動作し、アプリをインストールすることなく、リンク経由でビデオをすばやくダウンロードすることができます。
+        - question: YouTubeやその他のプラットフォームからビデオをダウンロードする場合、どの程度の画質でダウンロードできますか？
+          answer: 様々な解像度のMP4形式の動画をダウンロードできます：360p、480p、720p、1080p、SD、HD、フルHD、2K、4K。利用可能な品質オプションは、ソースビデオに依存します。また、ビデオのオーディオとサウンド。
+        - question: ビデオをMP3形式（音声のみ）でダウンロードすることは可能ですか？
+          answer: そう、このサービスでは、ビデオからオーディオをダウンロードし、画質を損なうことなく、オフラインで聴くのに便利なフォーマットで保存することができる。
+        - question: 携帯電話（AndroidやiPhone）にビデオをダウンロードできますか？
+          answer: はい、アプリなしでブラウザから携帯電話にビデオをダウンロードできます。アンドロイド、iPhone、タブレットに対応しています。
+        - question: ビデオの無料ダウンロードに制限はありますか？
+          answer: いいえ、オンライン・ビデオのダウンロードは、数量制限もなく、有料会員登録も不要です。
+        - question: ビデオをダウンロードするには登録が必要ですか？
+          answer: いいえ、登録は必要ありません。ビデオへのリンクをダウンロードボックスに貼り付けるだけで、アカウントを作成することなく、無料でファイルをダウンロードできます。
+  ko:
+    meta:
+      title: 유튜브에서 동영상 다운로드
+      description: YouTube에서 무료로 빠르게 동영상을 다운로드하거나 오디오를 추출하세요. 등록이나 속도 제한 없이 다운로드하세요. 단
+        몇 초 만에 오프라인에서 볼 수 있도록 클립을 저장하세요.
+      keywords: 유튜브 동영상 다운로드
+      ogImage: /images/main.png
+      ogImageAlt: Скачать видео с ютуб
+    pageContent:
+      mainTitle: YouTube에서 동영상 다운로드
+      subtitle: 유튜브, 틱톡, 인스타그램, VK, 루튜브, 레딧, 트위치 등 모든 플랫폼에서 동영상을 제한 없이 빠르게 다운로드하세요.
+      intro: 등록이나 제한 없이 고품질의 YouTube 동영상을 빠르고 무료로 다운로드하세요.
+      how_to:
+        title: YouTube에서 동영상을 다운로드하는 방법
+        blocks:
+          - title: ""
+            content: >-
+              YouTube는 세계에서 가장 큰 동영상 호스팅 서비스이며 대부분의 국가에서 인기를 얻고 있습니다. 그러나
+              YouTube에서 동영상을 다운로드하는 것은 생각만큼 쉽지 않으며, 이 서비스는 사용자에게 개인적인 용도로 동영상을
+              다운로드할 수 있는 기회를 직접 제공하지 않습니다.
+
+
+              aDownloader는 저해상도 360, 480, 720 HD 픽셀부터 고해상도 및 고품질 1080p FullHD,
+              2K, 4K 8k, 세로 비디오 쇼트까지 다양한 형식으로 유튜브에서 동영상을 다운로드할 수 있는 완벽한 무료 서비스를
+              제공합니다. 또한 오디오로 변환하고 파일을 다운로드하여 다양한 용도로 mp3, wav, m4a 형식으로 듣고 사용할 수
+              있습니다.
+
+
+              다운로더는 사용자 친화적인 인터페이스와 매우 빠른 속도로 유튜브에서 동영상을 다운로드하는 것을 주된 목적으로 하는
+              서비스로, 컴퓨터와 휴대폰에서 작동하며 오프라인에서 보거나 오프라인으로 듣기 위해 오디오를 추출할 수 있습니다.
+
+              안정적이고 빠른 다운로드 서비스를 제공합니다.
+          - title: 링크를 복사하여 유튜브 동영상을 다운로드할 수 있나요?
+            content: 다운로드를 시작하려면 먼저 원하는 동영상에 대한 링크를 복사해야 합니다. 이 작업은 두 가지 방법으로 수행할 수 있습니다. 첫
+              번째는 브라우저 주소 표시줄에서 직접 링크를 복사하는 것입니다. 동영상이 있는 페이지의 URL을 강조 표시하고
+              '복사'를 클릭하기만 하면 됩니다.
+            image: /images/1.png
+            imageAlt: YouTube에서 동영상 다운로드
+          - imageAlt: YouTube에서 동영상 다운로드
+            content: 두 번째 방법은 일반적으로 동영상 아래에 있는 '공유' 버튼을 사용하는 것입니다. 이를 클릭하고 '링크 복사'를 선택합니다.
+            image: /images/2.png
+          - content: >-
+              동영상 링크가 성공적으로 복사되면 adownloader.org로 이동하여 페이지에서 링크를 입력할 수 있는 특수
+              입력란을 찾습니다. 복사한 URL을 이 필드에 조심스럽게 붙여넣습니다. Ctrl + V(또는 Mac의 경우 Cmd +
+              V) 또는 모바일 디바이스의 '붙여넣기' 메뉴를 사용하여 수행할 수 있습니다.
+
+              링크가 추가 문자 없이 완전히 붙여넣어졌는지 확인한 다음 다운로드 버튼을 클릭합니다.
+            image: /images/main.png
+            imageAlt: YouTube에서 동영상 다운로드
+          - content: >-
+              이 서비스는 자동으로 링크를 처리하고 사용 가능한 형식을 결정하며 품질 옵션을 제공합니다. 적절한 해상도 또는 파일
+              형식을 선택하고 동영상을 디바이스에 저장하면 됩니다.
+
+
+              휴대폰에서도 프로세스는 완전히 유사합니다. 앱 또는 모바일 브라우저에서 동영상을 열고 '공유' 버튼을 탭한 후 '링크
+              복사'를 선택합니다. 그런 다음 브라우저에서 adownloader.org로 이동하여 다운로드 필드에 링크를 붙여넣고
+              컴퓨터에서와 마찬가지로 빠르고 편리하게 다운로드를 시작하세요.
+            image: /images/3.png
+            imageAlt: YouTube에서 동영상 다운로드
+      features:
+        items:
+          - icon: ⚡
+            title: 빠르고 무료
+            description: 등록 없이 무료로 동영상을 즉시 다운로드하세요.
+          - title: HD 및 4K 지원
+            description: 오디오 mp3부터 Full HD 및 4K까지 모든 해상도를 사용할 수 있습니다.
+            icon: "🎥 "
+          - title: 다양한 플랫폼으로 작업하기
+            description: 유튜브, 틱톡, 인스타그램, VK, 레딧 및 기타 서비스를 지원합니다.
+            icon: "🌍 "
+          - icon: "📱 "
+            title: 모든 디바이스에 적합
+            description: 소프트웨어 설치 없이 컴퓨터, 스마트폰, 태블릿에서 작동합니다.
+          - title: 오디오 추출
+            icon: "🔊 "
+            description: 편리한 형식으로 오디오만 다운로드할 수 있습니다.
+          - title: 즉시 링크 처리
+            description: 이 서비스는 자동으로 형식을 감지하고 다운로드에 가장 적합한 품질 옵션을 제공합니다.
+            icon: "🚀 "
+        title: 장점
+      faq:
+        - question: 온라인에서 동영상을 다운로드하려면 프로그램을 설치해야 하나요?
+          answer: 아니요, 무료로 동영상을 다운로드하기 위해 프로그램이나 앱을 설치할 필요가 없습니다. 당사의 온라인 서비스는 브라우저에서 바로
+            작동하며, 앱을 설치할 필요 없이 링크를 통해 동영상을 빠르게 다운로드할 수 있습니다.
+        - question: YouTube 및 기타 플랫폼에서 어떤 화질로 동영상을 다운로드할 수 있나요?
+          answer: "MP4 형식의 동영상을 다양한 해상도로 다운로드할 수 있습니다: 360p, 480p, 720p, 1080p, SD, HD,
+            Full HD, 2K 및 4K. 사용 가능한 품질 옵션은 소스 동영상에 따라 다릅니다. 비디오의 오디오와 사운드도
+            마찬가지입니다."
+        - question: MP3 형식(오디오/사운드만)으로 동영상을 다운로드할 수 있나요?
+          answer: 예, 이 서비스를 사용하면 동영상에서 오디오를 다운로드하여 품질 손실 없이 오프라인에서 들을 수 있도록 편리한 형식으로 저장할 수
+            있습니다.
+        - question: 휴대폰(Android 및 iPhone)에 동영상을 다운로드할 수 있나요?
+          answer: 예, 앱 없이 브라우저를 통해 휴대폰에 동영상을 다운로드할 수 있습니다. 이 서비스는 Android, iPhone 및 태블릿에
+            완벽하게 적용됩니다.
+        - question: 무료 동영상 다운로드에 제한이 있나요?
+          answer: 아니요, 온라인 동영상 다운로드는 수량 제한이나 유료 구독 없이 이용할 수 있습니다.
+        - question: 동영상을 다운로드하려면 등록해야 하나요?
+          answer: 아니요, 등록할 필요가 없습니다. 다운로드 상자에 동영상 링크를 붙여넣고 계정을 만들지 않고도 무료로 파일을 다운로드할 수
+            있습니다.
+slug: youtube
+platform: youtube
+source_lang: ru
+meta:
+  title: Скачать видео с Youtube
+  description: Скачать видео с YouTube  бесплатно и быстро или извлечь аудио.
+    Загрузка без регистрации, без ограничений скорости. Сохраняйте ролики для
+    офлайн-просмотра всего за несколько секунд.
+  keywords: Скачать видео ютуб
+  ogImage: /images/main.png
+  ogImageAlt: Скачать видео с ютуб
+pageContent:
+  mainTitle: Скачать видео с YouTube
+  subtitle: "Скачивайте видео с любых платформ:  YouTube, TikTok, Instagram, VK,
+    RuTube, Reddit, Twitch и многих других быстро и без ограничений."
+  intro: Скачивайте видео с YouTube быстро и бесплатно в высоком качестве без
+    регистрации и ограничений.
+  how_to:
+    title: Как скачать видео с YouTube
+    blocks:
+      - title: ""
+        content: >-
+          YouTube это самый большой видеохостинг в этом мире, и преобладает по
+          популярности в большинстве стран. Тем не менее скачать видео на ютубе
+          не так просто как кажется, сервис не отдает напрямую пользователю
+          возможность загрузить видео для персонального использования. 
+
+
+          aDownloader предлагает полноценный и бесплатный сервис для загрузки
+          видео с Youtube в различных форматах, от низкого разрешение 360, 480,
+          720 HD пикселей, также и в высоком разрешении и хорошем качестве 1080p
+          FullHD, 2K, 4k 8k, вертикальные видео Shorts. Также можно и
+          преобразовать в аудио и скачать файл для прослушивания и использования
+          в форматах mp3, wav, m4a, для различных целей. 
+
+
+          aDownloader сервис у которого основная цель скачивать видео с Youtube
+          в котором удобный интерфейс и очень высокая скорость, это будет
+          работать на вашем компьютере и на телефоне, что может позволять
+          просматривать в оффлайн режиме или извлечь аудио для офлайн
+          прослушивания. 
+
+          Мы делаем надежный и быстрый сервис для загрузки. 
+      - title: Скопируйте ссылку для скачивания видео с Youtube?
+        content: "Чтобы начать загрузку, сначала необходимо скопировать ссылку на нужное
+          видео. Это можно сделать двумя способами. Первый это скопировать
+          ссылку напрямую из адресной строки браузера: просто выделите URL
+          страницы с видео и нажмите «Копировать»."
+        image: /images/1.png
+        imageAlt: Скачать видео с YouTube
+      - imageAlt: Скачать видео с YouTube
+        content: Второй способ это воспользоваться кнопкой «Поделиться», которая обычно
+          находится под видео. Нажмите её и выберите пункт «Копировать ссылку».
+        image: /images/2.png
+      - content: >-
+          После того как ссылка на видео успешно скопирована, перейдите на сайт
+          adownloader.org  и найдите специальное поле для ввода ссылки на любой
+          странице. Аккуратно вставьте скопированный URL в это поле  это можно
+          сделать с помощью комбинации клавиш Ctrl + V (или Cmd + V на Mac) либо
+          через меню «Вставить» на мобильном устройстве.
+
+          Убедитесь, что ссылка вставлена полностью и без лишних символов, после
+          чего нажмите кнопку загрузки.
+        image: /images/main.png
+        imageAlt: Скачать видео с YouTube
+      - content: >-
+          Сервис автоматически обработает ссылку, определит доступные форматы и
+          предложит варианты качества. Вам останется выбрать подходящее
+          разрешение или формат файла и сохранить видео на своё устройство
+
+
+          На мобильных телефонах процесс полностью аналогичный. Откройте видео в
+          приложении или мобильном браузере, нажмите кнопку «Поделиться» и
+          выберите «Копировать ссылку». Затем перейдите на сайт adownloader.org
+          в браузере, вставьте ссылку в поле загрузки и начните скачивание  так
+          же быстро и удобно, как и на компьютере.
+        image: /images/3.png
+        imageAlt: Скачать видео с YouTube
+  features:
+    items:
+      - icon: ⚡
+        title: Быстро и бесплатно
+        description: Скачивайте видео мгновенно без регистрации и бесплатно.
+      - title: Поддержка HD и 4K
+        description: Доступны все разрешения от аудио mp3 до Full HD и 4K.
+        icon: "🎥 "
+      - title: Работа с разными платформами
+        description: Поддержка YouTube, TikTok, Instagram, VK, Reddit и других сервисов.
+        icon: "🌍 "
+      - icon: "📱 "
+        title: Подходит для всех устройств
+        description: Работает на компьютерах, смартфонах и планшетах без установки программ.
+      - title: Извлечение аудио
+        icon: "🔊 "
+        description: Возможность скачать только звук в удобном формате.
+      - title: Мгновенная обработка ссылки
+        description: Сервис автоматически определяет формат и предлагает лучшие варианты
+          качества для скачивания.
+        icon: "🚀 "
+    title: Преимущества
+  faq:
+    - question: Нужно ли устанавливать программу, чтобы скачать видео онлайн?
+      answer: Нет, чтобы скачать видео бесплатно, не нужно устанавливать программы или
+        приложения. Наш онлайн-сервис работает прямо в браузере и позволяет
+        быстро загрузить видео по ссылке без дополнительной установки
+        приложения.
+    - question: В каком качестве можно скачать видео с YouTube и других платформ?
+      answer: "Вы можете скачать видео в формате MP4 в различных разрешениях: 360p,
+        480p, 720p, 1080p,SD, HD, Full HD, 2K и 4K. Доступные варианты качества
+        зависят от исходного видео. А также аудио и звуки из видео."
+    - question: Можно ли скачать видео в формате MP3 (только аудио/звук)?
+      answer: Да, сервис позволяет скачать аудио из видео и сохранить его в удобном
+        формате для прослушивания офлайн — без потери качества.
+    - question: Можно ли скачать видео на телефон (Android и iPhone)?
+      answer: Да, вы можете скачать видео на телефон через браузер без приложений.
+        Сервис полностью адаптирован для Android, iPhone и планшетов.
+    - question: Есть ли ограничения на бесплатное скачивание видео?
+      answer: Нет, скачивание видео онлайн доступно без лимитов по количеству и без
+        платной подписки.
+    - question: Нужно ли регистрироваться, чтобы скачать видео?
+      answer: Нет, регистрация не требуется. Просто вставьте ссылку на видео в поле
+        загрузки и скачайте файл бесплатно и без создания аккаунта.
+_status: ready
+_hashes:
+  _slug: youtube
+  _contentHash: 2deb8383dcc5
+  fields:
+    meta.title: d933f30d28c2
+    meta.description: f0b631f23a1f
+    meta.keywords: 6a384a0ab36d
+    meta.ogImage: 9b4f7fdfd001
+    meta.ogImageAlt: 2204544cc36b
+    pageContent.mainTitle: d3dab28086da
+    pageContent.subtitle: 32d19a90389c
+    pageContent.intro: 79e2d91d8d03
+    pageContent.how_to.title: 621a4333293a
+    pageContent.how_to.blocks[0].content: a495efdb6308
+    pageContent.how_to.blocks[1].title: 30e1b8b84563
+    pageContent.how_to.blocks[1].content: c40302d56930
+    pageContent.how_to.blocks[1].image: aac5e66c5375
+    pageContent.how_to.blocks[1].imageAlt: d3dab28086da
+    pageContent.how_to.blocks[2].imageAlt: d3dab28086da
+    pageContent.how_to.blocks[2].content: e01eb8b40d47
+    pageContent.how_to.blocks[2].image: eb9faa820615
+    pageContent.how_to.blocks[3].content: 6253d3448e37
+    pageContent.how_to.blocks[3].image: 9b4f7fdfd001
+    pageContent.how_to.blocks[3].imageAlt: d3dab28086da
+    pageContent.how_to.blocks[4].content: a2dfc2516ab4
+    pageContent.how_to.blocks[4].image: 1ae098868acb
+    pageContent.how_to.blocks[4].imageAlt: d3dab28086da
+    pageContent.features.items[0].icon: e421f2667d62
+    pageContent.features.items[0].title: ccb29411db50
+    pageContent.features.items[0].description: a18aa1fbf7bc
+    pageContent.features.items[1].title: b039f3e32dd1
+    pageContent.features.items[1].description: fac23a5da7d2
+    pageContent.features.items[1].icon: 8b1cb736f66e
+    pageContent.features.items[2].title: 982efcad6b8f
+    pageContent.features.items[2].description: b9bbd46e5a07
+    pageContent.features.items[2].icon: 91b0e3c82df9
+    pageContent.features.items[3].icon: 33b7f6203af2
+    pageContent.features.items[3].title: 61698790b719
+    pageContent.features.items[3].description: 91c3a6d49b15
+    pageContent.features.items[4].title: 19dbcd6d1f77
+    pageContent.features.items[4].icon: d6537d336d11
+    pageContent.features.items[4].description: 1a114c2e7439
+    pageContent.features.items[5].title: bd98929bdbfe
+    pageContent.features.items[5].description: 06ce0edc2d99
+    pageContent.features.items[5].icon: a524646d0d45
+    pageContent.features.title: d76a352c6c8f
+    pageContent.faq[0].question: 9b021955af2b
+    pageContent.faq[0].answer: aa026a685473
+    pageContent.faq[1].question: 612ef555e8d1
+    pageContent.faq[1].answer: b7aa4065ab5e
+    pageContent.faq[2].question: e132b900f8dc
+    pageContent.faq[2].answer: e5961ec259b1
+    pageContent.faq[3].question: f065d5424e95
+    pageContent.faq[3].answer: 347cdb4131a3
+    pageContent.faq[4].question: 1892bd953f43
+    pageContent.faq[4].answer: 2688e8ef3744
+    pageContent.faq[5].question: 2e4de0d56558
+    pageContent.faq[5].answer: 6b593770e802

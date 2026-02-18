@@ -10,6 +10,7 @@ export const platforms: Platform[] = [
     { id: 'vk', name: 'VK' },
     { id: 'facebook', name: 'Facebook' },
     { id: 'vimeo', name: 'Vimeo' },
+    { id: 'other', name: 'Other'}
 ]
 
 export const platformIds = platforms.map(p => p.id)

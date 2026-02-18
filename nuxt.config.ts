@@ -244,17 +244,19 @@ export default defineNuxtConfig({
     // ═══════════════════════════════════════════
     // NITRO — серверные настройки и кэширование
     // ═══════════════════════════════════════════
+
     nitro: {
         compressPublicAssets: true,
         routeRules: {
             // API — без ISR, скрыт от поисковиков
             '/api/**': {
                 headers: {'X-Robots-Tag': 'noindex, nofollow'},
+                isr: false,
             },
 
-            // Статика — долгий кэш (1 год)
-            '/_ipx/**': {headers: staticCacheHeaders},
-            '/_nuxt/**': {headers: staticCacheHeaders},
+            // Статика — долгий кэш, БЕЗ ISR/SSR
+            '/_ipx/**': {headers: staticCacheHeaders, isr: false},
+            '/_nuxt/**': {headers: staticCacheHeaders, isr: false},
 
             // Админка — без кэша, без индексации
             '/admin/**': {
