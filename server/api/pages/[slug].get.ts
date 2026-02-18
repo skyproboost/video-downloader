@@ -1,5 +1,6 @@
 import { readFile, access } from 'node:fs/promises'
-import { join, resolve } from 'node:path'
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
 import { parse } from 'yaml'
 
 interface PageMeta {
@@ -59,24 +60,38 @@ interface PageData {
 }
 
 // ═══════════════════════════════════════════════════
-// Определяем корень проекта — работает и в dev, и в prod
-// В dev: process.cwd() = /project
-// В prod: process.cwd() = /project/.output/server, нужно подняться на 2 уровня
+// Определяем путь к content/pages — работает в dev, локальном билде и Docker
 // ═══════════════════════════════════════════════════
-function resolveProjectRoot(): string {
+function resolvePagesDir(): string {
     const cwd = process.cwd()
 
-    // Если cwd содержит .output — отрезаем всё начиная с .output
+    // 1. Dev: cwd = /project, файлы в /project/content/pages
+    const devPath = join(cwd, 'content', 'pages')
+    if (existsSync(devPath)) return devPath
+
+    // 2. Docker: cwd = /app, файлы в /app/.output/content/pages
+    const dockerPath = join(cwd, '.output', 'content', 'pages')
+    if (existsSync(dockerPath)) return dockerPath
+
+    // 3. Локальный билд: cwd содержит .output (например D:\project\.output)
     const outputIdx = cwd.indexOf('.output')
     if (outputIdx !== -1) {
-        return cwd.substring(0, outputIdx).replace(/[\\/]+$/, '')
+        const outputRoot = cwd.substring(0, outputIdx) + '.output'
+        const localProdPath = join(outputRoot, 'content', 'pages')
+        if (existsSync(localProdPath)) return localProdPath
+
+        // 4. Также проверяем корень проекта (dev через .output)
+        const projectRoot = cwd.substring(0, outputIdx).replace(/[\\/]+$/, '')
+        const rootPath = join(projectRoot, 'content', 'pages')
+        if (existsSync(rootPath)) return rootPath
     }
 
-    return cwd
+    // Fallback
+    console.warn('[pages] Could not resolve pages dir, tried:', devPath, dockerPath)
+    return devPath
 }
 
-const PROJECT_ROOT = resolveProjectRoot()
-const PAGES_DIR = join(PROJECT_ROOT, 'content', 'pages')
+const PAGES_DIR = resolvePagesDir()
 
 // Кэш в памяти
 const cache = new Map<string, { data: PageData; timestamp: number }>()
