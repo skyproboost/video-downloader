@@ -36,69 +36,57 @@
             <p v-if="error" class="error-message">{{ error }}</p>
         </Transition>
 
-        <!-- Лоадер -->
+        <!-- Карточка: лоадер или результат -->
         <Transition name="fade">
-            <div v-if="loading" class="loader-card">
-                <div class="loader-shimmer">
-                    <div class="shimmer-preview" />
-                    <div class="shimmer-info">
-                        <div class="shimmer-line wide" />
-                        <div class="shimmer-line narrow" />
-                        <div class="shimmer-btn" />
-                    </div>
-                </div>
-            </div>
-        </Transition>
-
-        <!-- Результат -->
-        <Transition name="fade">
-            <div v-if="videoData && !loading" class="result-card">
+            <div v-if="loading || videoData" class="result-card">
                 <div class="result-preview">
-                    <!--
-                        Видеоплеер: src указывает на прокси API-сервера,
-                        который стримит видео с CDN с правильного IP.
-                    -->
-                    <video
-                        class="preview-video"
-                        :src="videoStreamUrl"
-                        :poster="videoData.thumbnail"
-                        controls
-                        playsinline
-                        preload="metadata"
+                    <div v-if="loading" class="shimmer-block" />
+                    <img
+                        v-else-if="videoData?.thumbnail"
+                        :src="videoData.thumbnail"
+                        :alt="videoData.title || 'Video thumbnail'"
+                        class="preview-image"
                     />
+                    <div v-else class="preview-placeholder">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="5 3 19 12 5 21 5 3"/>
+                        </svg>
+                    </div>
                 </div>
 
                 <div class="result-info">
-                    <p v-if="videoData.title" class="result-title">{{ videoData.title }}</p>
-                    <div class="result-meta">
-                    <span v-if="videoData.duration" class="meta-tag">
-                        ⏱ {{ formatDuration(videoData.duration) }}
-                    </span>
-                        <span v-if="videoData.ext" class="meta-tag">
-                        {{ videoData.ext.toUpperCase() }}
-                    </span>
-                    </div>
-
-                    <button
-                        class="save-btn"
-                        :disabled="downloading"
-                        @click="triggerDownload"
-                    >
-                        <span v-if="downloading" class="spinner" />
-                        <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                             stroke-linejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                            <polyline points="7 10 12 15 17 10"/>
-                            <line x1="12" y1="15" x2="12" y2="3"/>
-                        </svg>
-                        {{ downloading ? $t('form.loading') : $t('form.saveFile') }}
-                    </button>
-
-                    <div v-if="downloadProgress > 0 && downloadProgress < 100" class="progress-bar">
-                        <div class="progress-fill" :style="{ width: downloadProgress + '%' }" />
-                        <span class="progress-text">{{ downloadProgress }}%</span>
-                    </div>
+                    <template v-if="loading">
+                        <div class="shimmer-line wide" />
+                        <div class="shimmer-line narrow" />
+                        <div class="shimmer-btn" />
+                    </template>
+                    <template v-else-if="videoData">
+                        <p v-if="videoData.title" class="result-title">{{ videoData.title }}</p>
+                        <div class="result-meta">
+                            <span v-if="videoData.duration" class="meta-tag">
+                                ⏱ {{ formatDuration(videoData.duration) }}
+                            </span>
+                            <span v-if="videoData.ext" class="meta-tag">
+                                {{ videoData.ext.toUpperCase() }}
+                            </span>
+                        </div>
+                        <a
+                            :href="videoData.url"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="save-btn"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            {{ $t('form.saveFile') }}
+                        </a>
+                    </template>
                 </div>
             </div>
         </Transition>
@@ -121,8 +109,6 @@ const config = useRuntimeConfig()
 const url = ref('')
 const isCooldown = ref(false)
 const loading = ref(false)
-const downloading = ref(false)
-const downloadProgress = ref(0)
 const error = ref('')
 const videoData = ref<VideoResponse | null>(null)
 
@@ -146,15 +132,10 @@ const DANGEROUS_PATTERNS = [
 
 let submitTimestamps: number[] = []
 
-/** Базовый URL API-сервера */
 const apiBase = computed(() =>
     (config.public.apiBaseUrl as string) || 'https://api.adownloader.org'
 )
 
-/**
- * URL для воспроизведения и скачивания —
- * через прокси на API-сервере (у него правильный IP для CDN)
- */
 const videoStreamUrl = computed(() => {
     if (!videoData.value) return ''
     const params = new URLSearchParams({
@@ -210,61 +191,7 @@ function clearError() {
     if (error.value) error.value = ''
 }
 
-/**
- * Скачивание: XHR к API-серверу → blob → сохранение с нужным именем
- */
-async function triggerDownload() {
-    if (!videoData.value || downloading.value) return
-
-    downloading.value = true
-    downloadProgress.value = 0
-    error.value = ''
-
-    try {
-        const blob = await new Promise<Blob>((resolve, reject) => {
-            const xhr = new XMLHttpRequest()
-            xhr.open('GET', videoStreamUrl.value)
-            xhr.responseType = 'blob'
-
-            xhr.onprogress = (e) => {
-                if (e.lengthComputable) {
-                    downloadProgress.value = Math.round((e.loaded / e.total) * 100)
-                }
-            }
-
-            xhr.onload = () => {
-                if (xhr.status >= 200 && xhr.status < 300) {
-                    resolve(xhr.response)
-                } else {
-                    reject(new Error(`HTTP ${xhr.status}`))
-                }
-            }
-
-            xhr.onerror = () => reject(new Error('Network error'))
-            xhr.send()
-        })
-
-        const blobUrl = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = blobUrl
-        a.download = downloadFilename.value
-        document.body.appendChild(a)
-        a.click()
-        document.body.removeChild(a)
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 1000)
-
-    } catch (e) {
-        console.error('Download error:', e)
-        error.value = t('error.unknown')
-    } finally {
-        downloading.value = false
-        downloadProgress.value = 0
-    }
-}
-
 const handleDownload = async () => {
-    return
-
     if (isCooldown.value || !isUrlValid.value || loading.value) return
 
     const trimmed = url.value.trim()
@@ -280,7 +207,6 @@ const handleDownload = async () => {
     videoData.value = null
     isCooldown.value = true
 
-    // Сначала убираем ошибку, ждём fade-out, потом показываем лоадер
     if (error.value) {
         error.value = ''
         await new Promise(r => setTimeout(r, 400))
@@ -317,7 +243,6 @@ const handleDownload = async () => {
         }
     }
 
-    // Минимум 500мс показа лоадера
     const elapsed = Date.now() - startTime
     const minShow = Math.max(MIN_COOLDOWN, 500)
     if (elapsed < minShow) {
@@ -422,6 +347,7 @@ const handleDownload = async () => {
     text-align: center;
 }
 
+/* Карточка результата — фиксированная высота preview */
 .result-card {
     margin-top: var(--space-6);
     background: rgba(255, 255, 255, 0.05);
@@ -432,14 +358,13 @@ const handleDownload = async () => {
 
 .result-preview {
     position: relative;
-    background: #000;
     width: 100%;
-    aspect-ratio: 9 / 16;
-    max-height: 35vh;
+    aspect-ratio: 2 / 1;
+    background: #15393382;
     overflow: hidden;
 }
 
-.preview-video {
+.preview-image {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -448,8 +373,18 @@ const handleDownload = async () => {
     display: block;
 }
 
+.preview-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.2);
+}
+
 .result-info {
     padding: var(--space-4);
+    min-height: 120px;
 }
 
 .result-title {
@@ -496,72 +431,19 @@ const handleDownload = async () => {
     cursor: pointer;
     transition: background var(--transition-fast);
     width: 100%;
+    text-decoration: none;
 }
 
-.save-btn:hover:not(:disabled) {
+.save-btn:hover {
     background: #16ad37;
 }
 
-.save-btn:disabled {
-    opacity: 0.7;
-    cursor: wait;
-}
-
-.progress-bar {
-    margin-top: var(--space-3);
-    position: relative;
-    height: 24px;
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-.progress-fill {
-    height: 100%;
-    background: #2ba546;
-    border-radius: 12px;
-    transition: width 0.2s ease;
-}
-
-.progress-text {
+/* Shimmer loader */
+.shimmer-block {
     position: absolute;
     inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: 600;
-    color: white;
-}
-
-/* Fade transition */
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity 0.3s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-    opacity: 0;
-}
-
-/* Shimmer loader */
-.loader-card {
-    margin-top: var(--space-6);
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-}
-
-.loader-shimmer {
-    display: flex;
-    flex-direction: column;
-}
-
-.shimmer-preview {
     width: 100%;
-    aspect-ratio: 9 / 16;
-    max-height: 35vh;
+    height: 100%;
     background: linear-gradient(
         110deg,
         rgba(255, 255, 255, 0.04) 30%,
@@ -572,15 +454,7 @@ const handleDownload = async () => {
     animation: shimmer 1.5s ease-in-out infinite;
 }
 
-.shimmer-info {
-    padding: var(--space-4);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
 .shimmer-line {
-    height: 14px;
     border-radius: 7px;
     background: linear-gradient(
         110deg,
@@ -594,10 +468,13 @@ const handleDownload = async () => {
 
 .shimmer-line.wide {
     width: 80%;
+    height: 17px;
+    margin-bottom: var(--space-3);
 }
-
 .shimmer-line.narrow {
     width: 40%;
+    height: 22px;
+    margin-bottom: var(--space-4);
 }
 
 .shimmer-btn {
@@ -616,6 +493,16 @@ const handleDownload = async () => {
 @keyframes shimmer {
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
+}
+
+/* Fade transition */
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
 }
 
 @media (max-width: 540px) {

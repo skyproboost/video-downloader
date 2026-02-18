@@ -50,6 +50,7 @@
     font-size: var(--fs-main-title);
     font-weight: var(--font-bold);
     margin-bottom: var(--space-3);
+    line-height: 1;
 }
 
 .main-section__subtitle {

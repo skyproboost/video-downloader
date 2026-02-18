@@ -33,7 +33,6 @@ const filteredPlatforms = computed(() => {
 <style scoped>
 .platform-grid-wrapper {
     text-align: center;
-    margin-bottom: var(--space-12);
 }
 
 .platform-grid {
@@ -41,8 +40,8 @@ const filteredPlatforms = computed(() => {
     flex-wrap: wrap;
     justify-content: center;
     gap: var(--space-3);
-    max-width: 36rem;
     margin: 0 auto;
+    max-width: 600px;
 }
 
 .platform-grid__card {
@@ -118,10 +117,6 @@ const filteredPlatforms = computed(() => {
     .platform-grid__icon {
         width: 1.25rem;
         height: 1.25rem;
-    }
-
-    .platform-grid-wrapper {
-        margin-bottom: var(--space-6);
     }
 }
 

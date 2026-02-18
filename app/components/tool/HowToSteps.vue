@@ -124,6 +124,7 @@ function escapeHtml(text: string): string {
     font-weight: var(--font-bold);
     color: var(--color-text);
     margin-bottom: var(--space-4);
+    margin-top: var(--space-12);
 }
 
 .how-to__blocks {
@@ -224,6 +225,10 @@ function escapeHtml(text: string): string {
 
     .how-to-block__text {
         font-size: var(--text-sm);
+    }
+
+    .how-to__title {
+        margin-top: var(--space-6);
     }
 }
 </style>
