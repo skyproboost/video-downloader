@@ -78,6 +78,7 @@ export default defineNuxtConfig({
                 {name: 'theme-color', content: '#ffffff'},
                 {name: 'robots', content: 'index, follow, max-image-preview:large'},
                 {name: 'msapplication-TileColor', content: '#ffffff'},
+                // og:type лучше задавать на уровне страниц через useSeoMeta
             ],
             link: [
                 {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'},
@@ -190,7 +191,7 @@ export default defineNuxtConfig({
         },
         requestSizeLimiter: {
             enabled: isProduction,
-            maxRequestSizeInBytes: 2 * 1024 * 1024,
+            maxRequestSizeInBytes: 2 * 1024 * 1024, // 2MB (было неверно 100MB)
             maxUploadFileRequestInBytes: 0,
         },
         rateLimiter: {
@@ -211,7 +212,6 @@ export default defineNuxtConfig({
             stripIgnoreTagBody: ['script', 'style'],
             css: false,
             escapeHtml: true,
-            exclude: ['/admin', '/config.yml'],
         },
         corsHandler: {
             origin: isProduction ? siteUrl : '*',
@@ -258,15 +258,9 @@ export default defineNuxtConfig({
         }
     },
 
-    // ═══════════════════════════════════════════
-    // ROUTE RULES (top-level — для nuxt-security)
-    // ═══════════════════════════════════════════
     routeRules: {
         '/admin/**': {
             security: { xssValidator: false, requestSizeLimiter: false, rateLimiter: false },
-        },
-        '/config.yml': {
-            security: { xssValidator: false },
         },
         '/api/footer-links': {
             security: { xssValidator: false },
@@ -276,6 +270,7 @@ export default defineNuxtConfig({
     // ═══════════════════════════════════════════
     // NITRO — серверные настройки и кэширование
     // ═══════════════════════════════════════════
+
     nitro: {
         compressPublicAssets: true,
         routeRules: {
@@ -300,7 +295,7 @@ export default defineNuxtConfig({
             },
 
             '/': {prerender: true},
-            '/**': {isr: 600},
+            '/**': {isr: 600 },
         },
     },
 
