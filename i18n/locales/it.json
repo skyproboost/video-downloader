@@ -7,7 +7,8 @@
     "subtitle": "Scaricare video da YouTube, Instagram, TikTok e altro ancora",
     "meta": {
       "title": "Downloader video gratuito - YouTube, TikTok, Instagram | Qualità HD e 4K",
-      "description": "Scaricate video da YouTube, TikTok, Instagram, Facebook, VK gratuitamente e senza registrazione. Corti, filmati, storie in qualità HD e 4K. Veloce, sicuro, senza filigrane."
+      "description": "Scaricate video da YouTube, TikTok, Instagram, Facebook, VK gratuitamente e senza registrazione. Corti, filmati, storie in qualità HD e 4K. Veloce, sicuro, senza filigrane.",
+      "keywords": "scaricatore di video"
     },
     "about": {
       "title": "Un unico servizio per tutte le piattaforme",
@@ -46,7 +47,9 @@
     "placeholder": "Incollare qui l'URL del video...",
     "download": "Scarica",
     "success": "Video pronto per il download!",
-    "supported": "Piattaforme supportate: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "Piattaforme supportate: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "Caricamento...",
+    "saveFile": "Salva file"
   },
   "error": {
     "invalidUrl": "Link non valido. Riprovare.",

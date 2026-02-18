@@ -7,7 +7,8 @@
     "subtitle": "Unduh video dari YouTube, Instagram, TikTok, dan lainnya",
     "meta": {
       "title": "Pengunduh Video Gratis - YouTube, TikTok, Instagram | Kualitas HD & 4K",
-      "description": "Unduh video dari YouTube, TikTok, Instagram, Facebook, VK secara gratis tanpa registrasi. Film Pendek, Gulungan, Cerita dalam kualitas HD dan 4K. Cepat, aman, tanpa tanda air."
+      "description": "Unduh video dari YouTube, TikTok, Instagram, Facebook, VK secara gratis tanpa registrasi. Film Pendek, Gulungan, Cerita dalam kualitas HD dan 4K. Cepat, aman, tanpa tanda air.",
+      "keywords": "pengunduh video"
     },
     "about": {
       "title": "Satu Layanan - Semua Platform",
@@ -46,7 +47,9 @@
     "placeholder": "Rekatkan URL video di sini...",
     "download": "Unduh",
     "success": "Video siap untuk diunduh!",
-    "supported": "Platform yang didukung: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "Platform yang didukung: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "Memuat...",
+    "saveFile": "Simpan file"
   },
   "error": {
     "invalidUrl": "Tautan tidak valid. Silakan coba lagi.",

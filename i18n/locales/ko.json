@@ -7,7 +7,8 @@
     "subtitle": "유튜브, 인스타그램, 틱톡 등에서 동영상 다운로드하기",
     "meta": {
       "title": "무료 동영상 다운로더 - 유튜브, 틱톡, 인스타그램 | HD & 4K 화질",
-      "description": "등록하지 않고도 YouTube, TikTok, Instagram, Facebook, VK에서 동영상을 무료로 다운로드할 수 있습니다. HD 및 4K 화질의 단편, 릴, 스토리. 빠르고 안전하며 워터마크가 없습니다."
+      "description": "등록하지 않고도 YouTube, TikTok, Instagram, Facebook, VK에서 동영상을 무료로 다운로드할 수 있습니다. HD 및 4K 화질의 단편, 릴, 스토리. 빠르고 안전하며 워터마크가 없습니다.",
+      "keywords": "비디오 다운로더"
     },
     "about": {
       "title": "하나의 서비스 - 모든 플랫폼",
@@ -46,7 +47,9 @@
     "placeholder": "여기에 동영상 URL 붙여넣기...",
     "download": "다운로드",
     "success": "동영상 다운로드 준비 완료!",
-    "supported": "지원 플랫폼 유튜브, 틱톡, 인스타그램, 페이스북, VK, 비메오"
+    "supported": "지원 플랫폼 유튜브, 틱톡, 인스타그램, 페이스북, VK, 비메오",
+    "loading": "로딩 중...",
+    "saveFile": "파일 저장"
   },
   "error": {
     "invalidUrl": "잘못된 링크입니다. 다시 시도해 주세요.",

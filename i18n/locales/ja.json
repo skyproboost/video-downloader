@@ -7,7 +7,8 @@
     "subtitle": "YouTube、Instagram、TikTokなどから動画をダウンロードする",
     "meta": {
       "title": "無料動画ダウンローダー - YouTube、TikTok、Instagram｜HD＆4K画質",
-      "description": "YouTube、TikTok、Instagram、Facebook、VKの動画を登録なしで無料ダウンロード。HDと4K画質のショートフィルム、リール、ストーリー。高速、安全、ウォーターマークなし。"
+      "description": "YouTube、TikTok、Instagram、Facebook、VKの動画を登録なしで無料ダウンロード。HDと4K画質のショートフィルム、リール、ストーリー。高速、安全、ウォーターマークなし。",
+      "keywords": "動画ダウンローダー"
     },
     "about": {
       "title": "ひとつのサービス - すべてのプラットフォーム",
@@ -46,7 +47,9 @@
     "placeholder": "ビデオのURLをここに貼り付ける",
     "download": "ダウンロード",
     "success": "ビデオはダウンロード可能です！",
-    "supported": "対応プラットフォームYouTube、TikTok、Instagram、Facebook、VK、Vimeo"
+    "supported": "対応プラットフォームYouTube、TikTok、Instagram、Facebook、VK、Vimeo",
+    "loading": "読み込み中...",
+    "saveFile": "ファイルを保存"
   },
   "error": {
     "invalidUrl": "リンクが無効です。もう一度お試しください。",

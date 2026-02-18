@@ -7,7 +7,8 @@
     "subtitle": "Descarregue vídeos do YouTube, Instagram, TikTok e muito mais",
     "meta": {
       "title": "Descarregador de vídeo gratuito - YouTube, TikTok, Instagram | Qualidade HD e 4K",
-      "description": "Descarregue vídeos do YouTube, TikTok, Instagram, Facebook, VK gratuitamente sem registo. Curtas, Reels, Stories em qualidade HD e 4K. Rápido, seguro e sem marcas de água."
+      "description": "Descarregue vídeos do YouTube, TikTok, Instagram, Facebook, VK gratuitamente sem registo. Curtas, Reels, Stories em qualidade HD e 4K. Rápido, seguro e sem marcas de água.",
+      "keywords": "baixador de vídeos"
     },
     "about": {
       "title": "Um serviço - Todas as plataformas",
@@ -46,7 +47,9 @@
     "placeholder": "Colar o URL do vídeo aqui...",
     "download": "Descarregar",
     "success": "Vídeo pronto para transferência!",
-    "supported": "Plataformas suportadas: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "Plataformas suportadas: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "Carregando...",
+    "saveFile": "Salvar arquivo"
   },
   "error": {
     "invalidUrl": "Ligação inválida. Por favor, tente novamente.",

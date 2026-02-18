@@ -7,7 +7,8 @@
     "subtitle": "Tải video từ YouTube, Instagram, TikTok và nhiều nền tảng khác.",
     "meta": {
       "title": "Phần mềm tải video miễn phí — YouTube, TikTok, Instagram | Chất lượng HD & 4K",
-      "description": "Tải video từ YouTube, TikTok, Instagram, Facebook, VK miễn phí mà không cần đăng ký. Video ngắn, Reels, Stories với chất lượng HD và 4K. Nhanh chóng, an toàn, không có watermark."
+      "description": "Tải video từ YouTube, TikTok, Instagram, Facebook, VK miễn phí mà không cần đăng ký. Video ngắn, Reels, Stories với chất lượng HD và 4K. Nhanh chóng, an toàn, không có watermark.",
+      "keywords": "trình tải video"
     },
     "about": {
       "title": "Một dịch vụ — Tất cả nền tảng",
@@ -46,7 +47,9 @@
     "placeholder": "Dán URL video vào đây...",
     "download": "Tải xuống",
     "success": "Video đã sẵn sàng để tải xuống!",
-    "supported": "Các nền tảng được hỗ trợ: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "Các nền tảng được hỗ trợ: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "Đang tải...",
+    "saveFile": "Lưu tệp"
   },
   "error": {
     "invalidUrl": "Liên kết không hợp lệ. Vui lòng thử lại.",

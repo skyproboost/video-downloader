@@ -7,7 +7,8 @@
     "subtitle": "Pobieranie filmów z serwisów YouTube, Instagram, TikTok i innych",
     "meta": {
       "title": "Darmowy program do pobierania filmów - YouTube, TikTok, Instagram | Jakość HD i 4K",
-      "description": "Pobieraj filmy z YouTube, TikTok, Instagram, Facebook, VK za darmo bez rejestracji. Szorty, filmy, historie w jakości HD i 4K. Szybko, bezpiecznie, bez znaków wodnych."
+      "description": "Pobieraj filmy z YouTube, TikTok, Instagram, Facebook, VK za darmo bez rejestracji. Szorty, filmy, historie w jakości HD i 4K. Szybko, bezpiecznie, bez znaków wodnych.",
+      "keywords": "pobieracz wideo"
     },
     "about": {
       "title": "Jedna usługa - wszystkie platformy",
@@ -46,7 +47,9 @@
     "placeholder": "Wklej adres URL filmu tutaj...",
     "download": "Pobierz",
     "success": "Wideo gotowe do pobrania!",
-    "supported": "Obsługiwane platformy: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "Obsługiwane platformy: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "Ładowanie...",
+    "saveFile": "Zapisz plik"
   },
   "error": {
     "invalidUrl": "Nieprawidłowy link. Spróbuj ponownie.",

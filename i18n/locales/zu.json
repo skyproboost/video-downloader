@@ -7,7 +7,8 @@
     "subtitle": "Landa amavidiyo ku-YouTube, Instagram, TikTok nakwezinye",
     "meta": {
       "title": "Umhloli Wevidiyo Wamahhala — YouTube, TikTok, Instagram | Ikhwalithi ye-HD ne-4K",
-      "description": "Landa amavidiyo avela ku-YouTube, TikTok, Instagram, Facebook, VK mahhala ngaphandle kokubhalisa. Ama-Shorts, ama-Reels, ama-Stories ngekhwalithi ye-HD ne-4K. Shesha, kuphephile, awekho amawatermark."
+      "description": "Landa amavidiyo avela ku-YouTube, TikTok, Instagram, Facebook, VK mahhala ngaphandle kokubhalisa. Ama-Shorts, ama-Reels, ama-Stories ngekhwalithi ye-HD ne-4K. Shesha, kuphephile, awekho amawatermark.",
+      "keywords": "umsizi wokulanda ividiyo"
     },
     "about": {
       "title": "Inkonzo eyodwa — zonke izinkundla",
@@ -46,7 +47,9 @@
     "placeholder": "Namathela i-URL yevidiyo lapha...",
     "download": "Landa",
     "success": "Ividiyo isilungele ukulanda!",
-    "supported": "Amapulatifomu asekelwayo: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "Amapulatifomu asekelwayo: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "Iyalayisha...",
+    "saveFile": "Londoloza ifayela"
   },
   "error": {
     "invalidUrl": "Isixhumanisi esingalungile. Sicela uzame futhi.",

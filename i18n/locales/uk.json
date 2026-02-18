@@ -7,7 +7,8 @@
     "subtitle": "Завантажуйте відео з YouTube, Instagram, TikTok тощо",
     "meta": {
       "title": "Безкоштовний завантажувач відео - YouTube, TikTok, Instagram | Якість HD та 4K",
-      "description": "Завантажуйте відео з YouTube, TikTok, Instagram, Facebook, VK безкоштовно без реєстрації. Короткометражки, ролики, історії в HD та 4K якості. Швидко, безпечно, без водяних знаків."
+      "description": "Завантажуйте відео з YouTube, TikTok, Instagram, Facebook, VK безкоштовно без реєстрації. Короткометражки, ролики, історії в HD та 4K якості. Швидко, безпечно, без водяних знаків.",
+      "keywords": "завантажувач відео"
     },
     "about": {
       "title": "Один сервіс - всі платформи",
@@ -46,7 +47,9 @@
     "placeholder": "Вставте URL-адресу відео сюди...",
     "download": "Завантажити",
     "success": "Відео готове до завантаження!",
-    "supported": "Підтримувані платформи: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "Підтримувані платформи: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "Завантаження...",
+    "saveFile": "Зберегти файл"
   },
   "error": {
     "invalidUrl": "Неправильне посилання. Будь ласка, спробуйте ще раз.",

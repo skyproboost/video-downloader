@@ -61,7 +61,7 @@
 }
 
 .main-section__platforms {
-    margin-top: var(--space-8);
+    margin-top: var(--space-6);
 }
 
 /* Section */

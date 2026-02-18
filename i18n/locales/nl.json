@@ -7,7 +7,8 @@
     "subtitle": "Video's downloaden van YouTube, Instagram, TikTok en meer",
     "meta": {
       "title": "Gratis video-downloader - YouTube, TikTok, Instagram | HD- & 4K-kwaliteit",
-      "description": "Download gratis video's van YouTube, TikTok, Instagram, Facebook, VK zonder registratie. Shorts, Reels, Stories in HD- en 4K-kwaliteit. Snel, veilig, geen watermerken."
+      "description": "Download gratis video's van YouTube, TikTok, Instagram, Facebook, VK zonder registratie. Shorts, Reels, Stories in HD- en 4K-kwaliteit. Snel, veilig, geen watermerken.",
+      "keywords": "video-downloader"
     },
     "about": {
       "title": "Eén service - alle platforms",
@@ -46,7 +47,9 @@
     "placeholder": "Video-URL hier plakken...",
     "download": "Downloaden",
     "success": "Video klaar om te downloaden!",
-    "supported": "Ondersteunde platforms: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "Ondersteunde platforms: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "Laden...",
+    "saveFile": "Bestand opslaan"
   },
   "error": {
     "invalidUrl": "Ongeldige link. Probeer het opnieuw.",

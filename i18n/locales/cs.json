@@ -7,7 +7,8 @@
     "subtitle": "Stahování videí ze služeb YouTube, Instagram, TikTok a dalších",
     "meta": {
       "title": "Stahování videí zdarma - YouTube, TikTok, Instagram | HD & 4K kvalita",
-      "description": "Stahujte videa z YouTube, TikToku, Instagramu, Facebooku a VK zdarma bez registrace. Krátké filmy, reálie, příběhy v HD a 4K kvalitě. Rychlé, bezpečné, bez vodoznaků."
+      "description": "Stahujte videa z YouTube, TikToku, Instagramu, Facebooku a VK zdarma bez registrace. Krátké filmy, reálie, příběhy v HD a 4K kvalitě. Rychlé, bezpečné, bez vodoznaků.",
+      "keywords": "stahovač videa"
     },
     "about": {
       "title": "Jedna služba - všechny platformy",
@@ -46,7 +47,9 @@
     "placeholder": "Zde vložte adresu URL videa...",
     "download": "Stáhnout",
     "success": "Video je připraveno ke stažení!",
-    "supported": "Podporované platformy: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "Podporované platformy: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "Načítání...",
+    "saveFile": "Uložit soubor"
   },
   "error": {
     "invalidUrl": "Neplatný odkaz. Zkuste to prosím znovu.",

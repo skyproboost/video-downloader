@@ -1,5 +1,6 @@
 import { defineEventHandler } from 'h3'
 import { readFile, readdir, stat, access } from 'node:fs/promises'
+import { existsSync } from 'node:fs'
 import { resolve, join } from 'node:path'
 import { parse } from 'yaml'
 import { languageCodes, defaultLanguage } from '@/../config/languages'
@@ -76,15 +77,40 @@ function collectImages(obj: unknown, baseUrl: string, images: Set<string>): void
     }
 }
 
-function getPagesDir(): string {
+// ═══════════════════════════════════════════════════════════════
+// Определяем путь к content/pages — работает в dev, локальном билде и Docker
+// ═══════════════════════════════════════════════════════════════
+
+function resolvePagesDir(): string {
     const cwd = process.cwd()
 
-    if (cwd.endsWith('.output') || cwd.includes('.output')) {
-        return resolve(cwd, '..', 'content/pages')
+    // 1. Dev: cwd = /project, файлы в /project/content/pages
+    const devPath = join(cwd, 'content', 'pages')
+    if (existsSync(devPath)) return devPath
+
+    // 2. Docker: cwd = /app, файлы в /app/.output/content/pages
+    const dockerPath = join(cwd, '.output', 'content', 'pages')
+    if (existsSync(dockerPath)) return dockerPath
+
+    // 3. Локальный билд: cwd содержит .output (например D:\project\.output)
+    const outputIdx = cwd.indexOf('.output')
+    if (outputIdx !== -1) {
+        const outputRoot = cwd.substring(0, outputIdx) + '.output'
+        const localProdPath = join(outputRoot, 'content', 'pages')
+        if (existsSync(localProdPath)) return localProdPath
+
+        // 4. Также проверяем корень проекта (dev через .output)
+        const projectRoot = cwd.substring(0, outputIdx).replace(/[\\/]+$/, '')
+        const rootPath = join(projectRoot, 'content', 'pages')
+        if (existsSync(rootPath)) return rootPath
     }
 
-    return resolve(cwd, 'content/pages')
+    // Fallback
+    console.warn('[sitemap] Could not resolve pages dir, tried:', devPath, dockerPath)
+    return devPath
 }
+
+const PAGES_DIR = resolvePagesDir()
 
 // ═══════════════════════════════════════════════════════════════
 // ОБРАБОТКА СТРАНИЦЫ
@@ -146,7 +172,6 @@ async function processPage(filePath: string, baseUrl: string): Promise<SitemapUr
 async function generateSitemap(): Promise<SitemapUrl[]> {
     const baseUrl = (process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, '')
     const today = formatDate(new Date())
-    const pagesDir = getPagesDir()
 
     // Главные страницы — каждая в свой sitemap
     const homeUrls: SitemapUrl[] = languageCodes.map(locale => ({
@@ -158,13 +183,13 @@ async function generateSitemap(): Promise<SitemapUrl[]> {
     }))
 
     try {
-        await access(pagesDir)
+        await access(PAGES_DIR)
 
-        const files = await readdir(pagesDir)
+        const files = await readdir(PAGES_DIR)
         const ymlFiles = files.filter(f => f.endsWith('.yml'))
 
         if (isDev) {
-            console.log(`📄 Sitemap: found ${ymlFiles.length} pages`)
+            console.log(`📄 Sitemap: found ${ymlFiles.length} pages in ${PAGES_DIR}`)
         }
 
         if (ymlFiles.length === 0) {
@@ -173,7 +198,7 @@ async function generateSitemap(): Promise<SitemapUrl[]> {
 
         const results = await Promise.all(
             ymlFiles.map(file =>
-                processPage(join(pagesDir, file), baseUrl).catch(err => {
+                processPage(join(PAGES_DIR, file), baseUrl).catch(err => {
                     console.error(`❌ Sitemap error [${file}]:`, err.message)
                     return []
                 })

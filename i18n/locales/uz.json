@@ -7,7 +7,8 @@
     "subtitle": "YouTube, Instagram, TikTok va boshqalardan videolarni yuklab oling",
     "meta": {
       "title": "Bepul video yuklab oluvchi — YouTube, TikTok, Instagram | HD va 4K sifat",
-      "description": "YouTube, TikTok, Instagram, Facebook, VK'dan videolarni ro'yxatdan o'tmasdan bepul yuklab oling. Shorts, Reels, Stories HD va 4K sifatida. Tez, xavfsiz, suv belgisi yo'q."
+      "description": "YouTube, TikTok, Instagram, Facebook, VK'dan videolarni ro'yxatdan o'tmasdan bepul yuklab oling. Shorts, Reels, Stories HD va 4K sifatida. Tez, xavfsiz, suv belgisi yo'q.",
+      "keywords": "video yuklovchi"
     },
     "about": {
       "title": "Bir xizmat — barcha platformalar",
@@ -46,7 +47,9 @@
     "placeholder": "Videoning URL manzilini bu yerga joylashtiring...",
     "download": "Yuklab oling",
     "success": "Video yuklab olishga tayyor!",
-    "supported": "Qo'llab-quvvatlanadigan platformalar: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "Qo'llab-quvvatlanadigan platformalar: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "Yuklanmoqda...",
+    "saveFile": "Faylni saqlash"
   },
   "error": {
     "invalidUrl": "Noto'g'ri havola. Iltimos, yana urinib ko'ring.",

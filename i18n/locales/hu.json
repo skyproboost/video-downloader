@@ -7,7 +7,8 @@
     "subtitle": "Videók letöltése a YouTube-ról, Instagramról, TikTok-ról és így tovább",
     "meta": {
       "title": "Ingyenes videó letöltő - YouTube, TikTok, Instagram | HD & 4K minőség",
-      "description": "Videók letöltése a YouTube-ról, TikTok-ról, Instagramról, Facebookról, VK-ról ingyen, regisztráció nélkül. Rövidfilmek, tekercsek, történetek HD és 4K minőségben. Gyors, biztonságos, vízjelek nélkül."
+      "description": "Videók letöltése a YouTube-ról, TikTok-ról, Instagramról, Facebookról, VK-ról ingyen, regisztráció nélkül. Rövidfilmek, tekercsek, történetek HD és 4K minőségben. Gyors, biztonságos, vízjelek nélkül.",
+      "keywords": "videó letöltő"
     },
     "about": {
       "title": "Egy szolgáltatás - minden platformon",
@@ -46,7 +47,9 @@
     "placeholder": "A videó URL beillesztése ide...",
     "download": "Letöltés",
     "success": "Videó letölthető!",
-    "supported": "Támogatott platformok: YouTube, TikTok, Instagram, Facebook, VK, Vimeo."
+    "supported": "Támogatott platformok: YouTube, TikTok, Instagram, Facebook, VK, Vimeo.",
+    "loading": "Betöltés...",
+    "saveFile": "Fájl mentése"
   },
   "error": {
     "invalidUrl": "Érvénytelen link. Kérjük, próbálja újra.",

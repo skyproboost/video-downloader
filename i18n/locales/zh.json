@@ -7,7 +7,8 @@
     "subtitle": "从 YouTube、Instagram、TikTok 等下载视频",
     "meta": {
       "title": "免费视频下载器 - YouTube、TikTok、Instagram | 高清和 4K 质量",
-      "description": "从 YouTube、TikTok、Instagram、Facebook 和 VK 免费下载视频，无需注册。高清和 4K 质量的短片、卷轴、故事。快速、安全、无水印。"
+      "description": "从 YouTube、TikTok、Instagram、Facebook 和 VK 免费下载视频，无需注册。高清和 4K 质量的短片、卷轴、故事。快速、安全、无水印。",
+      "keywords": "视频下载器"
     },
     "about": {
       "title": "一项服务 - 所有平台",
@@ -46,7 +47,9 @@
     "placeholder": "在此处粘贴视频 URL...",
     "download": "下载",
     "success": "视频可供下载！",
-    "supported": "支持的平台：YouTube、TikTok、Instagram、Facebook、VK、Vimeo"
+    "supported": "支持的平台：YouTube、TikTok、Instagram、Facebook、VK、Vimeo",
+    "loading": "加载中...",
+    "saveFile": "保存文件"
   },
   "error": {
     "invalidUrl": "链接无效。请重试。",

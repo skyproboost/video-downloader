@@ -7,7 +7,8 @@
     "subtitle": "Budata vidiyo si na YouTube, Instagram, TikTok na ndị ọzọ",
     "meta": {
       "title": "Ngwa nbudata vidiyo n'efu — YouTube, TikTok, Instagram | Ogo HD & 4K",
-      "description": "Budata vidiyo si na YouTube, TikTok, Instagram, Facebook, VK n'efu na-enweghị ndebanye aha. Shorts, Reels, Stories n'ogo HD na 4K. Ngwa ngwa, nchekwa, enweghị akara mmiri."
+      "description": "Budata vidiyo si na YouTube, TikTok, Instagram, Facebook, VK n'efu na-enweghị ndebanye aha. Shorts, Reels, Stories n'ogo HD na 4K. Ngwa ngwa, nchekwa, enweghị akara mmiri.",
+      "keywords": "nbudata vidiyo"
     },
     "about": {
       "title": "Otu Ọrụ — Ngwaọrụ niile",
@@ -46,7 +47,9 @@
     "placeholder": "Tinye URL vidiyo ebe a...",
     "download": "Budata",
     "success": "Vidiyo dị njikere maka ibudata!",
-    "supported": "Ikpo okwu a na-akwado: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "Ikpo okwu a na-akwado: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "Na-adọnye...",
+    "saveFile": "Chekwaa faịlụ"
   },
   "error": {
     "invalidUrl": "Njikọ ezighi ezi. Biko gbalịa ọzọ.",

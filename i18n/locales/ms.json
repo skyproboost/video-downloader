@@ -7,7 +7,8 @@
     "subtitle": "Muat turun video daripada YouTube, Instagram, TikTok dan banyak lagi",
     "meta": {
       "title": "Pemuat Turun Video Percuma — YouTube, TikTok, Instagram | Kualiti HD & 4K",
-      "description": "Muat turun video dari YouTube, TikTok, Instagram, Facebook, VK secara percuma tanpa pendaftaran. Shorts, Reels, Stories dalam kualiti HD dan 4K. Pantas, selamat, tiada tanda air."
+      "description": "Muat turun video dari YouTube, TikTok, Instagram, Facebook, VK secara percuma tanpa pendaftaran. Shorts, Reels, Stories dalam kualiti HD dan 4K. Pantas, selamat, tiada tanda air.",
+      "keywords": "pemuat turun video"
     },
     "about": {
       "title": "Satu Perkhidmatan — Semua Platform",
@@ -46,7 +47,9 @@
     "placeholder": "Tampal URL video di sini...",
     "download": "Muat turun",
     "success": "Video sudah sedia untuk dimuat turun!",
-    "supported": "Platform yang disokong: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "Platform yang disokong: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "Memuatkan...",
+    "saveFile": "Simpan fail"
   },
   "error": {
     "invalidUrl": "Pautan tidak sah. Sila cuba lagi.",

@@ -7,7 +7,8 @@
     "subtitle": "Unduh pidéo ti YouTube, Instagram, TikTok jeung sajabana",
     "meta": {
       "title": "Unduh Video Gratis — YouTube, TikTok, Instagram | Kualitas HD & 4K",
-      "description": "Unduh video ti YouTube, TikTok, Instagram, Facebook, VK sacara gratis tanpa pendaptaran. Shorts, Reels, Stories dina kualitas HD jeung 4K. Gancang, aman, tanpa watermark."
+      "description": "Unduh video ti YouTube, TikTok, Instagram, Facebook, VK sacara gratis tanpa pendaptaran. Shorts, Reels, Stories dina kualitas HD jeung 4K. Gancang, aman, tanpa watermark.",
+      "keywords": "pangunduh video"
     },
     "about": {
       "title": "Hiji Layanan — Sadaya Platform",
@@ -46,7 +47,9 @@
     "placeholder": "Tempelkeun URL pidéo di dieu...",
     "download": "Unduh",
     "success": "Video geus siap diunduh!",
-    "supported": "Platform anu didukung: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "Platform anu didukung: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "Ngamuat...",
+    "saveFile": "Simpen file"
   },
   "error": {
     "invalidUrl": "Tautan teu sah. Mangga cobian deui.",

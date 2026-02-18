@@ -32,7 +32,7 @@ const filteredPlatforms = computed(() => {
 <style scoped>
 .platform-grid-wrapper {
     text-align: center;
-    margin-bottom: var(--space-12);
+    margin-bottom: var(--space-6);
 }
 
 .platform-grid {

@@ -7,7 +7,8 @@
     "subtitle": "ดาวน์โหลดวิดีโอจาก YouTube, Instagram, TikTok และอื่น ๆ",
     "meta": {
       "title": "ดาวน์โหลดวิดีโอฟรี — YouTube, TikTok, Instagram | คุณภาพ HD & 4K",
-      "description": "ดาวน์โหลดวิดีโอจาก YouTube, TikTok, Instagram, Facebook, VK ได้ฟรีโดยไม่ต้องลงทะเบียน ช็อต, รีล, สตอรี่ในคุณภาพ HD และ 4K เร็ว ปลอดภัย ไม่มีลายน้ำ"
+      "description": "ดาวน์โหลดวิดีโอจาก YouTube, TikTok, Instagram, Facebook, VK ได้ฟรีโดยไม่ต้องลงทะเบียน ช็อต, รีล, สตอรี่ในคุณภาพ HD และ 4K เร็ว ปลอดภัย ไม่มีลายน้ำ",
+      "keywords": "ตัวดาวน์โหลดวิดีโอ"
     },
     "about": {
       "title": "บริการเดียว — ทุกแพลตฟอร์ม",
@@ -46,7 +47,9 @@
     "placeholder": "วาง URL วิดีโอที่นี่...",
     "download": "ดาวน์โหลด",
     "success": "วิดีโอพร้อมให้ดาวน์โหลดแล้ว!",
-    "supported": "แพลตฟอร์มที่รองรับ: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "แพลตฟอร์มที่รองรับ: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "กำลังโหลด...",
+    "saveFile": "บันทึกไฟล์"
   },
   "error": {
     "invalidUrl": "ลิงก์ไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง",

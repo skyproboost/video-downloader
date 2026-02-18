@@ -7,7 +7,8 @@
     "subtitle": "Zazzage bidiyo daga YouTube, Instagram, TikTok da sauransu",
     "meta": {
       "title": "Mai Zazzage Bidiyo Kyauta — YouTube, TikTok, Instagram | Inganci HD & 4K",
-      "description": "Zazzage bidiyo daga YouTube, TikTok, Instagram, Facebook, VK kyauta ba tare da rajista ba. Shorts, Reels, Stories a ingancin HD da 4K. Mai sauri, amintacce, babu alamomin ruwa."
+      "description": "Zazzage bidiyo daga YouTube, TikTok, Instagram, Facebook, VK kyauta ba tare da rajista ba. Shorts, Reels, Stories a ingancin HD da 4K. Mai sauri, amintacce, babu alamomin ruwa.",
+      "keywords": "mai saukar bidiyo"
     },
     "about": {
       "title": "Wani Sabis — Dukkan Dandamali",
@@ -46,7 +47,9 @@
     "placeholder": "Liƙa URL na bidiyo anan...",
     "download": "Zazzage",
     "success": "Bidiyo ya shirya don sauke!",
-    "supported": "Dandamali da ake tallafawa: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "Dandamali da ake tallafawa: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "Ana lodawa...",
+    "saveFile": "Ajiye fayil"
   },
   "error": {
     "invalidUrl": "Haɗin ba daidai ba. Don Allah ku sake gwadawa.",

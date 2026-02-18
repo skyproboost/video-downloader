@@ -7,7 +7,8 @@
     "subtitle": "Ladda ner videor från YouTube, Instagram, TikTok m.m.",
     "meta": {
       "title": "Gratis videodownloader - YouTube, TikTok, Instagram | HD & 4K-kvalitet",
-      "description": "Ladda ner videor från YouTube, TikTok, Instagram, Facebook, VK gratis utan registrering. Shorts, Reels, Stories i HD- och 4K-kvalitet. Snabbt, säkert, inga vattenstämplar."
+      "description": "Ladda ner videor från YouTube, TikTok, Instagram, Facebook, VK gratis utan registrering. Shorts, Reels, Stories i HD- och 4K-kvalitet. Snabbt, säkert, inga vattenstämplar.",
+      "keywords": "videonedladdare"
     },
     "about": {
       "title": "En tjänst - alla plattformar",
@@ -46,7 +47,9 @@
     "placeholder": "Klistra in videons URL här...",
     "download": "Nedladdningar",
     "success": "Video redo för nedladdning!",
-    "supported": "Plattformar som stöds: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "Plattformar som stöds: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "Laddar...",
+    "saveFile": "Spara fil"
   },
   "error": {
     "invalidUrl": "Ogiltig länk. Vänligen försök igen.",

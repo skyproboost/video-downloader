@@ -7,7 +7,8 @@
     "subtitle": "Télécharger des vidéos depuis YouTube, Instagram, TikTok et bien plus encore",
     "meta": {
       "title": "Téléchargement gratuit de vidéos - YouTube, TikTok, Instagram | Qualité HD & 4K",
-      "description": "Téléchargez des vidéos de YouTube, TikTok, Instagram, Facebook, VK gratuitement et sans inscription. Courts métrages, bobines, histoires en qualité HD et 4K. Rapide, sécurisé, sans filigrane."
+      "description": "Téléchargez des vidéos de YouTube, TikTok, Instagram, Facebook, VK gratuitement et sans inscription. Courts métrages, bobines, histoires en qualité HD et 4K. Rapide, sécurisé, sans filigrane.",
+      "keywords": "téléchargeur de vidéos"
     },
     "about": {
       "title": "Un seul service - toutes les plates-formes",
@@ -46,7 +47,9 @@
     "placeholder": "Collez l'URL de la vidéo ici...",
     "download": "Télécharger",
     "success": "Vidéo prête à être téléchargée !",
-    "supported": "Plates-formes prises en charge : YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "Plates-formes prises en charge : YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "Chargement...",
+    "saveFile": "Enregistrer le fichier"
   },
   "error": {
     "invalidUrl": "Lien invalide. Veuillez réessayer.",

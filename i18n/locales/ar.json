@@ -7,7 +7,8 @@
     "subtitle": "تنزيل مقاطع الفيديو من YouTube وInstagram وTikTok وغيرها",
     "meta": {
       "title": "برنامج مجاني لتنزيل الفيديو - يوتيوب، تيك توك، إنستجرام | بجودة HD و4K",
-      "description": "قم بتنزيل مقاطع الفيديو من YouTube وTikTok وInstagram وFacebook وVK مجانًا بدون تسجيل. أفلام قصيرة وبكرات وقصص بجودة HD و 4K. سريع وآمن وبدون علامات مائية."
+      "description": "قم بتنزيل مقاطع الفيديو من YouTube وTikTok وInstagram وFacebook وVK مجانًا بدون تسجيل. أفلام قصيرة وبكرات وقصص بجودة HD و 4K. سريع وآمن وبدون علامات مائية.",
+      "keywords": "تنزيل الفيديو"
     },
     "about": {
       "title": "خدمة واحدة - جميع المنصات",
@@ -46,7 +47,9 @@
     "placeholder": "الصق رابط الفيديو هنا...",
     "download": "تنزيل",
     "success": "فيديو جاهز للتحميل!",
-    "supported": "المنصات المدعومة: YouTube وTikTok وTikTok وInstagram وFacebook وVK وVimeo"
+    "supported": "المنصات المدعومة: YouTube وTikTok وTikTok وInstagram وFacebook وVK وVimeo",
+    "loading": "جارٍ التحميل...",
+    "saveFile": "حفظ الملف"
   },
   "error": {
     "invalidUrl": "الرابط غير صالح. يرجى المحاولة مرة أخرى.",

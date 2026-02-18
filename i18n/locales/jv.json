@@ -7,7 +7,8 @@
     "subtitle": "Undhuh video saka YouTube, Instagram, TikTok lan liya-liyane",
     "meta": {
       "title": "Pangundhuh Video Gratis — YouTube, TikTok, Instagram | Kualitas HD & 4K",
-      "description": "Unduh video saka YouTube, TikTok, Instagram, Facebook, VK kanthi gratis tanpa registrasi. Shorts, Reels, Stories ing kualitas HD lan 4K. Cepet, aman, tanpa watermark."
+      "description": "Unduh video saka YouTube, TikTok, Instagram, Facebook, VK kanthi gratis tanpa registrasi. Shorts, Reels, Stories ing kualitas HD lan 4K. Cepet, aman, tanpa watermark.",
+      "keywords": "pangunduh video"
     },
     "about": {
       "title": "Siji Layanan — Kabeh Platform",
@@ -46,7 +47,9 @@
     "placeholder": "Tempel URL video ing kene...",
     "download": "Undhuh",
     "success": "Video wis siap kanggo diundhuh!",
-    "supported": "Platform sing didhukung: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "Platform sing didhukung: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "Ngundhuh...",
+    "saveFile": "Simpen berkas"
   },
   "error": {
     "invalidUrl": "Tautan ora sah. Mangga coba maneh.",

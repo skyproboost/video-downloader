@@ -7,7 +7,8 @@
     "subtitle": "YouTube, Instagram, TikTok ve daha fazlasından videolar indirin",
     "meta": {
       "title": "Ücretsiz Video İndirici - YouTube, TikTok, Instagram | HD & 4K Kalite",
-      "description": "YouTube, TikTok, Instagram, Facebook, VK'dan videoları kayıt olmadan ücretsiz indirin. HD ve 4K kalitesinde Şortlar, Makaralar, Hikayeler. Hızlı, güvenli, filigran yok."
+      "description": "YouTube, TikTok, Instagram, Facebook, VK'dan videoları kayıt olmadan ücretsiz indirin. HD ve 4K kalitesinde Şortlar, Makaralar, Hikayeler. Hızlı, güvenli, filigran yok.",
+      "keywords": "video indirici"
     },
     "about": {
       "title": "Tek Hizmet - Tüm Platformlar",
@@ -46,7 +47,9 @@
     "placeholder": "Video URL'sini buraya yapıştırın...",
     "download": "İndir",
     "success": "Video indirilmeye hazır!",
-    "supported": "Desteklenen platformlar: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "Desteklenen platformlar: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "Yükleniyor...",
+    "saveFile": "Dosyayı kaydet"
   },
   "error": {
     "invalidUrl": "Geçersiz bağlantı. Lütfen tekrar deneyin.",

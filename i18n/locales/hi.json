@@ -7,7 +7,8 @@
     "subtitle": "YouTube, Instagram, TikTok और अन्य से वीडियो डाउनलोड करें",
     "meta": {
       "title": "फ्री वीडियो डाउनलोडर — यूट्यूब, टिकटॉक, इंस्टाग्राम | एचडी और 4के क्वालिटी",
-      "description": "YouTube, TikTok, Instagram, Facebook, VK से वीडियो बिना पंजीकरण के मुफ्त में डाउनलोड करें। शॉर्ट्स, रील्स, स्टोरीज़ HD और 4K गुणवत्ता में। तेज़, सुरक्षित, बिना वॉटरमार्क के।"
+      "description": "YouTube, TikTok, Instagram, Facebook, VK से वीडियो बिना पंजीकरण के मुफ्त में डाउनलोड करें। शॉर्ट्स, रील्स, स्टोरीज़ HD और 4K गुणवत्ता में। तेज़, सुरक्षित, बिना वॉटरमार्क के।",
+      "keywords": "वीडियो डाउनलोडर"
     },
     "about": {
       "title": "एक सेवा — सभी प्लेटफ़ॉर्म",
@@ -46,7 +47,9 @@
     "placeholder": "यहाँ वीडियो URL पेस्ट करें...",
     "download": "डाउनलोड",
     "success": "वीडियो डाउनलोड के लिए तैयार है!",
-    "supported": "समर्थित प्लेटफ़ॉर्म: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "समर्थित प्लेटफ़ॉर्म: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "लोड हो रहा है...",
+    "saveFile": "फ़ाइल सहेजें"
   },
   "error": {
     "invalidUrl": "अमान्य लिंक। कृपया फिर से प्रयास करें।",
