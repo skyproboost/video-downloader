@@ -50,7 +50,6 @@ jobs:
           interpreter: /bin/bash
           script: |
             set -e
-
             APP_DIR="/home/debian/video-downloader"
 
             echo "═══════════════════════════════════════════════════════"
