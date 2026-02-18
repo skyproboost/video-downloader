@@ -50,7 +50,7 @@ jobs:
           script: |
             set -e
 
-            APP_DIR="/home/debian/video-downloader"
+            set APP_DIR "/home/debian/video-downloader"
 
             echo "═══════════════════════════════════════════════════════"
             echo "🚀 DEPLOYMENT STARTED"
