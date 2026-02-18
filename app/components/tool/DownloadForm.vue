@@ -136,24 +136,6 @@ const apiBase = computed(() =>
     (config.public.apiBaseUrl as string) || 'https://api.adownloader.org'
 )
 
-const videoStreamUrl = computed(() => {
-    if (!videoData.value) return ''
-    const params = new URLSearchParams({
-        url: videoData.value.url,
-        filename: downloadFilename.value,
-    })
-    return `${apiBase.value}/api/download_file?${params.toString()}`
-})
-
-const downloadFilename = computed(() => {
-    if (!videoData.value) return 'video.mp4'
-    const ext = videoData.value.ext || 'mp4'
-    const title = videoData.value.title
-        ? videoData.value.title.slice(0, 60).replace(/[^\w\s\-а-яёА-ЯЁ]/g, '').trim().replace(/\s+/g, '_')
-        : 'video'
-    return `${title}.${ext}`
-})
-
 const isUrlValid = computed(() => validateUrl(url.value.trim()) === null)
 const isButtonDisabled = computed(() => !isUrlValid.value || isCooldown.value || loading.value)
 
@@ -525,6 +507,7 @@ const handleDownload = async () => {
         width: 100%;
         padding: var(--space-4);
         text-align: center;
+        font-size: 16px;
         border-bottom: 1px solid var(--color-border);
     }
 
