@@ -1,0 +1,1250 @@
+slug: vimeo
+footerLinkText: Vimeo
+platform: vimeo
+source_lang: ru
+meta:
+  title: Скачать видео с Vimeo онлайн бесплатно без регистрации
+  description: Скачивайте видео с Vimeo онлайн бесплатно и без регистрации.
+    Быстрое скачивание видео в высоком качестве без водяных знаков. Поддержка HD
+    и Full HD.
+  keywords: скачать видео с Vimeo, скачать видео Vimeo онлайн, Vimeo downloader,
+    загрузить видео с Vimeo бесплатно, скачать видео Vimeo без регистрации,
+    Vimeo video download
+  ogImage: /images/main.png
+  ogImageAlt: Скачать видео с Vimeo
+pageContent:
+  mainTitle: Скачать видео с Vimeo онлайн бесплатно
+  subtitle: "Скачивайте видео с любых платформ: YouTube, TikTok, Instagram, VK,
+    RuTube, Reddit, Twitch и многих других быстро и без ограничений."
+  intro: Скачивайте видео с Vimeo быстро и бесплатно в высоком качестве без
+    регистрации и без водяных знаков.
+  how_to:
+    blocks:
+      - content: >-
+          Сервис ADownloader позволяет быстро и удобно скачивать видео с Vimeo
+          напрямую через браузер. Платформа Vimeo широко используется для
+          размещения фильмов, обучающих материалов, презентаций, музыкальных
+          клипов и авторского контента в высоком качестве. Иногда возникает
+          необходимость сохранить видео на устройство  для просмотра без
+          интернета, работы с материалом, демонстрации на презентации или
+          личного архива.
+
+
+          Наш онлайн-инструмент помогает скачать видео с Vimeo бесплатно и без
+          установки дополнительных программ. Вам не нужно создавать аккаунт,
+          вводить личные данные или проходить сложные проверки. Всё работает
+          максимально просто: вы вставляете ссылку и получаете файл в доступном
+          качестве. Сервис поддерживает HD и Full HD (если такое качество
+          предусмотрено источником).
+      - title: "Инструкция по скачиванию очень простая:"
+        content: >-
+          1. Найдите нужное видео на Vimeo.
+
+          2. Скопируйте ссылку на него из браузера.
+
+          3. Вставьте ссылку в поле на сайте adownloader.org.
+
+          4. Нажмите кнопку «Скачать»
+
+
+          Весь процесс занимает меньше минуты и работает на компьютерах,
+          планшетах и смартфонах.
+        image: /images/vimeo_1.png
+        imageAlt: Скачать видео с Vimeo
+      - content: |-
+          5. Выберете доступный формат.
+          6. Начните скачивание и сохраните файл на своё устройство.
+          7. Готово.
+  features:
+    title: Преимущества сервиса
+    items:
+      - icon: "⚡ "
+        title: Быстрое скачивание
+        description: загрузка видео занимает всего несколько секунд.
+      - icon: "🎬 "
+        title: Высокое качество
+        description: поддержка HD и Full HD.
+      - icon: "🔒 "
+        title: Без регистрации
+        description: никаких аккаунтов и авторизации.
+      - icon: "🚫 "
+        title: Без водяных знаков
+        description: видео сохраняется без дополнительных отметок.
+      - icon: "📱 "
+        title: Поддержка всех устройств
+        description: работает на ПК и смартфонах.
+      - icon: "💾 "
+        title: Онлайн без установки
+        description: не нужно скачивать программы.
+  faq:
+    - question: Можно ли скачать видео с Vimeo бесплатно?
+      answer: Да, сервис полностью бесплатный.
+    - question: Нужно ли устанавливать программу?
+      answer: Нет, скачивание происходит прямо в браузере.
+    - question: Требуется ли регистрация?
+      answer: Нет, регистрация не нужна.
+    - question: В каком качестве можно сохранить видео?
+      answer: В максимально доступном качестве исходного файла.
+    - question: Работает ли сервис на телефоне?
+      answer: Да, вы можете использовать его на Android и iPhone.
+    - question: Безопасно ли это?
+      answer: Да, для скачивания нужна только ссылка на видео, без ввода личных данных.
+_status: ready
+translations:
+  ru:
+    meta:
+      title: Скачать видео с Vimeo онлайн бесплатно без регистрации
+      description: Скачивайте видео с Vimeo онлайн бесплатно и без регистрации.
+        Быстрое скачивание видео в высоком качестве без водяных знаков.
+        Поддержка HD и Full HD.
+      keywords: скачать видео с Vimeo, скачать видео Vimeo онлайн, Vimeo downloader,
+        загрузить видео с Vimeo бесплатно, скачать видео Vimeo без регистрации,
+        Vimeo video download
+      ogImage: /images/main.png
+      ogImageAlt: Скачать видео с Vimeo
+    pageContent:
+      mainTitle: Скачать видео с Vimeo онлайн бесплатно
+      subtitle: "Скачивайте видео с любых платформ: YouTube, TikTok, Instagram, VK,
+        RuTube, Reddit, Twitch и многих других быстро и без ограничений."
+      intro: Скачивайте видео с Vimeo быстро и бесплатно в высоком качестве без
+        регистрации и без водяных знаков.
+      how_to:
+        blocks:
+          - content: >-
+              Сервис ADownloader позволяет быстро и удобно скачивать видео с
+              Vimeo напрямую через браузер. Платформа Vimeo широко используется
+              для размещения фильмов, обучающих материалов, презентаций,
+              музыкальных клипов и авторского контента в высоком качестве.
+              Иногда возникает необходимость сохранить видео на устройство  для
+              просмотра без интернета, работы с материалом, демонстрации на
+              презентации или личного архива.
+
+
+              Наш онлайн-инструмент помогает скачать видео с Vimeo бесплатно и
+              без установки дополнительных программ. Вам не нужно создавать
+              аккаунт, вводить личные данные или проходить сложные проверки. Всё
+              работает максимально просто: вы вставляете ссылку и получаете файл
+              в доступном качестве. Сервис поддерживает HD и Full HD (если такое
+              качество предусмотрено источником).
+          - title: "Инструкция по скачиванию очень простая:"
+            content: >-
+              1. Найдите нужное видео на Vimeo.
+
+              2. Скопируйте ссылку на него из браузера.
+
+              3. Вставьте ссылку в поле на сайте adownloader.org.
+
+              4. Нажмите кнопку «Скачать»
+
+
+              Весь процесс занимает меньше минуты и работает на компьютерах,
+              планшетах и смартфонах.
+            image: /images/vimeo_1.png
+            imageAlt: Скачать видео с Vimeo
+          - content: |-
+              5. Выберете доступный формат.
+              6. Начните скачивание и сохраните файл на своё устройство.
+              7. Готово.
+      features:
+        title: Преимущества сервиса
+        items:
+          - icon: "⚡ "
+            title: Быстрое скачивание
+            description: загрузка видео занимает всего несколько секунд.
+          - icon: "🎬 "
+            title: Высокое качество
+            description: поддержка HD и Full HD.
+          - icon: "🔒 "
+            title: Без регистрации
+            description: никаких аккаунтов и авторизации.
+          - icon: "🚫 "
+            title: Без водяных знаков
+            description: видео сохраняется без дополнительных отметок.
+          - icon: "📱 "
+            title: Поддержка всех устройств
+            description: работает на ПК и смартфонах.
+          - icon: "💾 "
+            title: Онлайн без установки
+            description: не нужно скачивать программы.
+      faq:
+        - question: Можно ли скачать видео с Vimeo бесплатно?
+          answer: Да, сервис полностью бесплатный.
+        - question: Нужно ли устанавливать программу?
+          answer: Нет, скачивание происходит прямо в браузере.
+        - question: Требуется ли регистрация?
+          answer: Нет, регистрация не нужна.
+        - question: В каком качестве можно сохранить видео?
+          answer: В максимально доступном качестве исходного файла.
+        - question: Работает ли сервис на телефоне?
+          answer: Да, вы можете использовать его на Android и iPhone.
+        - question: Безопасно ли это?
+          answer: Да, для скачивания нужна только ссылка на видео, без ввода личных
+            данных.
+  en:
+    meta:
+      title: Download video from Vimeo online for free without registration
+      description: Download videos from Vimeo online for free and without
+        registration. Quickly download videos in high quality without
+        watermarks. HD and Full HD support.
+      keywords: download video from Vimeo, download video Vimeo online, Vimeo
+        downloader, download video from Vimeo for free, download video Vimeo
+        without registration, Vimeo video download
+      ogImage: /images/main.png
+      ogImageAlt: Download video from Vimeo
+    pageContent:
+      mainTitle: Download video from Vimeo online for free
+      subtitle: "Download videos from any platform: YouTube, TikTok, Instagram, VK,
+        RuTube, Reddit, Twitch and many others quickly and without
+        restrictions."
+      intro: Download videos from Vimeo fast and free in high quality without
+        registration and without watermarks.
+      how_to:
+        blocks:
+          - content: >-
+              ADownloader service allows you to quickly and conveniently
+              download videos from Vimeo directly through your browser. Vimeo
+              platform is widely used to host movies, tutorials, presentations,
+              music videos and author's content in high quality. Sometimes there
+              is a need to save videos to a device for viewing without internet,
+              working with the material, demonstration at a presentation or
+              personal archive.
+
+
+              Our online tool helps you download videos from Vimeo for free and
+              without installing additional programs. You don't need to create
+              an account, enter personal data or go through complicated checks.
+              Everything works as simple as possible: you insert a link and get
+              the file in the available quality. The service supports HD and
+              Full HD (if such quality is provided by the source).
+          - title: "The download instructions are very simple:"
+            content: >-
+              1. Find the desired video on Vimeo.
+
+              2. Copy the link to it from your browser.
+
+              3. Paste the link into the box on adownloader.org.
+
+              4. Click the "Download" button
+
+
+              The whole process takes less than a minute and works on computers,
+              tablets and smartphones.
+            image: /images/vimeo_1.png
+            imageAlt: Download video from Vimeo
+          - content: |-
+              5. Select the available format.
+              6. Start downloading and save the file to your device.
+              7. Done.
+      features:
+        title: Benefits of the service
+        items:
+          - icon: "⚡ "
+            title: Fast download
+            description: it only takes a few seconds to upload a video.
+          - icon: "🎬 "
+            title: High quality
+            description: HD and Full HD support.
+          - icon: "🔒 "
+            title: Unregistered
+            description: no accounts and no authorization.
+          - icon: "🚫 "
+            title: No watermark
+            description: the video is saved without additional marks.
+          - icon: "📱 "
+            title: Support for all devices
+            description: works on PCs and smartphones.
+          - icon: "💾 "
+            title: Online without installation
+            description: you don't have to download any programs.
+      faq:
+        - question: Can I download videos from Vimeo for free?
+          answer: Yes, the service is completely free.
+        - question: Do I need to install the program?
+          answer: No, the download happens right in the browser.
+        - question: Is registration required?
+          answer: No, you don't need to register.
+        - question: What quality can I save the video in?
+          answer: In the highest available quality of the source file.
+        - question: Does the service work on the phone?
+          answer: Yes, you can use it on Android and iPhone.
+        - question: Is it safe to do so?
+          answer: Yes, you only need a link to the video to download, no personal
+            information to enter.
+  de:
+    meta:
+      title: Videos von Vimeo kostenlos und ohne Registrierung herunterladen
+      description: Videos von Vimeo kostenlos und ohne Anmeldung online herunterladen.
+        Schnelles Herunterladen von Videos in hoher Qualität ohne Wasserzeichen.
+        Unterstützung von HD und Full HD.
+      keywords: download video von Vimeo, download video Vimeo online, Vimeo
+        downloader, download video von Vimeo kostenlos, download video Vimeo
+        ohne Registrierung, Vimeo video download
+      ogImage: /images/main.png
+      ogImageAlt: Video von Vimeo herunterladen
+    pageContent:
+      mainTitle: Videos von Vimeo kostenlos online herunterladen
+      subtitle: "Laden Sie Videos von jeder Plattform herunter: YouTube, TikTok,
+        Instagram, VK, RuTube, Reddit, Twitch und viele andere schnell und ohne
+        Einschränkungen."
+      intro: Laden Sie Videos von Vimeo schnell und kostenlos in hoher Qualität ohne
+        Registrierung und ohne Wasserzeichen herunter.
+      how_to:
+        blocks:
+          - content: >-
+              Mit dem ADownloader-Service können Sie schnell und bequem Videos
+              von Vimeo direkt über Ihren Browser herunterladen. Die
+              Vimeo-Plattform wird häufig genutzt, um Filme, Tutorials,
+              Präsentationen, Musikvideos und Autoreninhalte in hoher Qualität
+              zu hosten. Manchmal besteht die Notwendigkeit, Videos auf einem
+              Gerät zu speichern, um sie ohne Internet anzusehen, mit dem
+              Material zu arbeiten, bei einer Präsentation zu demonstrieren oder
+              für das persönliche Archiv.
+
+
+              Unser Online-Tool hilft Ihnen, Videos von Vimeo kostenlos und ohne
+              Installation von zusätzlicher Software herunterzuladen. Sie müssen
+              kein Konto einrichten, keine persönlichen Daten eingeben und keine
+              komplizierten Prüfungen durchlaufen. Alles funktioniert so einfach
+              wie möglich: Sie geben den Link ein und erhalten die Datei in der
+              verfügbaren Qualität. Der Dienst unterstützt HD und Full HD (wenn
+              diese Qualität von der Quelle bereitgestellt wird).
+          - title: "Die Anweisungen zum Herunterladen sind sehr einfach:"
+            content: >-
+              1. Finden Sie das gewünschte Video auf Vimeo.
+
+              2. Kopieren Sie den Link dazu in Ihrem Browser.
+
+              3. Fügen Sie den Link in das Feld auf adownloader.org ein.
+
+              4. Klicken Sie auf die Schaltfläche "Herunterladen".
+
+
+              Der gesamte Vorgang dauert weniger als eine Minute und
+              funktioniert auf Computern, Tablets und Smartphones.
+            image: /images/vimeo_1.png
+            imageAlt: Video von Vimeo herunterladen
+          - content: >-
+              5. Wählen Sie das verfügbare Format.
+
+              6. Starten Sie das Herunterladen und speichern Sie die Datei auf
+              Ihrem Gerät.
+
+              7. Erledigt.
+      features:
+        title: Vorteile des Dienstes
+        items:
+          - icon: "⚡ "
+            title: Schnelles Herunterladen
+            description: Es dauert nur ein paar Sekunden, ein Video zu laden.
+          - icon: "🎬 "
+            title: Hohe Qualität
+            description: Unterstützung von HD und Full HD.
+          - icon: "🔒 "
+            title: Unregistriert
+            description: keine Konten und keine Genehmigung.
+          - icon: "🚫 "
+            title: Kein Wasserzeichen
+            description: wird das Video ohne zusätzliche Markierungen gespeichert.
+          - icon: "📱 "
+            title: Unterstützung für alle Geräte
+            description: funktioniert auf PCs und Smartphones.
+          - icon: "💾 "
+            title: Online ohne Installation
+            description: Sie müssen keine Software herunterladen.
+      faq:
+        - question: Ist es möglich, Videos von Vimeo kostenlos herunterzuladen?
+          answer: Ja, der Dienst ist völlig kostenlos.
+        - question: Muss ich die Software installieren?
+          answer: Nein, der Download erfolgt direkt im Browser.
+        - question: Ist eine Registrierung erforderlich?
+          answer: Nein, Sie brauchen sich nicht zu registrieren.
+        - question: In welcher Qualität kann ich das Video speichern?
+          answer: In der höchsten verfügbaren Qualität der Quelldatei.
+        - question: Funktioniert der Dienst auch am Telefon?
+          answer: Ja, Sie können es auf Android und iPhone verwenden.
+        - question: Ist es sicher, dies zu tun?
+          answer: Ja, Sie benötigen nur den Link zum Video, um es herunterzuladen, und
+            müssen keine persönlichen Daten eingeben.
+  es:
+    meta:
+      title: Descargar vídeo de Vimeo en línea gratis sin registro
+      description: Descarga vídeos de Vimeo online gratis y sin registro. Descarga
+        rápidamente vídeos en alta calidad sin marcas de agua. Compatible con HD
+        y Full HD.
+      keywords: descargar video de Vimeo, descargar video Vimeo online, Vimeo
+        downloader, descargar video de Vimeo gratis, descargar video Vimeo sin
+        registro, Vimeo video download
+      ogImage: /images/main.png
+      ogImageAlt: Descargar vídeo de Vimeo
+    pageContent:
+      mainTitle: Descargar vídeos de Vimeo online gratis
+      subtitle: "Descarga vídeos de cualquier plataforma: YouTube, TikTok, Instagram,
+        VK, RuTube, Reddit, Twitch y muchas otras de forma rápida y sin
+        restricciones."
+      intro: Descarga vídeos de Vimeo rápido y gratis en alta calidad sin registro y
+        sin marcas de agua.
+      how_to:
+        blocks:
+          - content: >-
+              El servicio ADownloader te permite descargar vídeos de Vimeo de
+              forma rápida y cómoda directamente a través de tu navegador. La
+              plataforma Vimeo es muy utilizada para alojar películas,
+              tutoriales, presentaciones, vídeos musicales y contenidos de autor
+              en alta calidad. A veces existe la necesidad de guardar vídeos en
+              un dispositivo para verlos sin Internet, trabajar con el material,
+              hacer una demostración en una presentación o un archivo personal.
+
+
+              Nuestra herramienta en línea te ayuda a descargar vídeos de Vimeo
+              de forma gratuita y sin instalar software adicional. No necesitas
+              crear una cuenta, introducir datos personales ni pasar por
+              comprobaciones complicadas. Todo funciona de la forma más sencilla
+              posible: introduces el enlace y obtienes el archivo en la calidad
+              disponible. El servicio admite HD y Full HD (si la fuente
+              proporciona dicha calidad).
+          - title: "Las instrucciones de descarga son muy sencillas:"
+            content: >-
+              1. Busca el vídeo deseado en Vimeo.
+
+              2. Copia el enlace al mismo desde tu navegador.
+
+              3. Pega el enlace en la casilla de adownloader.org.
+
+              4. Haga clic en el botón "Descargar
+
+
+              Todo el proceso dura menos de un minuto y funciona en ordenadores,
+              tabletas y smartphones.
+            image: /images/vimeo_1.png
+            imageAlt: Descargar vídeo de Vimeo
+          - content: |-
+              5. Seleccione el formato disponible.
+              6. Inicia la descarga y guarda el archivo en tu dispositivo.
+              7. 7. Listo.
+      features:
+        title: Ventajas del servicio
+        items:
+          - icon: "⚡ "
+            title: Descarga rápida
+            description: sólo tarda unos segundos en cargar un vídeo.
+          - icon: "🎬 "
+            title: Alta calidad
+            description: Compatible con HD y Full HD.
+          - icon: "🔒 "
+            title: No registrado
+            description: sin cuentas y sin autorización.
+          - icon: "🚫 "
+            title: Sin marca de agua
+            description: el vídeo se guarda sin marcas adicionales.
+          - icon: "📱 "
+            title: Compatible con todos los dispositivos
+            description: funciona en PC y smartphones.
+          - icon: "💾 "
+            title: En línea sin instalación
+            description: no tienes que descargar ningún programa.
+      faq:
+        - question: ¿Es posible descargar vídeos de Vimeo gratis?
+          answer: Sí, el servicio es totalmente gratuito.
+        - question: ¿Tengo que instalar el programa?
+          answer: No, la descarga se realiza directamente en el navegador.
+        - question: ¿Es necesario registrarse?
+          answer: No, no necesita registrarse.
+        - question: ¿En qué calidad puedo guardar el vídeo?
+          answer: En la calidad más alta disponible del archivo fuente.
+        - question: ¿Funciona el servicio por teléfono?
+          answer: Sí, puedes utilizarlo en Android y iPhone.
+        - question: ¿Es seguro hacerlo?
+          answer: Sí, sólo necesitas el enlace al vídeo para descargarlo, no hay que
+            introducir datos personales.
+  pt:
+    meta:
+      title: Descarregar vídeos do Vimeo online gratuitamente sem registo
+      description: Descarregue vídeos do Vimeo online gratuitamente e sem registo.
+        Descarregue rapidamente vídeos em alta qualidade sem marcas de água.
+        Suporte HD e Full HD.
+      keywords: descarregar vídeo do Vimeo, descarregar vídeo do Vimeo online,
+        descarregador do Vimeo, descarregar vídeo do Vimeo gratuitamente,
+        descarregar vídeo do Vimeo sem registo, descarregar vídeo do Vimeo
+      ogImage: /images/main.png
+      ogImageAlt: Descarregar o vídeo do Vimeo
+    pageContent:
+      mainTitle: Descarregar vídeos do Vimeo online gratuitamente
+      subtitle: "Descarregue vídeos de qualquer plataforma: YouTube, TikTok,
+        Instagram, VK, RuTube, Reddit, Twitch e muitas outras, rapidamente e sem
+        restrições."
+      intro: Descarregue vídeos do Vimeo de forma rápida e gratuita em alta qualidade,
+        sem registo e sem marcas de água.
+      how_to:
+        blocks:
+          - content: >-
+              O serviço ADownloader permite-lhe descarregar rápida e
+              convenientemente vídeos do Vimeo diretamente através do seu
+              browser. A plataforma Vimeo é muito utilizada para alojar filmes,
+              tutoriais, apresentações, vídeos de música e conteúdos de autor de
+              alta qualidade. Por vezes, é necessário guardar vídeos num
+              dispositivo para visualização sem Internet, para trabalhar com o
+              material, para demonstração numa apresentação ou para arquivo
+              pessoal.
+
+
+              A nossa ferramenta online ajuda-o a descarregar vídeos do Vimeo
+              gratuitamente e sem instalar software adicional. Não é necessário
+              criar uma conta, introduzir dados pessoais ou passar por
+              verificações complicadas. Tudo funciona da forma mais simples
+              possível: insere a ligação e obtém o ficheiro na qualidade
+              disponível. O serviço suporta HD e Full HD (se essa qualidade for
+              fornecida pela fonte).
+          - title: "As instruções de descarregamento são muito simples:"
+            content: >-
+              1. Encontre o vídeo pretendido no Vimeo.
+
+              2. Copie a hiperligação para o mesmo a partir do seu browser.
+
+              3. Cole o link na caixa do adownloader.org.
+
+              4. Clique no botão "Descarregar"
+
+
+              Todo o processo demora menos de um minuto e funciona em
+              computadores, tablets e smartphones.
+            image: /images/vimeo_1.png
+            imageAlt: Descarregar o vídeo do Vimeo
+          - content: >-
+              5. Selecione o formato disponível.
+
+              6. Inicie o descarregamento e guarde o ficheiro no seu
+              dispositivo.
+
+              7. Concluído.
+      features:
+        title: Vantagens do serviço
+        items:
+          - icon: "⚡ "
+            title: Descarregamento rápido
+            description: demora apenas alguns segundos a carregar um vídeo.
+          - icon: "🎬 "
+            title: Alta qualidade
+            description: Suporte HD e Full HD.
+          - icon: "🔒 "
+            title: Não registado
+            description: sem contas e sem autorização.
+          - icon: "🚫 "
+            title: Sem marca de água
+            description: o vídeo é guardado sem marcas adicionais.
+          - icon: "📱 "
+            title: Suporte para todos os dispositivos
+            description: funciona em PCs e smartphones.
+          - icon: "💾 "
+            title: Online sem instalação
+            description: não é necessário descarregar qualquer software.
+      faq:
+        - question: É possível descarregar vídeos do Vimeo gratuitamente?
+          answer: Sim, o serviço é totalmente gratuito.
+        - question: Preciso de instalar o software?
+          answer: Não, a transferência é efectuada diretamente no browser.
+        - question: É necessário registar-se?
+          answer: Não, não é necessário registar-se.
+        - question: Em que qualidade posso guardar o vídeo?
+          answer: Na qualidade mais elevada disponível do ficheiro de origem.
+        - question: O serviço funciona no telemóvel?
+          answer: Sim, pode ser utilizado no Android e no iPhone.
+        - question: É seguro fazê-lo?
+          answer: Sim, só precisa da ligação para o vídeo para descarregar, não precisa de
+            introduzir informações pessoais.
+  ja:
+    meta:
+      title: 登録なしでVimeoのオンラインビデオを無料でダウンロードする
+      description: 登録なしでVimeoのビデオを無料でダウンロード。ウォーターマークなしの高画質ビデオを素早くダウンロード。HDとフルHDをサポート。
+      keywords: Vimeoから動画をダウンロード、Vimeoオンライン動画をダウンロード、Vimeoダウンローダー、Vimeoから無料で動画をダウンロード、登録なしでVimeo動画をダウンロード、Vimeo動画ダウンロード
+      ogImage: /images/main.png
+      ogImageAlt: Vimeoからビデオをダウンロード
+    pageContent:
+      mainTitle: Vimeoのビデオを無料でダウンロード
+      subtitle: YouTube、TikTok、Instagram、VK、RuTube、Reddit、Twitchなど、あらゆるプラットフォームから動画を制限なく素早くダウンロードできます。
+      intro: Vimeoからビデオを登録なし、ウォーターマークなしの高画質で高速かつ無料でダウンロード。
+      how_to:
+        blocks:
+          - content: |-
+              ADownloaderサービスを使用すると、迅速かつ便利にブラウザを介して直接Vimeoからビデオをダウンロードすることができます。Vimeoのプラットフォームは、映画、チュートリアル、プレゼンテーション、ミュージックビデオや作家のコンテンツを高品質でホストするために広く使用されています。時には、インターネットなしでの視聴、素材での作業、プレゼンテーションでの実演、または個人的なアーカイブのためにビデオをデバイスに保存する必要があります。
+
+              当社のオンラインツールを使えば、追加ソフトウェアをインストールすることなく、無料でVimeoからビデオをダウンロードできます。アカウントを作成したり、個人データを入力したり、複雑なチェックをしたりする必要はありません。リンクを挿入し、利用可能な画質でファイルを取得します。このサービスは、HDとフルHDをサポートしています（そのような品質がソースによって提供されている場合）。
+          - title: ダウンロード方法はとても簡単だ：
+            content: |-
+              1.Vimeoで目的のビデオを見つける。
+              2.ブラウザからリンクをコピーする。
+              3.adownloader.orgのボックスにリンクを貼り付ける。
+              4.ダウンロード」ボタンをクリックします。
+
+              すべてのプロセスは1分もかからず、コンピューター、タブレット、スマートフォンで動作します。
+            image: /images/vimeo_1.png
+            imageAlt: Vimeoからビデオをダウンロード
+          - content: |-
+              5.利用可能なフォーマットを選択します。
+              6.ダウンロードを開始し、ファイルをデバイスに保存します。
+              7.完了。
+      features:
+        title: サービスの利点
+        items:
+          - icon: "⚡ "
+            title: 高速ダウンロード
+            description: ビデオを読み込むのに数秒しかかからない。
+          - icon: "🎬 "
+            title: 高品質
+            description: HDおよびフルHD対応。
+          - icon: "🔒 "
+            title: 未登録
+            description: 口座も権限もない。
+          - icon: "🚫 "
+            title: 透かしなし
+            description: マークが追加されずに保存されます。
+          - icon: "📱 "
+            title: すべてのデバイスに対応
+            description: PCとスマートフォンで動作する。
+          - icon: "💾 "
+            title: インストール不要のオンライン
+            description: ソフトウェアをダウンロードする必要はありません。
+      faq:
+        - question: Vimeoから無料でビデオをダウンロードすることは可能ですか？
+          answer: はい、サービスは完全に無料です。
+        - question: ソフトウェアをインストールする必要がありますか？
+          answer: いいえ、ダウンロードはブラウザ上で行われます。
+        - question: 登録は必要ですか？
+          answer: いいえ、登録する必要はありません。
+        - question: どのような画質でビデオを保存できますか？
+          answer: ソースファイルの最高画質で。
+        - question: 電話は使えますか？
+          answer: はい、AndroidでもiPhoneでも使えます。
+        - question: それは安全なのか？
+          answer: はい、ダウンロードに必要なのはビデオへのリンクだけで、個人情報の入力は不要です。
+  jv:
+    meta:
+      title: Undhuh video saka Vimeo online kanthi gratis tanpa registrasi
+      description: Undhuh video saka Vimeo online kanthi gratis lan tanpa registrasi.
+        Undhuhan video sing cepet kanthi kualitas dhuwur tanpa watermark.
+        Dhukungan HD lan Full HD.
+      keywords: undhuh video saka Vimeo, undhuh video Vimeo online, undhuh video saka
+        Vimeo kanthi gratis, undhuh video Vimeo tanpa registrasi, undhuh video
+        Vimeo
+      ogImage: /images/main.png
+      ogImageAlt: Undhuh video saka Vimeo
+    pageContent:
+      mainTitle: Undhuh video saka Vimeo online kanthi gratis
+      subtitle: "Undhuh video saka sembarang platform: YouTube, TikTok, Instagram, VK,
+        RuTube, Reddit, Twitch, lan liya-liyane kanthi cepet lan tanpa watesan."
+      intro: Undhuh video saka Vimeo kanthi cepet lan gratis kanthi kualitas dhuwur
+        tanpa ndhaptar lan tanpa watermark.
+      how_to:
+        blocks:
+          - content: >-
+              Layanan ADownloader ngidini sampeyan kanthi cepet lan gampang
+              ngundhuh video saka Vimeo langsung liwat browser sampeyan.
+              Platform Vimeo akeh digunakake kanggo nyimpen film, bahan ajar,
+              presentasi, video musik, lan konten asli kanthi kualitas dhuwur.
+              Kadhangkala sampeyan perlu nyimpen video ing piranti supaya bisa
+              ditonton tanpa sambungan internet, diolah dadi bahan kerja,
+              ditampilake ing presentasi, utawa ditambahake ing arsip pribadi.
+
+
+              Piranti online kita mbantu sampeyan ngundhuh video saka Vimeo
+              kanthi gratis lan tanpa nginstal program tambahan. Sampeyan ora
+              perlu nggawe akun, ngisi data pribadi, utawa ngliwati pemeriksaan
+              sing rumit. Kabeh bisa digunakake kanthi prasaja: sampeyan
+              nempelake pranala banjur entuk file ing kualitas sing kasedhiya.
+              Layanan iki ndhukung HD lan Full HD (yen kualitas kaya ngono
+              disedhiyakake dening sumber).
+          - title: "Pandhuan ngundhuhé prasaja banget:"
+            content: 1. Golek video sing sampeyan karepake ing Vimeo.  2. Salin pranala saka
+              browser sampeyan.  3. Tampel pranala kasebut ing kolom ing situs
+              adownloader.org.  4. Klik tombol "Download".  Kabeh proses iki
+              mung mbutuhake kurang saka siji menit lan bisa digunakake ing
+              komputer, tablet, lan smartphone.
+            image: /images/vimeo_1.png
+            imageAlt: Undhuh video saka Vimeo
+          - content: 5. Pilih format sing kasedhiya.   6. Miwiti undhuhan lan nyimpen berkas
+              ing piranti sampeyan.   7. Rampung.
+      features:
+        title: Kauntungan saka layanan
+        items:
+          - icon: "⚡ "
+            title: Undhuhan cepet
+            description: Mung butuh sawetara detik kanggo muat video.
+          - icon: "🎬 "
+            title: Kualitas dhuwur
+            description: Dhukungan HD lan Full HD.
+          - icon: "🔒 "
+            title: Tanpa registrasi
+            description: Ora perlu akun utawa wewenang.
+          - icon: "🚫 "
+            title: Tanpa watermark
+            description: Video kasimpen tanpa tandha tambahan.
+          - icon: "📱 "
+            title: Dhukungan kanggo kabeh piranti
+            description: bisa digunakake ing PC lan smartphone.
+          - icon: "💾 "
+            title: Online tanpa instalasi
+            description: Ora perlu ngundhuh program.
+      faq:
+        - question: Apa bisa ngundhuh video saka Vimeo kanthi gratis?
+          answer: Ya, layanan iki pancen gratis.
+        - question: Apa aku kudu nginstal program kasebut?
+          answer: Ora, undhuhan langsung kelakon ing panyungsi.
+        - question: Apa pendaftaran dibutuhake?
+          answer: Ora, pendaftaran ora dibutuhake.
+        - question: Video bisa disimpen ing format apa?
+          answer: Ing kualitas paling dhuwur sing kasedhiya kanggo file sumber.
+        - question: Apa layanan iki bisa digunakake ing ponsel?
+          answer: Ya, sampeyan bisa nggunakake ing Android lan iPhone.
+        - question: Apa aman?
+          answer: Ya, sampeyan mung perlu pranala video kanggo ngundhuh, tanpa kudu ngisi
+            rincian pribadhi.
+  tr:
+    meta:
+      title: Vimeo'dan kayıt olmadan ücretsiz çevrimiçi video indirin
+      description: Vimeo'dan videoları ücretsiz ve kayıt olmadan çevrimiçi indirin.
+        Videoları filigran olmadan yüksek kalitede hızla indirin. HD ve Full HD
+        desteği.
+      keywords: Vimeo'dan video indir, Vimeo'dan çevrimiçi video indir, Vimeo
+        indirici, Vimeo'dan ücretsiz video indir, Vimeo'dan kayıt olmadan video
+        indir, Vimeo video indir
+      ogImage: /images/main.png
+      ogImageAlt: Videoyu Vimeo'dan indirin
+    pageContent:
+      mainTitle: Vimeo'daki videoları ücretsiz olarak çevrimiçi indirin
+      subtitle: "Herhangi bir platformdan video indirin: YouTube, TikTok, Instagram,
+        VK, RuTube, Reddit, Twitch ve diğerleri hızlı ve kısıtlama olmadan."
+      intro: Vimeo'dan videoları kayıt olmadan ve filigran olmadan yüksek kalitede
+        hızlı ve ücretsiz indirin.
+      how_to:
+        blocks:
+          - content: >-
+              ADownloader hizmeti, Vimeo'daki videoları doğrudan tarayıcınız
+              üzerinden hızlı ve kolay bir şekilde indirmenize olanak tanır.
+              Vimeo platformu, filmleri, eğitimleri, sunumları, müzik
+              videolarını ve yazarların içeriklerini yüksek kalitede barındırmak
+              için yaygın olarak kullanılmaktadır. Bazen videoları internet
+              olmadan görüntülemek, materyalle çalışmak, bir sunumda göstermek
+              veya kişisel arşiv için bir cihaza kaydetme ihtiyacı vardır.
+
+
+              Çevrimiçi aracımız, Vimeo'dan ücretsiz olarak ve ek yazılım
+              yüklemeden video indirmenize yardımcı olur. Bir hesap
+              oluşturmanız, kişisel verilerinizi girmeniz veya karmaşık
+              kontrollerden geçmeniz gerekmez. Her şey olabildiğince basit
+              çalışır: bağlantıyı eklersiniz ve dosyayı mevcut kalitede
+              alırsınız. Hizmet HD ve Full HD'yi destekler (kaynak tarafından bu
+              kalite sağlanmışsa).
+          - title: "İndirme talimatları çok basittir:"
+            content: >-
+              1. Vimeo'da istediğiniz videoyu bulun.
+
+              2. Tarayıcınızdan bağlantıyı kopyalayın.
+
+              3. Bağlantıyı adownloader.org'daki kutuya yapıştırın.
+
+              4. "İndir" düğmesine tıklayın
+
+
+              Tüm süreç bir dakikadan az sürer ve bilgisayarlarda, tabletlerde
+              ve akıllı telefonlarda çalışır.
+            image: /images/vimeo_1.png
+            imageAlt: Videoyu Vimeo'dan indirin
+          - content: |-
+              5. Kullanılabilir formatı seçin.
+              6. İndirmeye başlayın ve dosyayı cihazınıza kaydedin.
+              7. Bitti.
+      features:
+        title: Hizmetin avantajları
+        items:
+          - icon: "⚡ "
+            title: Hızlı indirme
+            description: bir videonun yüklenmesi sadece birkaç saniye sürer.
+          - icon: "🎬 "
+            title: Yüksek kalite
+            description: HD ve Full HD desteği.
+          - icon: "🔒 "
+            title: Kayıtsız
+            description: hesap yok ve yetki yok.
+          - icon: "🚫 "
+            title: Filigran yok
+            description: video ek işaretler olmadan kaydedilir.
+          - icon: "📱 "
+            title: Tüm cihazlar için destek
+            description: PC'lerde ve akıllı telefonlarda çalışır.
+          - icon: "💾 "
+            title: Kurulum olmadan çevrimiçi
+            description: herhangi bir yazılım indirmeniz gerekmez.
+      faq:
+        - question: Vimeo'dan ücretsiz video indirmek mümkün mü?
+          answer: Evet, hizmet tamamen ücretsizdir.
+        - question: Yazılımı yüklemem gerekiyor mu?
+          answer: Hayır, indirme işlemi doğrudan tarayıcıda gerçekleşir.
+        - question: Kayıt gerekli mi?
+          answer: Hayır, kayıt olmanıza gerek yok.
+        - question: Videoyu hangi kalitede kaydedebilirim?
+          answer: Kaynak dosyanın mevcut en yüksek kalitesinde.
+        - question: Servis telefonda çalışıyor mu?
+          answer: Evet, Android ve iPhone'da kullanabilirsiniz.
+        - question: Bunu yapmak güvenli mi?
+          answer: Evet, indirmek için yalnızca videonun bağlantısına ihtiyacınız var,
+            girmeniz gereken kişisel bilgi yok.
+  ko:
+    meta:
+      title: 등록 없이 Vimeo 온라인에서 무료로 동영상 다운로드하기
+      description: 등록 없이 무료로 Vimeo 온라인에서 동영상을 다운로드하세요. 워터마크 없이 고화질로 동영상을 빠르게 다운로드하세요.
+        HD 및 풀 HD 지원.
+      keywords: 비메오에서 비디오 다운로드, 비디오 비메오 온라인 다운로드, 비메오 다운로더, 무료로 비메오에서 비디오 다운로드, 등록없이
+        비디오 비메오 다운로드, 비메오 비디오 다운로드
+      ogImage: /images/main.png
+      ogImageAlt: Vimeo에서 비디오 다운로드
+    pageContent:
+      mainTitle: Vimeo 온라인에서 무료로 동영상 다운로드
+      subtitle: 유튜브, 틱톡, 인스타그램, VK, 루튜브, 레딧, 트위치 등 모든 플랫폼에서 동영상을 제한 없이 빠르게 다운로드하세요.
+      intro: 등록 없이 워터마크 없이 Vimeo에서 고품질의 동영상을 빠르고 무료로 다운로드하세요.
+      how_to:
+        blocks:
+          - content: >-
+              ADownloader 서비스를 사용하면 브라우저를 통해 Vimeo에서 직접 동영상을 빠르고 편리하게 다운로드할 수
+              있습니다. Vimeo 플랫폼은 영화, 튜토리얼, 프레젠테이션, 뮤직 비디오 및 작가의 콘텐츠를 고품질로 호스팅하는 데
+              널리 사용됩니다. 때로는 인터넷 없이 보기 위해 비디오를 장치에 저장하고, 자료로 작업하고, 프레젠테이션이나 개인
+              아카이브에서 시연해야 할 필요가 있습니다.
+
+
+              온라인 도구를 사용하면 추가 소프트웨어를 설치하지 않고도 Vimeo에서 무료로 동영상을 다운로드할 수 있습니다. 계정을
+              만들거나 개인 데이터를 입력하거나 복잡한 확인 절차를 거칠 필요가 없습니다. 링크를 삽입하고 사용 가능한 화질로 파일을
+              받기만 하면 모든 것이 가능한 한 간단하게 작동합니다. 이 서비스는 HD 및 Full HD를 지원합니다(소스에서 해당
+              화질을 제공하는 경우).
+          - title: "다운로드 방법은 매우 간단합니다:"
+            content: |-
+              1. Vimeo에서 원하는 동영상을 찾습니다.
+              2. 2. 브라우저에서 링크를 복사합니다.
+              3. 3. adownloader.org의 상자에 링크를 붙여넣습니다.
+              4. 4. '다운로드' 버튼을 클릭합니다.
+
+              전체 과정은 1분도 채 걸리지 않으며 컴퓨터, 태블릿, 스마트폰에서 작동합니다.
+            image: /images/vimeo_1.png
+            imageAlt: Vimeo에서 비디오 다운로드
+          - content: |-
+              5. 사용 가능한 형식을 선택합니다.
+              6. 6. 다운로드를 시작하고 파일을 장치에 저장합니다.
+              7. 완료.
+      features:
+        title: 서비스의 장점
+        items:
+          - icon: "⚡ "
+            title: 빠른 다운로드
+            description: 동영상을 로드하는 데 몇 초 밖에 걸리지 않습니다.
+          - icon: "🎬 "
+            title: 고품질
+            description: HD 및 Full HD 지원.
+          - icon: "🔒 "
+            title: 등록되지 않음
+            description: 계정도 없고 권한도 없습니다.
+          - icon: "🚫 "
+            title: 워터마크 없음
+            description: 동영상은 추가 표시 없이 저장됩니다.
+          - icon: "📱 "
+            title: 모든 디바이스 지원
+            description: 는 PC와 스마트폰에서 작동합니다.
+          - icon: "💾 "
+            title: 설치 없이 온라인
+            description: 소프트웨어를 다운로드할 필요가 없습니다.
+      faq:
+        - question: Vimeo에서 동영상을 무료로 다운로드할 수 있나요?
+          answer: 예, 이 서비스는 완전히 무료입니다.
+        - question: 소프트웨어를 설치해야 하나요?
+          answer: 아니요, 다운로드는 브라우저에서 바로 이루어집니다.
+        - question: 등록이 필요한가요?
+          answer: 아니요, 등록할 필요가 없습니다.
+        - question: 동영상을 어떤 화질로 저장할 수 있나요?
+          answer: 사용 가능한 최고 품질의 소스 파일입니다.
+        - question: 이 서비스는 휴대폰에서 작동하나요?
+          answer: 예, Android 및 iPhone에서 사용할 수 있습니다.
+        - question: 그렇게 해도 안전한가요?
+          answer: 예, 다운로드할 동영상 링크만 있으면 되며 개인 정보를 입력할 필요는 없습니다.
+  id:
+    meta:
+      title: Unduh video dari Vimeo online gratis tanpa registrasi
+      description: Unduh video dari Vimeo online secara gratis dan tanpa registrasi.
+        Unduh video dengan cepat dalam kualitas tinggi tanpa tanda air. Dukungan
+        HD dan Full HD.
+      keywords: unduh video dari Vimeo, unduh video Vimeo online, pengunduh Vimeo,
+        unduh video dari Vimeo gratis, unduh video Vimeo tanpa registrasi, unduh
+        video Vimeo
+      ogImage: /images/main.png
+      ogImageAlt: Unduh video dari Vimeo
+    pageContent:
+      mainTitle: Unduh video dari Vimeo online secara gratis
+      subtitle: "Unduh video dari platform apa pun: YouTube, TikTok, Instagram, VK,
+        RuTube, Reddit, Twitch, dan banyak lagi dengan cepat dan tanpa batasan."
+      intro: Unduh video dari Vimeo dengan cepat dan gratis dalam kualitas tinggi
+        tanpa registrasi dan tanpa tanda air.
+      how_to:
+        blocks:
+          - content: >-
+              Layanan ADownloader memungkinkan Anda mengunduh video dari Vimeo
+              dengan cepat dan mudah melalui browser Anda. Platform Vimeo banyak
+              digunakan untuk meng-host film, tutorial, presentasi, video musik,
+              dan konten penulis dengan kualitas tinggi. Terkadang ada kebutuhan
+              untuk menyimpan video ke perangkat untuk dilihat tanpa internet,
+              mengerjakan materi, mendemonstrasikan presentasi atau arsip
+              pribadi.
+
+
+              Alat online kami membantu Anda mengunduh video dari Vimeo secara
+              gratis dan tanpa menginstal perangkat lunak tambahan. Anda tidak
+              perlu membuat akun, memasukkan data pribadi, atau melalui
+              pemeriksaan yang rumit. Semuanya bekerja sesederhana mungkin: Anda
+              memasukkan tautan dan mendapatkan file dalam kualitas yang
+              tersedia. Layanan ini mendukung HD dan Full HD (jika kualitas
+              seperti itu disediakan oleh sumbernya).
+          - title: "Petunjuk pengunduhannya sangat sederhana:"
+            content: >-
+              1. Temukan video yang diinginkan di Vimeo.
+
+              2. Salin tautan ke video tersebut dari browser Anda.
+
+              3. Rekatkan tautan tersebut ke dalam kotak di adownloader.org.
+
+              4. Klik tombol "Unduh"
+
+
+              Seluruh proses ini membutuhkan waktu kurang dari satu menit dan
+              dapat dilakukan di komputer, tablet, dan ponsel pintar.
+            image: /images/vimeo_1.png
+            imageAlt: Unduh video dari Vimeo
+          - content: |-
+              5. Pilih format yang tersedia.
+              6. Mulai mengunduh dan simpan file ke perangkat Anda.
+              7. Selesai.
+      features:
+        title: Keuntungan dari layanan ini
+        items:
+          - icon: "⚡ "
+            title: Unduh cepat
+            description: hanya perlu beberapa detik untuk memuat video.
+          - icon: "🎬 "
+            title: Kualitas tinggi
+            description: Dukungan HD dan Full HD.
+          - icon: "🔒 "
+            title: Tidak terdaftar
+            description: tidak ada akun dan tidak ada otorisasi.
+          - icon: "🚫 "
+            title: Tidak ada tanda air
+            description: video disimpan tanpa tanda tambahan.
+          - icon: "📱 "
+            title: Dukungan untuk semua perangkat
+            description: bekerja pada PC dan smartphone.
+          - icon: "💾 "
+            title: Online tanpa instalasi
+            description: Anda tidak perlu mengunduh perangkat lunak apa pun.
+      faq:
+        - question: Apakah mungkin mengunduh video dari Vimeo secara gratis?
+          answer: Ya, layanan ini sepenuhnya gratis.
+        - question: Apakah saya perlu menginstal perangkat lunak?
+          answer: Tidak, pengunduhan terjadi langsung di browser.
+        - question: Apakah pendaftaran diperlukan?
+          answer: Tidak, Anda tidak perlu mendaftar.
+        - question: Kualitas apa yang dapat saya gunakan untuk menyimpan video?
+          answer: Dalam kualitas tertinggi yang tersedia dari file sumber.
+        - question: Apakah layanan ini dapat digunakan di telepon?
+          answer: Ya, Anda dapat menggunakannya di Android dan iPhone.
+        - question: Apakah aman untuk melakukannya?
+          answer: Ya, Anda hanya memerlukan tautan ke video untuk mengunduh, tidak ada
+            informasi pribadi yang perlu dimasukkan.
+  hi:
+    meta:
+      title: बिना पंजीकरण के विमियो से वीडियो ऑनलाइन मुफ्त में डाउनलोड करें
+      description: वीमियो से वीडियो ऑनलाइन मुफ्त में और बिना पंजीकरण के डाउनलोड
+        करें।   तेज़ वीडियो डाउनलोड उच्च गुणवत्ता में बिना वॉटरमार्क के।   एचडी
+        और फुल एचडी समर्थन।
+      keywords: Vimeo से वीडियो डाउनलोड करें, ऑनलाइन Vimeo वीडियो डाउनलोड करें, Vimeo
+        डाउनलोडर, मुफ्त में Vimeo से वीडियो डाउनलोड करें, बिना पंजीकरण के Vimeo
+        वीडियो डाउनलोड करें, Vimeo वीडियो डाउनलोड
+      ogImage: /images/main.png
+      ogImageAlt: Vimeo से वीडियो डाउनलोड करें
+    pageContent:
+      mainTitle: Vimeo से वीडियो ऑनलाइन मुफ्त में डाउनलोड करें
+      subtitle: "किसी भी प्लेटफ़ॉर्म से वीडियो डाउनलोड करें: YouTube, TikTok,
+        Instagram, VK, RuTube, Reddit, Twitch, और कई अन्य, तेज़ी से और बिना किसी
+        प्रतिबंध के।"
+      intro: वीमियो से वीडियो जल्दी और मुफ्त में, बिना पंजीकरण और बिना वॉटरमार्क के,
+        उच्च गुणवत्ता में डाउनलोड करें।
+      how_to:
+        blocks:
+          - content: >-
+              ADownloader सेवा आपको अपने ब्राउज़र के माध्यम से सीधे Vimeo से
+              वीडियो जल्दी और सुविधाजनक रूप से डाउनलोड करने की अनुमति देती है।
+              Vimeo प्लेटफ़ॉर्म का उपयोग उच्च गुणवत्ता में फ़िल्में, शैक्षिक
+              सामग्री, प्रस्तुतियों, संगीत वीडियो और मूल सामग्री होस्ट करने के
+              लिए व्यापक रूप से किया जाता है। कभी-कभी आपको वीडियो को ऑफ़लाइन
+              देखने, सामग्री पर काम करने, प्रस्तुति में दिखाने, या इसे अपने
+              व्यक्तिगत संग्रह में जोड़ने के लिए अपने डिवाइस पर सहेजने की
+              आवश्यकता होती है।
+
+
+              हमारा ऑनलाइन टूल आपको अतिरिक्त प्रोग्राम इंस्टॉल किए बिना और मुफ्त
+              में Vimeo से वीडियो डाउनलोड करने में मदद करता है। आपको खाता बनाने,
+              व्यक्तिगत डेटा दर्ज करने, या जटिल जांच से गुजरने की आवश्यकता नहीं
+              है। सब कुछ यथासंभव सरल है: आप लिंक पेस्ट करते हैं और उपलब्ध
+              गुणवत्ता में फ़ाइल प्राप्त करते हैं। यह सेवा HD और फुल HD (यदि
+              स्रोत द्वारा ऐसी गुणवत्ता प्रदान की जाती है) को सपोर्ट करती है।
+          - title: "डाउनलोड निर्देश बहुत सरल हैं:"
+            content: 1. Vimeo पर वह वीडियो खोजें जिसे आप चाहते हैं।  2. अपने ब्राउज़र से उस
+              वीडियो का लिंक कॉपी करें।  3. adownloader.org वेबसाइट पर दिए गए
+              फ़ील्ड में लिंक पेस्ट करें।  4. "डाउनलोड" बटन पर क्लिक करें।  यह
+              पूरी प्रक्रिया एक मिनट से भी कम समय लेती है और कंप्यूटर, टैबलेट और
+              स्मार्टफोन पर काम करती है।
+            image: /images/vimeo_1.png
+            imageAlt: Vimeo से वीडियो डाउनलोड करें
+          - content: 5. एक उपलब्ध प्रारूप चुनें।   6. डाउनलोड शुरू करें और फ़ाइल को अपने
+              डिवाइस पर सहेजें।   7. हो गया।
+      features:
+        title: सेवा के लाभ
+        items:
+          - icon: "⚡ "
+            title: त्वरित डाउनलोड
+            description: वीडियो लोड होने में केवल कुछ सेकंड लगते हैं।
+          - icon: "🎬 "
+            title: उच्च गुणवत्ता
+            description: एचडी और फुल एचडी समर्थन।
+          - icon: "🔒 "
+            title: बिना पंजीकरण के
+            description: किसी खाते या प्राधिकरण की आवश्यकता नहीं है।
+          - icon: "🚫 "
+            title: वाटरमार्क के बिना
+            description: वीडियो अतिरिक्त निशानों के बिना सहेजा गया है।
+          - icon: "📱 "
+            title: सभी उपकरणों के लिए समर्थन
+            description: पीसी और स्मार्टफोन पर काम करता है।
+          - icon: "💾 "
+            title: बिना इंस्टॉलेशन के ऑनलाइन
+            description: प्रोग्राम डाउनलोड करने की कोई आवश्यकता नहीं है।
+      faq:
+        - question: क्या Vimeo से वीडियो मुफ्त में डाउनलोड करना संभव है?
+          answer: हाँ, यह सेवा पूरी तरह से मुफ्त है।
+        - question: क्या मुझे प्रोग्राम इंस्टॉल करने की आवश्यकता है?
+          answer: नहीं, डाउनलोड सीधे ब्राउज़र में होता है।
+        - question: क्या पंजीकरण आवश्यक है?
+          answer: नहीं, पंजीकरण आवश्यक नहीं है।
+        - question: वीडियो को किस प्रारूप में सहेजा जा सकता है?
+          answer: स्रोत फ़ाइल के लिए उपलब्ध उच्चतम गुणवत्ता में।
+        - question: क्या यह सेवा मोबाइल फोन पर काम करती है?
+          answer: हाँ, आप इसे Android और iPhone पर उपयोग कर सकते हैं।
+        - question: क्या यह सुरक्षित है?
+          answer: हाँ, वीडियो डाउनलोड करने के लिए आपको केवल वीडियो का लिंक चाहिए, कोई
+            व्यक्तिगत विवरण दर्ज करने की आवश्यकता नहीं है।
+  bn:
+    meta:
+      title: বিনামূল্যে নিবন্ধন ছাড়াই অনলাইন থেকে ভিমিওর ভিডিও ডাউনলোড করুন
+      description: বিনামূল্যে এবং নিবন্ধন ছাড়াই অনলাইন থেকে Vimeo ভিডিও ডাউনলোড
+        করুন।  জলছবি ছাড়া উচ্চমানের দ্রুত ভিডিও ডাউনলোড।  এইচডি এবং ফুল এইচডি
+        সমর্থন।
+      keywords: ভিমিও থেকে ভিডিও ডাউনলোড করুন, অনলাইনে ভিমিও ভিডিও ডাউনলোড করুন, ভিমিও
+        ডাউনলোডার, বিনামূল্যে ভিমিও থেকে ভিডিও ডাউনলোড করুন, নিবন্ধন ছাড়া ভিমিও
+        ভিডিও ডাউনলোড করুন, ভিমিও ভিডিও ডাউনলোড
+      ogImage: /images/main.png
+      ogImageAlt: ভিমিও থেকে ভিডিও ডাউনলোড করুন
+    pageContent:
+      mainTitle: ভিমিও থেকে অনলাইনে বিনামূল্যে ভিডিও ডাউনলোড করুন
+      subtitle: "যেকোনো প্ল্যাটফর্ম থেকে ভিডিও ডাউনলোড করুন: YouTube, TikTok,
+        Instagram, VK, RuTube, Reddit, Twitch এবং আরও অনেক কিছু দ্রুত এবং কোনো
+        বাধা ছাড়াই।"
+      intro: ভিমিও থেকে ভিডিও দ্রুত, বিনামূল্যে এবং উচ্চমানের ডাউনলোড করুন, কোনো
+        নিবন্ধন বা ওয়াটারমার্ক ছাড়াই।
+      how_to:
+        blocks:
+          - content: >-
+              ADownloader সার্ভিস আপনাকে আপনার ব্রাউজারের মাধ্যমে সরাসরি Vimeo
+              থেকে দ্রুত এবং সুবিধাজনকভাবে ভিডিও ডাউনলোড করার সুযোগ দেয়। Vimeo
+              প্ল্যাটফর্মটি উচ্চমানের চলচ্চিত্র, শিক্ষামূলক উপকরণ, উপস্থাপনা,
+              মিউজিক ভিডিও এবং মৌলিক বিষয়বস্তু হোস্ট করার জন্য ব্যাপকভাবে
+              ব্যবহৃত হয়। কখনও কখনও আপনাকে ভিডিওটি আপনার ডিভাইসে সংরক্ষণ করতে
+              হয় যাতে আপনি এটি অফলাইনে দেখতে পারেন, বিষয়বস্তু নিয়ে কাজ করতে
+              পারেন, উপস্থাপনায় দেখাতে পারেন, অথবা আপনার ব্যক্তিগত সংরক্ষণাগারে
+              যোগ করতে পারেন।
+
+
+              আমাদের অনলাইন টুল আপনাকে বিনামূল্যে এবং অতিরিক্ত কোনো প্রোগ্রাম
+              ইনস্টল না করেই Vimeo থেকে ভিডিও ডাউনলোড করতে সাহায্য করে। আপনাকে
+              কোনো অ্যাকাউন্ট তৈরি করতে হবে না, ব্যক্তিগত তথ্য দিতে হবে না, বা
+              জটিল যাচাই-বাছাই প্রক্রিয়া অতিক্রম করতে হবে না। সবকিছু যতটা সম্ভব
+              সহজভাবে কাজ করে: আপনি লিঙ্কটি পেস্ট করেন এবং উপলব্ধ গুণমানে ফাইলটি
+              পান। এই সার্ভিস HD এবং Full HD সমর্থন করে (যদি উৎসে এমন গুণমান
+              প্রদান করা হয়)।
+          - title: "ডাউনলোড নির্দেশনাগুলি খুবই সহজ:"
+            content: ১. Vimeo-তে আপনার পছন্দের ভিডিওটি খুঁজুন।   ২. আপনার ব্রাউজার থেকে
+              ভিডিওটির লিঙ্ক কপি করুন।   ৩. adownloader.org ওয়েবসাইটের ফিল্ডে
+              লিঙ্কটি পেস্ট করুন।   ৪. "Download" বোতামে ক্লিক করুন।   পুরো
+              প্রক্রিয়াটি এক মিনিটেরও কম সময় নেয় এবং কম্পিউটার, ট্যাবলেট ও
+              স্মার্টফোনে কাজ করে।
+            image: /images/vimeo_1.png
+            imageAlt: ভিমিও থেকে ভিডিও ডাউনলোড করুন
+          - content: 5. একটি উপলব্ধ ফরম্যাট নির্বাচন করুন।   6. ডাউনলোড শুরু করুন এবং ফাইলটি
+              আপনার ডিভাইসে সংরক্ষণ করুন।   7. সম্পন্ন।
+      features:
+        title: সেবার সুবিধাগুলি
+        items:
+          - icon: "⚡ "
+            title: দ্রুত ডাউনলোড
+            description: ভিডিও লোড হতে মাত্র কয়েক সেকেন্ড সময় লাগে।
+          - icon: "🎬 "
+            title: উচ্চ মানের
+            description: এইচডি এবং ফুল এইচডি সমর্থন।
+          - icon: "🔒 "
+            title: নিবন্ধন ছাড়া
+            description: কোনও অ্যাকাউন্ট বা অনুমোদনের প্রয়োজন নেই।
+          - icon: "🚫 "
+            title: ওয়াটারমার্ক ছাড়া
+            description: ভিডিওটি অতিরিক্ত কোনো চিহ্ন ছাড়াই সংরক্ষিত হয়েছে।
+          - icon: "📱 "
+            title: সমস্ত ডিভাইসের জন্য সমর্থন
+            description: পিসি এবং স্মার্টফোনে কাজ করে।
+          - icon: "💾 "
+            title: ইনস্টলেশন ছাড়া অনলাইনে
+            description: প্রোগ্রাম ডাউনলোড করার কোনো প্রয়োজন নেই।
+      faq:
+        - question: ভিমিও থেকে বিনামূল্যে ভিডিও ডাউনলোড করা কি সম্ভব?
+          answer: হ্যাঁ, সেবাটি সম্পূর্ণ বিনামূল্যে।
+        - question: আমার কি প্রোগ্রামটি ইনস্টল করতে হবে?
+          answer: না, ডাউনলোড সরাসরি ব্রাউজারেই হয়।
+        - question: নিবন্ধন কি প্রয়োজন?
+          answer: না, নিবন্ধন প্রয়োজন নেই।
+        - question: ভিডিওটি কোন ফরম্যাটে সংরক্ষণ করা যাবে?
+          answer: উৎস ফাইলের জন্য উপলব্ধ সর্বোচ্চ গুণমানে।
+        - question: এই সেবা কি মোবাইল ফোনে কাজ করে?
+          answer: হ্যাঁ, আপনি এটি অ্যান্ড্রয়েড এবং আইফোনে ব্যবহার করতে পারেন।
+        - question: এটা কি নিরাপদ?
+          answer: হ্যাঁ, ভিডিওটি ডাউনলোড করতে আপনার শুধুমাত্র ভিডিওর লিঙ্কই প্রয়োজন, কোনো
+            ব্যক্তিগত তথ্য দিতে হবে না।
+  pa:
+    meta:
+      title: ਵਿਮੀਓ ਤੋਂ ਬਿਨਾਂ ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਦੇ ਆਨਲਾਈਨ ਮੁਫ਼ਤ ਵਿੱਚ ਵੀਡੀਓਜ਼ ਡਾਊਨਲੋਡ ਕਰੋ
+      description: ਵਿਮੀਓ ਤੋਂ ਵੀਡੀਓਜ਼ ਆਨਲਾਈਨ ਮੁਫ਼ਤ ਅਤੇ ਬਿਨਾਂ ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਦੇ ਡਾਊਨਲੋਡ
+        ਕਰੋ। ਵਾਟਰਮਾਰਕਾਂ ਤੋਂ ਬਿਨਾਂ ਉੱਚ ਗੁਣਵੱਤਾ ਵਿੱਚ ਤੇਜ਼ ਵੀਡੀਓ ਡਾਊਨਲੋਡ। HD ਅਤੇ
+        Full HD ਸਪੋਰਟ।
+      keywords: ਵੀਮਿਓ ਤੋਂ ਵੀਡੀਓ ਡਾਊਨਲੋਡ ਕਰੋ, ਆਨਲਾਈਨ ਵੀਮਿਓ ਵੀਡੀਓ ਡਾਊਨਲੋਡ ਕਰੋ, ਵੀਮਿਓ
+        ਡਾਊਨਲੋਡਰ, ਮੁਫ਼ਤ ਵਿੱਚ ਵੀਮਿਓ ਤੋਂ ਵੀਡੀਓ ਡਾਊਨਲੋਡ ਕਰੋ, ਬਿਨਾਂ ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਦੇ
+        ਵੀਮਿਓ ਵੀਡੀਓ ਡਾਊਨਲੋਡ ਕਰੋ, ਵੀਮਿਓ ਵੀਡੀਓ ਡਾਊਨਲੋਡ
+      ogImage: /images/main.png
+      ogImageAlt: ਵਿਮੀਓ ਤੋਂ ਵੀਡੀਓ ਡਾਊਨਲੋਡ ਕਰੋ
+    pageContent:
+      mainTitle: ਵਿਮੀਓ ਤੋਂ ਆਨਲਾਈਨ ਮੁਫ਼ਤ ਵਿੱਚ ਵੀਡੀਓਜ਼ ਡਾਊਨਲੋਡ ਕਰੋ
+      subtitle: "ਕਿਸੇ ਵੀ ਪਲੇਟਫਾਰਮ ਤੋਂ ਵੀਡੀਓਜ਼ ਤੇਜ਼ੀ ਨਾਲ ਅਤੇ ਬਿਨਾਂ ਕਿਸੇ ਪਾਬੰਦੀ ਦੇ
+        ਡਾਊਨਲੋਡ ਕਰੋ: YouTube, TikTok, Instagram, VK, RuTube, Reddit, Twitch, ਅਤੇ
+        ਹੋਰ ਬਹੁਤ ਸਾਰੇ।"
+      intro: ਵਿਮੀਓ ਤੋਂ ਵੀਡੀਓਜ਼ ਨੂੰ ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਅਤੇ ਵਾਟਰਮਾਰਕ ਤੋਂ ਬਿਨਾਂ, ਤੇਜ਼ੀ ਨਾਲ ਅਤੇ
+        ਮੁਫ਼ਤ ਵਿੱਚ ਉੱਚ ਗੁਣਵੱਤਾ ਵਿੱਚ ਡਾਊਨਲੋਡ ਕਰੋ।
+      how_to:
+        blocks:
+          - content: >-
+              ADownloader ਸੇਵਾ ਤੁਹਾਨੂੰ ਆਪਣੇ ਬ੍ਰਾਊਜ਼ਰ ਰਾਹੀਂ Vimeo ਤੋਂ ਵੀਡੀਓਜ਼ ਨੂੰ
+              ਤੇਜ਼ੀ ਅਤੇ ਸੁਵਿਧਾਜਨਕ ਢੰਗ ਨਾਲ ਡਾਊਨਲੋਡ ਕਰਨ ਦੀ ਆਗਿਆ ਦਿੰਦੀ ਹੈ। Vimeo
+              ਪਲੇਟਫਾਰਮ ਫਿਲਮਾਂ, ਸਿੱਖਿਆਤਮਕ ਸਮੱਗਰੀ, ਪ੍ਰਸਤੁਤੀਆਂ, ਮਿਊਜ਼ਿਕ ਵੀਡੀਓਜ਼ ਅਤੇ
+              ਮੂਲ ਸਮੱਗਰੀ ਨੂੰ ਉੱਚ ਗੁਣਵੱਤਾ ਵਿੱਚ ਹੋਸਟ ਕਰਨ ਲਈ ਵਿਆਪਕ ਤੌਰ 'ਤੇ ਵਰਤਿਆ
+              ਜਾਂਦਾ ਹੈ। ਕਈ ਵਾਰ ਤੁਹਾਨੂੰ ਕਿਸੇ ਵੀਡੀਓ ਨੂੰ ਆਪਣੇ ਡਿਵਾਈਸ 'ਤੇ ਸੇਵ ਕਰਨ ਦੀ
+              ਲੋੜ ਹੁੰਦੀ ਹੈ ਤਾਂ ਜੋ ਤੁਸੀਂ ਇਸਨੂੰ ਆਫਲਾਈਨ ਦੇਖ ਸਕੋ, ਸਮੱਗਰੀ 'ਤੇ ਕੰਮ ਕਰ
+              ਸਕੋ, ਇਸਨੂੰ ਇੱਕ ਪ੍ਰਸਤੁਤੀ ਵਿੱਚ ਦਿਖਾ ਸਕੋ, ਜਾਂ ਇਸਨੂੰ ਆਪਣੇ ਨਿੱਜੀ
+              ਪੁਰਾਲੇਖ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰ ਸਕੋ।
+
+
+              ਸਾਡਾ ਔਨਲਾਈਨ ਟੂਲ ਤੁਹਾਨੂੰ ਵਾਧੂ ਪ੍ਰੋਗਰਾਮਾਂ ਨੂੰ ਇੰਸਟਾਲ ਕੀਤੇ ਬਿਨਾਂ,
+              ਮੁਫ਼ਤ ਵਿੱਚ ਵਿਮੀਓ ਤੋਂ ਵੀਡੀਓ ਡਾਊਨਲੋਡ ਕਰਨ ਵਿੱਚ ਮਦਦ ਕਰਦਾ ਹੈ। ਤੁਹਾਨੂੰ
+              ਖਾਤਾ ਬਣਾਉਣ, ਨਿੱਜੀ ਡੇਟਾ ਦਾਖਲ ਕਰਨ, ਜਾਂ ਗੁੰਝਲਦਾਰ ਜਾਂਚਾਂ ਵਿੱਚੋਂ ਲੰਘਣ
+              ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ। ਸਭ ਕੁਝ ਜਿੰਨਾ ਸੰਭਵ ਹੋ ਸਕੇ ਸੌਖਾ ਹੈ: ਤੁਸੀਂ ਲਿੰਕ ਪੇਸਟ
+              ਕਰਦੇ ਹੋ ਅਤੇ ਉਪਲਬਧ ਗੁਣਵੱਤਾ ਵਿੱਚ ਫਾਈਲ ਪ੍ਰਾਪਤ ਕਰਦੇ ਹੋ। ਇਹ ਸੇਵਾ HD ਅਤੇ
+              ਫੁੱਲ HD (ਜੇਕਰ ਸਰੋਤ ਦੁਆਰਾ ਅਜਿਹੀ ਗੁਣਵੱਤਾ ਪ੍ਰਦਾਨ ਕੀਤੀ ਜਾਂਦੀ ਹੈ) ਨੂੰ
+              ਸਪੋਰਟ ਕਰਦੀ ਹੈ।
+          - title: "ਡਾਊਨਲੋਡ ਦੀਆਂ ਹਦਾਇਤਾਂ ਬਹੁਤ ਸਧਾਰਣ ਹਨ:"
+            content: 1. Vimeo 'ਤੇ ਆਪਣੀ ਪਸੰਦ ਦੀ ਵੀਡੀਓ ਲੱਭੋ।  2. ਆਪਣੇ ਬ੍ਰਾਊਜ਼ਰ ਤੋਂ ਇਸਦਾ ਲਿੰਕ
+              ਕਾਪੀ ਕਰੋ।  3. adownloader.org ਵੈਬਸਾਈਟ 'ਤੇ ਦਿੱਤੇ ਖੇਤਰ ਵਿੱਚ ਲਿੰਕ
+              ਪੇਸਟ ਕਰੋ।  4. "ਡਾਊਨਲੋਡ" ਬਟਨ 'ਤੇ ਕਲਿੱਕ ਕਰੋ।  ਪੂਰੀ ਪ੍ਰਕਿਰਿਆ ਇੱਕ ਮਿੰਟ
+              ਤੋਂ ਘੱਟ ਸਮਾਂ ਲੈਂਦੀ ਹੈ ਅਤੇ ਕੰਪਿਊਟਰ, ਟੈਬਲੇਟ ਅਤੇ ਸਮਾਰਟਫੋਨਾਂ 'ਤੇ ਕੰਮ
+              ਕਰਦੀ ਹੈ।
+            image: /images/vimeo_1.png
+            imageAlt: ਵਿਮੀਓ ਤੋਂ ਵੀਡੀਓ ਡਾਊਨਲੋਡ ਕਰੋ
+          - content: 5. ਇੱਕ ਉਪਲਬਧ ਫਾਰਮੈਟ ਚੁਣੋ। 6. ਡਾਊਨਲੋਡ ਸ਼ੁਰੂ ਕਰੋ ਅਤੇ ਫਾਈਲ ਨੂੰ ਆਪਣੇ ਡਿਵਾਈਸ
+              'ਤੇ ਸੇਵ ਕਰੋ। 7. ਹੋ ਗਿਆ।
+      features:
+        title: ਸੇਵਾ ਦੇ ਫਾਇਦੇ
+        items:
+          - icon: "⚡ "
+            title: ਤੁਰੰਤ ਡਾਊਨਲੋਡ
+            description: ਵੀਡੀਓ ਲੋਡ ਕਰਨ ਵਿੱਚ ਸਿਰਫ ਕੁਝ ਸਕਿੰਟ ਲੱਗਦੇ ਹਨ।
+          - icon: "🎬 "
+            title: ਉੱਚ ਗੁਣਵੱਤਾ
+            description: HD ਅਤੇ ਫੁੱਲ HD ਸਪੋਰਟ।
+          - icon: "🔒 "
+            title: ਬਿਨਾਂ ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਦੇ
+            description: ਕੋਈ ਖਾਤਾ ਜਾਂ ਅਧਿਕਾਰ ਲੋੜੀਂਦਾ ਨਹੀਂ।
+          - icon: "🚫 "
+            title: ਵਾਟਰਮਾਰਕਾਂ ਤੋਂ ਬਿਨਾਂ
+            description: ਵੀਡੀਓ ਵਾਧੂ ਨਿਸ਼ਾਨਾਂ ਤੋਂ ਬਿਨਾਂ ਸੇਵ ਕੀਤਾ ਗਿਆ ਹੈ।
+          - icon: "📱 "
+            title: ਸਾਰੇ ਡਿਵਾਈਸਾਂ ਲਈ ਸਹਾਇਤਾ
+            description: ਪੀਸੀ ਅਤੇ ਸਮਾਰਟਫੋਨਾਂ 'ਤੇ ਕੰਮ ਕਰਦਾ ਹੈ।
+          - icon: "💾 "
+            title: ਇੰਸਟਾਲੇਸ਼ਨ ਤੋਂ ਬਿਨਾਂ ਆਨਲਾਈਨ
+            description: ਕੋਈ ਪ੍ਰੋਗਰਾਮ ਡਾਊਨਲੋਡ ਕਰਨ ਦੀ ਲੋੜ ਨਹੀਂ।
+      faq:
+        - question: ਕੀ Vimeo ਤੋਂ ਮੁਫ਼ਤ ਵਿੱਚ ਵੀਡੀਓਜ਼ ਡਾਊਨਲੋਡ ਕਰਨਾ ਸੰਭਵ ਹੈ?
+          answer: ਹਾਂ, ਇਹ ਸੇਵਾ ਪੂਰੀ ਤਰ੍ਹਾਂ ਮੁਫ਼ਤ ਹੈ।
+        - question: ਕੀ ਮੈਨੂੰ ਪ੍ਰੋਗਰਾਮ ਇੰਸਟਾਲ ਕਰਨ ਦੀ ਲੋੜ ਹੈ?
+          answer: ਨਹੀਂ, ਡਾਊਨਲੋਡ ਸਿੱਧਾ ਬ੍ਰਾਊਜ਼ਰ ਵਿੱਚ ਹੁੰਦਾ ਹੈ।
+        - question: ਕੀ ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਲਾਜ਼ਮੀ ਹੈ?
+          answer: ਨਹੀਂ, ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਲਾਜ਼ਮੀ ਨਹੀਂ ਹੈ।
+        - question: ਵੀਡੀਓ ਕਿਸ ਫਾਰਮੈਟ ਵਿੱਚ ਸੇਵ ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ?
+          answer: ਸਰੋਤ ਫਾਈਲ ਲਈ ਉਪਲਬਧ ਸਭ ਤੋਂ ਉੱਚ ਗੁਣਵੱਤਾ ਵਿੱਚ।
+        - question: ਕੀ ਇਹ ਸੇਵਾ ਮੋਬਾਈਲ ਫੋਨ 'ਤੇ ਕੰਮ ਕਰਦੀ ਹੈ?
+          answer: ਹਾਂ, ਤੁਸੀਂ ਇਸਨੂੰ ਐਂਡਰਾਇਡ ਅਤੇ ਆਈਫੋਨ 'ਤੇ ਵਰਤ ਸਕਦੇ ਹੋ।
+        - question: ਕੀ ਇਹ ਸੁਰੱਖਿਅਤ ਹੈ?
+          answer: ਹਾਂ, ਤੁਹਾਨੂੰ ਇਸਨੂੰ ਡਾਊਨਲੋਡ ਕਰਨ ਲਈ ਸਿਰਫ਼ ਵੀਡੀਓ ਦਾ ਲਿੰਕ ਚਾਹੀਦਾ ਹੈ, ਬਿਨਾਂ
+            ਕਿਸੇ ਨਿੱਜੀ ਜਾਣਕਾਰੀ ਦਰਜ ਕੀਤੇ।
+_hashes:
+  _slug: vimeo
+  _contentHash: eb2ff65f8737
+  fields:
+    meta.title: 2396730b74f5
+    meta.description: cb85896da8da
+    meta.keywords: 389a731406b2
+    meta.ogImage: 9b4f7fdfd001
+    meta.ogImageAlt: 06f51e502bdf
+    pageContent.mainTitle: c7946114088c
+    pageContent.subtitle: 6f3701777c2e
+    pageContent.intro: b5b4e2129ed5
+    pageContent.how_to.blocks[0].content: e08dc52cbdeb
+    pageContent.how_to.blocks[1].title: 93b139dd71e0
+    pageContent.how_to.blocks[1].content: 6b721bb9c169
+    pageContent.how_to.blocks[1].image: e7579afc6241
+    pageContent.how_to.blocks[1].imageAlt: 06f51e502bdf
+    pageContent.how_to.blocks[2].content: 2486aafe98ad
+    pageContent.features.title: b0ed28e8e231
+    pageContent.features.items[0].icon: 862c80a2a94a
+    pageContent.features.items[0].title: 30fa97d1a6b9
+    pageContent.features.items[0].description: ef029cff03f7
+    pageContent.features.items[1].icon: a7bdda11177a
+    pageContent.features.items[1].title: a9bde4fc96b3
+    pageContent.features.items[1].description: e1e126e0fddf
+    pageContent.features.items[2].icon: 19827f61e2b9
+    pageContent.features.items[2].title: 72b957ea8298
+    pageContent.features.items[2].description: 75eed5c8e589
+    pageContent.features.items[3].icon: 4b44c5868440
+    pageContent.features.items[3].title: 3813507b7fc8
+    pageContent.features.items[3].description: 8c8e72cb446f
+    pageContent.features.items[4].icon: 33b7f6203af2
+    pageContent.features.items[4].title: d1d2c766450c
+    pageContent.features.items[4].description: 824f23009a4c
+    pageContent.features.items[5].icon: ab93bfabd60f
+    pageContent.features.items[5].title: 2a8535b9902e
+    pageContent.features.items[5].description: a7c22ce88042
+    pageContent.faq[0].question: 874532f5c854
+    pageContent.faq[0].answer: b8728aced17a
+    pageContent.faq[1].question: e29d4005d04c
+    pageContent.faq[1].answer: 60219b38b421
+    pageContent.faq[2].question: deca67ed59e7
+    pageContent.faq[2].answer: 9c36e0956f27
+    pageContent.faq[3].question: b5d04fe8ca65
+    pageContent.faq[3].answer: 587ea4f64c5f
+    pageContent.faq[4].question: 9eeed6dc8836
+    pageContent.faq[4].answer: "239290336826"
+    pageContent.faq[5].question: 96b0ed9340ca
+    pageContent.faq[5].answer: 97c179533d9d

@@ -14,11 +14,11 @@ export const languages: Language[] = [
 
 
     // { code: 'zh', iso: 'zh-CN', name: '中文', country: 'cn' },
-    // { code: 'hi', iso: 'hi-IN', name: 'हिन्दी', country: 'in' },
-    // { code: 'bn', iso: 'bn-BD', name: 'বাংলা', country: 'bd' },
+    { code: 'hi', iso: 'hi-IN', name: 'हिन्दी', country: 'in' },
+    { code: 'bn', iso: 'bn-BD', name: 'বাংলা', country: 'bd' },
     { code: 'pt', iso: 'pt-PT', name: 'Português', country: 'pt' },
     { code: 'ja', iso: 'ja-JP', name: '日本語', country: 'jp' },
-    // { code: 'pa', iso: 'pa-IN', name: 'ਪੰਜਾਬੀ', country: 'in' },
+    { code: 'pa', iso: 'pa-IN', name: 'ਪੰਜਾਬੀ', country: 'in' },
 
 
     { code: 'jv', iso: 'jv-ID', name: 'Basa Jawa', country: 'id' },

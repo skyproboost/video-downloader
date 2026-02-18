@@ -230,6 +230,8 @@ useHead({
 
 .tool-main__title {
     font-size: var(--text-5xl);
+    line-height: 1;
+    margin-bottom: var(--space-4);
 }
 
 .tool-main__subtitle {
@@ -248,7 +250,7 @@ useHead({
 
 @media (max-width: 767px) {
     .tool-main__title {
-        font-size: var(--text-2xl);
+        font-size: var(--text-3xl);
     }
     .tool-main__subtitle {
         font-size: var(--text-base);
