@@ -223,12 +223,16 @@ const handleDownload = async () => {
         })
 
         if (!data?.url) {
+            loading.value = false
             error.value = t('error.notFound')
-        } else {
-            videoData.value = data
-            url.value = ''
+            isCooldown.value = false
+            return
         }
+
+        videoData.value = data
+        url.value = ''
     } catch (err: any) {
+        loading.value = false
         const status = err?.response?.status ?? err?.statusCode
         if (status === 429) {
             error.value = t('error.tooManyRequests')
@@ -241,6 +245,8 @@ const handleDownload = async () => {
         } else {
             error.value = t('error.unknown')
         }
+        isCooldown.value = false
+        return
     }
 
     const elapsed = Date.now() - startTime
