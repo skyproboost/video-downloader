@@ -70,6 +70,7 @@ export default defineNuxtConfig({
             charset: 'utf-8',
             viewport: 'width=device-width, initial-scale=1, viewport-fit=cover',
             meta: [
+                {name: 'google-site-verification', content: 'EmJ29sepAHXfk8hZ6S8WEuurNzop40zRBA223jOVTUw'},
                 {name: 'format-detection', content: 'telephone=no'},
                 {name: 'mobile-web-app-capable', content: 'yes'},
                 {name: 'apple-mobile-web-app-capable', content: 'yes'},
