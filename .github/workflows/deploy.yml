@@ -48,9 +48,10 @@ jobs:
           port: 22
           script_stop: true
           script: |
+            bash << 'EOF'
             set -e
 
-            set APP_DIR "/home/debian/video-downloader"
+            APP_DIR="/home/debian/video-downloader"
 
             echo "═══════════════════════════════════════════════════════"
             echo "🚀 DEPLOYMENT STARTED"
@@ -99,3 +100,5 @@ jobs:
             echo "✅ DEPLOYMENT COMPLETE"
             echo "   Commit: $(git rev-parse --short HEAD)"
             echo "═══════════════════════════════════════════════════════"
+
+            EOF
