@@ -36,11 +36,11 @@
             <p v-if="error" class="error-message">{{ error }}</p>
         </Transition>
 
-        <!-- Карточка: лоадер или результат -->
+        <!-- Карточка: показываем только если запрос висит долго ИЛИ уже есть результат -->
         <Transition name="fade">
-            <div v-if="loading || videoData" class="result-card">
+            <div v-if="showSkeleton || videoData" class="result-card">
                 <div class="result-preview">
-                    <div v-if="loading" class="shimmer-block" />
+                    <div v-if="showSkeleton" class="shimmer-block" />
                     <img
                         v-else-if="videoData?.thumbnail"
                         :src="videoData.thumbnail"
@@ -56,7 +56,7 @@
                 </div>
 
                 <div class="result-info">
-                    <template v-if="loading">
+                    <template v-if="showSkeleton">
                         <div class="shimmer-line wide" />
                         <div class="shimmer-line narrow" />
                         <div class="shimmer-btn" />
@@ -109,6 +109,7 @@ const config = useRuntimeConfig()
 const url = ref('')
 const isCooldown = ref(false)
 const loading = ref(false)
+const showSkeleton = ref(false)
 const error = ref('')
 const videoData = ref<VideoResponse | null>(null)
 
@@ -117,6 +118,8 @@ const URL_MAX_LENGTH = 2048
 const MIN_COOLDOWN = 2000
 const MAX_SUBMITS = 5
 const SUBMIT_WINDOW = 60_000
+const SKELETON_DELAY = 400 // показываем скелетон только если запрос висит дольше 400мс
+const MIN_BTN_DISABLED = 1000 // кнопка остаётся disabled минимум 1с
 
 const URL_REGEX = /^https?:\/\/[a-zA-Z0-9]([a-zA-Z0-9\-]*[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+([\/\w\-._~:?#\[\]@!$&'()*+,;=%]*)?$/
 const BLOCKED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '[::1]']
@@ -131,6 +134,16 @@ const DANGEROUS_PATTERNS = [
 ]
 
 let submitTimestamps: number[] = []
+let skeletonTimer: ReturnType<typeof setTimeout> | null = null
+let cooldownStart = 0
+
+async function releaseCooldown() {
+    const elapsed = Date.now() - cooldownStart
+    if (elapsed < MIN_BTN_DISABLED) {
+        await new Promise(r => setTimeout(r, MIN_BTN_DISABLED - elapsed))
+    }
+    isCooldown.value = false
+}
 
 const apiBase = computed(() =>
     (config.public.apiBaseUrl as string) || 'https://api.adownloader.org'
@@ -173,6 +186,13 @@ function clearError() {
     if (error.value) error.value = ''
 }
 
+function cancelSkeletonTimer() {
+    if (skeletonTimer) {
+        clearTimeout(skeletonTimer)
+        skeletonTimer = null
+    }
+}
+
 const handleDownload = async () => {
     if (isCooldown.value || !isUrlValid.value || loading.value) return
 
@@ -188,13 +208,25 @@ const handleDownload = async () => {
     submitTimestamps.push(Date.now())
     videoData.value = null
     isCooldown.value = true
+    cooldownStart = Date.now()
 
     if (error.value) {
         error.value = ''
         await new Promise(r => setTimeout(r, 400))
     }
     await new Promise(r => setTimeout(r, 100))
+
+    // Кнопка сразу показывает спиннер
     loading.value = true
+
+    // Скелетон-карточку показываем с задержкой —
+    // если запрос отобьётся быстро (ошибка или успех), карточка не мелькнёт
+    cancelSkeletonTimer()
+    skeletonTimer = setTimeout(() => {
+        if (loading.value) {
+            showSkeleton.value = true
+        }
+    }, SKELETON_DELAY)
 
     const startTime = Date.now()
 
@@ -205,15 +237,19 @@ const handleDownload = async () => {
         })
 
         if (!data?.url) {
+            cancelSkeletonTimer()
+            showSkeleton.value = false
             loading.value = false
             error.value = t('error.notFound')
-            isCooldown.value = false
+            await releaseCooldown()
             return
         }
 
         videoData.value = data
         url.value = ''
     } catch (err: any) {
+        cancelSkeletonTimer()
+        showSkeleton.value = false
         loading.value = false
         const status = err?.response?.status ?? err?.statusCode
         if (status === 429) {
@@ -227,18 +263,23 @@ const handleDownload = async () => {
         } else {
             error.value = t('error.unknown')
         }
-        isCooldown.value = false
+        await releaseCooldown()
         return
     }
 
+    // Если скелетон успел показаться — держим минимальное время, чтобы не мелькал
     const elapsed = Date.now() - startTime
-    const minShow = Math.max(MIN_COOLDOWN, 500)
-    if (elapsed < minShow) {
-        await new Promise(r => setTimeout(r, minShow - elapsed))
+    if (showSkeleton.value) {
+        const minShow = Math.max(MIN_COOLDOWN, 500)
+        if (elapsed < minShow) {
+            await new Promise(r => setTimeout(r, minShow - elapsed))
+        }
     }
 
+    cancelSkeletonTimer()
+    showSkeleton.value = false
     loading.value = false
-    isCooldown.value = false
+    await releaseCooldown()
 }
 </script>
 
@@ -335,7 +376,7 @@ const handleDownload = async () => {
     text-align: center;
 }
 
-/* Карточка результата — фиксированная высота preview */
+/* Карточка результата */
 .result-card {
     margin-top: var(--space-6);
     background: rgba(255, 255, 255, 0.05);
