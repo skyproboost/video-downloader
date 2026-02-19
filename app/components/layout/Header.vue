@@ -438,8 +438,7 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside))
 }
 
 @media (max-width: 380px) {
-    .lang__grid--cols-3,
-    .lang__grid--cols-2 {
+    .lang__grid--cols-3, .lang__grid--cols-2 {
         grid-template-columns: 1fr;
     }
 }
