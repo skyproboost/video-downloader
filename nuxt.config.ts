@@ -262,8 +262,10 @@ export default defineNuxtConfig({
         '/admin/**': {
             security: { xssValidator: false, requestSizeLimiter: false, rateLimiter: false },
         },
+
         '/api/footer-links': {
             security: { xssValidator: false },
+            isr: false,
         },
     },
 
@@ -275,6 +277,15 @@ export default defineNuxtConfig({
         compressPublicAssets: true,
         routeRules: {
             '/__sitemap__/**': { isr: false, headers: { 'Cache-Control': 'public, max-age=0, s-maxage=3600, stale-while-revalidate=600' } },
+
+            '/api/footer-links': {
+                isr: false,               // Никогда не кэшировать ISR'ом
+                swr: false,               // Никакого stale-while-revalidate на уровне Nitro
+                headers: {
+                    'Cache-Control': 'public, max-age=60, s-maxage=300, stale-while-revalidate=600',
+                    'X-Robots-Tag': 'noindex, nofollow',
+                },
+            },
 
             '/api/**': {
                 headers: {'X-Robots-Tag': 'noindex, nofollow'},

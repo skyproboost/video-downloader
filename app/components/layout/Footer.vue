@@ -47,10 +47,11 @@ interface GroupedLinks {
 const localePath = useLocalePath()
 const currentYear = new Date().getFullYear()
 
-const { data: groupedLinks } = await useFetch<GroupedLinks[]>('/api/footer-links', {
-    key: 'footer-links',
-    default: () => [],
-})
+const { data: groupedLinks } = await useAsyncData(
+    'footer-links',
+    () => $fetch<GroupedLinks[]>('/api/footer-links'),
+    { default: () => [] }
+)
 </script>
 
 <style scoped>
