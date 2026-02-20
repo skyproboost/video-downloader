@@ -21,11 +21,15 @@ import { platforms } from '@/../config/platforms'
 
 const props = defineProps<{
     currentPlatform?: string
+    pageSlug?: string
 }>()
 
 const localePath = useLocalePath()
 
 const filteredPlatforms = computed(() => {
+    if (props.pageSlug && props.pageSlug !== props.currentPlatform) {
+        return platforms.filter(p => p.id !== 'other')
+    }
     return platforms.filter(p => p.id !== 'other' && p.id !== props.currentPlatform)
 })
 </script>

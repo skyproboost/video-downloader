@@ -17,11 +17,11 @@
             </div>
         </section>
 
-        <ToolPromoBanner link="https://www.youtube.com/premium" />
+        <ToolPromoBanner link="https://www.youtube.com/" />
 
         <section v-if="page.platform" class="platforms-section">
             <div class="container">
-                <LazyHomePlatformGrid :current-platform="page.platform" />
+                <LazyToolPlatformGrid :current-platform="page.platform" :page-slug="slug" />
             </div>
         </section>
 
