@@ -116,6 +116,7 @@ function escapeHtml(text: string): string {
 .how-to {
     padding: 0 0 var(--section-padding-lg) 0;
     background: var(--color-bg);
+    margin-top: var(--space-12);
 }
 
 .how-to__title {
@@ -124,7 +125,6 @@ function escapeHtml(text: string): string {
     font-weight: var(--font-bold);
     color: var(--color-text);
     margin-bottom: var(--space-4);
-    margin-top: var(--space-12);
 }
 
 .how-to__blocks {
