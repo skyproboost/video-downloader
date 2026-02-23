@@ -38,6 +38,7 @@ services:
     volumes:
       - ./logs:/app/logs
       - downloads:/tmp/downloads
+      - ./cookies:/app/cookies:ro
     healthcheck:
       test: curl localhost:${PORT:-8000}/api/health
       interval: 2s
@@ -53,8 +54,6 @@ services:
     restart: always
     environment:
       ALLOW_EMPTY_PASSWORD: "yes"
-    ports:
-      - 6379:6379
     healthcheck:
       test: redis-cli ping
       interval: 1s
@@ -78,6 +77,7 @@ services:
     volumes:
       - ./logs:/app/logs
       - downloads:/tmp/downloads
+      - ./cookies:/app/cookies:ro
   scheduler:
     container_name: downloader-scheduler
     build:
