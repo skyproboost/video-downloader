@@ -5,6 +5,7 @@
                 v-for="platform in filteredPlatforms"
                 :key="platform.id"
                 :to="localePath(`/${platform.id}`)"
+                :title="platform.id"
                 :prefetch="false"
                 :class="['platform-grid__card', `platform-grid__card--${platform.id}`]"
             >
@@ -20,11 +21,15 @@ import { platforms } from '@/../config/platforms'
 
 const props = defineProps<{
     currentPlatform?: string
+    pageSlug?: string
 }>()
 
 const localePath = useLocalePath()
 
 const filteredPlatforms = computed(() => {
+    if (props.pageSlug && props.pageSlug !== props.currentPlatform) {
+        return platforms.filter(p => p.id !== 'other')
+    }
     return platforms.filter(p => p.id !== 'other' && p.id !== props.currentPlatform)
 })
 </script>
@@ -32,7 +37,6 @@ const filteredPlatforms = computed(() => {
 <style scoped>
 .platform-grid-wrapper {
     text-align: center;
-    margin-bottom: var(--space-12);
 }
 
 .platform-grid {
@@ -40,8 +44,8 @@ const filteredPlatforms = computed(() => {
     flex-wrap: wrap;
     justify-content: center;
     gap: var(--space-3);
-    max-width: 36rem;
     margin: 0 auto;
+    max-width: 600px;
 }
 
 .platform-grid__card {

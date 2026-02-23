@@ -17,11 +17,11 @@
             </div>
         </section>
 
-        <ToolPromoBanner link="https://www.youtube.com/premium" />
+        <ToolPromoBanner link="https://www.youtube.com/" />
 
         <section v-if="page.platform" class="platforms-section">
             <div class="container">
-                <LazyHomePlatformGrid :current-platform="page.platform" />
+                <LazyToolPlatformGrid :current-platform="page.platform" :page-slug="slug" />
             </div>
         </section>
 
@@ -83,7 +83,7 @@ const config = useRuntimeConfig()
 
 const slug = route.params.slug as string
 const siteUrl = config.public.siteUrl as string || 'localhost:3000'
-const siteName = 'VideoDownloader'
+const siteName = 'aDownloader'
 
 // Игнорируем запросы к файлам
 if (/^(_|api)|\.(js|json|css|map|ico|png|jpg|svg|webp|txt|xml)$/i.test(slug)) {
@@ -230,6 +230,8 @@ useHead({
 
 .tool-main__title {
     font-size: var(--text-5xl);
+    line-height: 1;
+    margin-bottom: var(--space-4);
 }
 
 .tool-main__subtitle {
@@ -248,7 +250,7 @@ useHead({
 
 @media (max-width: 767px) {
     .tool-main__title {
-        font-size: var(--text-2xl);
+        font-size: var(--text-3xl);
     }
     .tool-main__subtitle {
         font-size: var(--text-base);

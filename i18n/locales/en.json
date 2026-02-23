@@ -7,7 +7,8 @@
     "subtitle": "Download videos from YouTube, Instagram, TikTok and more",
     "meta": {
       "title": "Free Video Downloader — YouTube, TikTok, Instagram | HD & 4K Quality",
-      "description": "Download videos from YouTube, TikTok, Instagram, Facebook, VK for free without registration. Shorts, Reels, Stories in HD and 4K quality. Fast, secure, no watermarks."
+      "description": "Download videos from YouTube, TikTok, Instagram, Facebook, VK for free without registration. Shorts, Reels, Stories in HD and 4K quality. Fast, secure, no watermarks.",
+      "keywords": "video downloader"
     },
     "about": {
       "title": "One Service — All Platforms",
@@ -46,7 +47,9 @@
     "placeholder": "Paste video URL here...",
     "download": "Download",
     "success": "Video ready for download!",
-    "supported": "Supported platforms: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "Supported platforms: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "Loading...",
+    "saveFile": "Save file"
   },
   "error": {
     "invalidUrl": "Invalid link. Please try again.",
@@ -61,8 +64,6 @@
     "title": "Frequently Asked Questions"
   },
   "errors": {
-    "backHome": "Back to Home",
-    "retry": "Try again",
     "404": {
       "title": "Page Not Found",
       "description": "The page you are looking for does not exist or has been moved."
@@ -70,7 +71,9 @@
     "500": {
       "title": "Server Error",
       "description": "Something went wrong. Please try again later."
-    }
+    },
+    "backHome": "Back to Home",
+    "retry": "Try again"
   },
   "footer": {
     "description": "Free online tool to download videos from popular platforms.",

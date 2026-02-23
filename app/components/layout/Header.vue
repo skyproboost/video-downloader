@@ -5,10 +5,10 @@
                 <NuxtPicture
                     src="/images/logo.png"
                     alt="Video Downloader"
-                    width="70"
-                    height="70"
-                    sizes="100vw sm:70px"
-                    quality="50"
+                    width="263"
+                    height="64"
+                    sizes="263px"
+                    quality="80"
                     loading="eager"
                     preload
                     :img-attrs="{
@@ -16,7 +16,6 @@
                         fetchpriority: 'high'
                     }"
                 />
-                <span class="header__logo-text">aDownloader</span>
             </NuxtLink>
 
             <div class="lang" ref="langRef">
@@ -91,6 +90,7 @@
                             :key="lang.code"
                             :to="switchLocalePath(lang.code)"
                             class="lang__option"
+                            :title="lang.name"
                             :class="{ 'lang__option--active': lang.code === currentLang?.code }"
                             @click.prevent="switchLang(lang.code)"
                         >
@@ -194,15 +194,9 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside))
 }
 
 .header__logo :deep(.header__logo-img) {
-    width: 70px;
-    height: 70px;
+    height: 64px;
+    width: auto;
     object-fit: contain;
-}
-
-.header__logo-text {
-    font-size: var(--text-xl);
-    font-weight: var(--font-bold);
-    color: var(--color-text);
 }
 
 /* ── Language Selector ── */
@@ -430,12 +424,12 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside))
 
 /* ── Responsive ── */
 @media (max-width: 640px) {
-    .header__logo-text {
-        font-size: var(--text-base);
-    }
-
     .lang__toggle {
         padding: 6px 10px;
+    }
+
+    .header__inner {
+        padding: var(--space-4) var(--container-padding);
     }
 
     .lang__grid--cols-3 {
@@ -444,8 +438,7 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside))
 }
 
 @media (max-width: 380px) {
-    .lang__grid--cols-3,
-    .lang__grid--cols-2 {
+    .lang__grid--cols-3, .lang__grid--cols-2 {
         grid-template-columns: 1fr;
     }
 }

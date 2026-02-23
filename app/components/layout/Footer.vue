@@ -12,6 +12,7 @@
                         <li v-for="link in group.links" :key="link.slug">
                             <NuxtLink
                                 :to="localePath(`/${link.slug}`)"
+                                :title="link.slug"
                                 class="footer__link"
                             >
                                 {{ link.text }}
@@ -24,7 +25,7 @@
             <div class="footer__bottom">
                 <p class="footer__description">{{ $t('footer.description') }}</p>
                 <p class="footer__copy">
-                    © {{ currentYear }} VideoDownloader. {{ $t('footer.rights') }}
+                    © {{ currentYear }} aDownloader. {{ $t('footer.rights') }}
                 </p>
             </div>
         </div>
@@ -45,16 +46,12 @@ interface GroupedLinks {
 
 const localePath = useLocalePath()
 const currentYear = new Date().getFullYear()
-const route = useRoute()
 
-const { data: groupedLinks, refresh } = await useFetch<GroupedLinks[]>('/api/footer-links', {
-    key: `footer-links-${route.path}`,
-    default: () => [],
-})
-
-if (import.meta.client) {
-    watch(() => route.fullPath, () => refresh())
-}
+const { data: groupedLinks } = await useAsyncData(
+    'footer-links',
+    () => $fetch<GroupedLinks[]>('/api/footer-links'),
+    { default: () => [] }
+)
 </script>
 
 <style scoped>

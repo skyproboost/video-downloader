@@ -7,7 +7,8 @@
     "subtitle": "Descarga vídeos de YouTube, Instagram, TikTok y otras plataformas",
     "meta": {
       "title": "Descargador de vídeos gratuito — YouTube, TikTok, Instagram | Calidad HD y 4K",
-      "description": "Descarga vídeos de YouTube, TikTok, Instagram, Facebook, VK gratis y sin registro. Shorts, Reels, Stories en calidad HD y 4K. Rápido, seguro y sin marcas de agua."
+      "description": "Descarga vídeos de YouTube, TikTok, Instagram, Facebook, VK gratis y sin registro. Shorts, Reels, Stories en calidad HD y 4K. Rápido, seguro y sin marcas de agua.",
+      "keywords": "descargador de vídeos"
     },
     "about": {
       "title": "Un servicio — todas las plataformas",
@@ -46,7 +47,9 @@
     "placeholder": "Pega el enlace del vídeo...",
     "download": "Descargar",
     "success": "¡El vídeo está listo para descargar!",
-    "supported": "Plataformas compatibles: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "Plataformas compatibles: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "Cargando...",
+    "saveFile": "Guardar archivo"
   },
   "error": {
     "invalidUrl": "El enlace no es válido. Inténtalo de nuevo.",
@@ -61,8 +64,6 @@
     "title": "Preguntas frecuentes"
   },
   "errors": {
-    "backHome": "Ir al inicio",
-    "retry": "Intentar de nuevo",
     "404": {
       "title": "Página no encontrada",
       "description": "La página que buscas no existe o ha sido trasladada."
@@ -70,7 +71,9 @@
     "500": {
       "title": "Error del servidor",
       "description": "Algo salió mal. Inténtalo más tarde."
-    }
+    },
+    "backHome": "Ir al inicio",
+    "retry": "Intentar de nuevo"
   },
   "footer": {
     "description": "Herramienta online gratuita para descargar vídeos de plataformas populares.",

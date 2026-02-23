@@ -7,7 +7,7 @@
             <p class="error-description">{{ errorDescription }}</p>
 
             <div class="error-actions">
-                <a href="/" class="error-link error-link--primary" @click.prevent="handleBack">
+                <a :href="homeUrl" class="error-link error-link--primary">
                     {{ backHomeText }}
                 </a>
                 <a
@@ -25,40 +25,50 @@
 
 <script setup lang="ts">
 import type { NuxtError } from '#app'
+import { defaultLanguage } from '@/../config/languages'
 
 const props = defineProps<{ error: NuxtError }>()
 
-// Fallback тексты если i18n не загрузился
-const fallbacks = {
-    backHome: 'Back to Home',
-    retry: 'Try again',
-    404: { title: 'Page Not Found', description: 'The page you are looking for does not exist.' },
-    500: { title: 'Server Error', description: 'Something went wrong. Please try again later.' }
-}
-
-// Безопасный доступ к i18n
 const i18n = tryUseI18n()
-const t = i18n?.t ?? (() => null)
+const t = i18n?.t ?? ((key: string) => key)
+const currentLocale = i18n?.locale?.value
 
 const code = computed(() => props.error?.statusCode || 500)
 const is404 = computed(() => code.value === 404)
 
-const errorTitle = computed(() => {
-    const key = is404.value ? 'errors.404.title' : 'errors.500.title'
-    return t(key) ?? (is404.value ? fallbacks[404].title : fallbacks[500].title)
+const errorTitle = computed(() =>
+    t(is404.value ? 'errors.404.title' : 'errors.500.title')
+)
+
+const errorDescription = computed(() =>
+    t(is404.value ? 'errors.404.description' : 'errors.500.description')
+)
+
+const backHomeText = computed(() => t('errors.backHome'))
+const retryText = computed(() => t('errors.retry'))
+
+// Определяем локаль из i18n или URL
+const homeUrl = computed(() => {
+    // Если i18n определил локаль
+    if (currentLocale && currentLocale !== defaultLanguage) {
+        return `/${currentLocale}`
+    }
+
+    // Fallback: берём из URL
+    let pathname = '/'
+    try {
+        pathname = import.meta.client ? window.location.pathname : useRequestURL().pathname
+    } catch {
+        return '/'
+    }
+    const firstSegment = pathname.split('/')[1] || ''
+    if (/^[a-z]{2,3}$/.test(firstSegment) && firstSegment !== defaultLanguage) {
+        return `/${firstSegment}`
+    }
+    return '/'
 })
 
-const errorDescription = computed(() => {
-    const key = is404.value ? 'errors.404.description' : 'errors.500.description'
-    return t(key) ?? (is404.value ? fallbacks[404].description : fallbacks[500].description)
-})
-
-const backHomeText = computed(() => t('errors.backHome') ?? fallbacks.backHome)
-const retryText = computed(() => t('errors.retry') ?? fallbacks.retry)
-
-const handleBack = () => clearError({ redirect: '/' })
 const handleRetry = () => {
-    clearError()
     window.location.reload()
 }
 

@@ -1,5 +1,7 @@
 import {languages, defaultLanguage} from './config/languages'
 import cssPurge from 'vite-plugin-purgecss'
+import { resolve } from 'node:path'
+import { cp } from 'node:fs/promises'
 
 const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 const isProduction = process.env.NODE_ENV === 'production'
@@ -68,6 +70,7 @@ export default defineNuxtConfig({
             charset: 'utf-8',
             viewport: 'width=device-width, initial-scale=1, viewport-fit=cover',
             meta: [
+                {name: 'google-site-verification', content: 'EmJ29sepAHXfk8hZ6S8WEuurNzop40zRBA223jOVTUw'},
                 {name: 'format-detection', content: 'telephone=no'},
                 {name: 'mobile-web-app-capable', content: 'yes'},
                 {name: 'apple-mobile-web-app-capable', content: 'yes'},
@@ -241,6 +244,31 @@ export default defineNuxtConfig({
         typedPages: true,
     },
 
+    hooks: {
+        async 'nitro:build:public-assets'() {
+            const src = resolve(__dirname, 'content/pages')
+            const dest = resolve(__dirname, '.output/content/pages')
+
+            try {
+                await cp(src, dest, { recursive: true })
+                console.log('✅ content/pages скопированы в .output')
+            } catch (e) {
+                console.error('❌ Ошибка копирования content/pages:', e)
+            }
+        }
+    },
+
+    routeRules: {
+        '/admin/**': {
+            security: { xssValidator: false, requestSizeLimiter: false, rateLimiter: false },
+        },
+
+        '/api/footer-links': {
+            security: { xssValidator: false },
+            isr: false,
+        },
+    },
+
     // ═══════════════════════════════════════════
     // NITRO — серверные настройки и кэширование
     // ═══════════════════════════════════════════
@@ -248,17 +276,25 @@ export default defineNuxtConfig({
     nitro: {
         compressPublicAssets: true,
         routeRules: {
-            // API — без ISR, скрыт от поисковиков
+            '/__sitemap__/**': { isr: false, headers: { 'Cache-Control': 'public, max-age=0, s-maxage=3600, stale-while-revalidate=600' } },
+
+            '/api/footer-links': {
+                isr: false,               // Никогда не кэшировать ISR'ом
+                swr: false,               // Никакого stale-while-revalidate на уровне Nitro
+                headers: {
+                    'Cache-Control': 'public, max-age=60, s-maxage=300, stale-while-revalidate=600',
+                    'X-Robots-Tag': 'noindex, nofollow',
+                },
+            },
+
             '/api/**': {
                 headers: {'X-Robots-Tag': 'noindex, nofollow'},
                 isr: false,
             },
 
-            // Статика — долгий кэш, БЕЗ ISR/SSR
             '/_ipx/**': {headers: staticCacheHeaders, isr: false},
             '/_nuxt/**': {headers: staticCacheHeaders, isr: false},
 
-            // Админка — без кэша, без индексации
             '/admin/**': {
                 prerender: false,
                 robots: false,
@@ -269,11 +305,8 @@ export default defineNuxtConfig({
                 }
             },
 
-            // Главная — пререндер при билде
             '/': {prerender: true},
-
-            // ВСЕ ОСТАЛЬНЫЕ СТРАНИЦЫ — ISR (кэш на 1 час)
-            '/**': {isr: 3600},
+            '/**': {isr: 600 },
         },
     },
 

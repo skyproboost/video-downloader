@@ -7,7 +7,8 @@
     "subtitle": "Videos von YouTube, Instagram, TikTok und mehr herunterladen",
     "meta": {
       "title": "Kostenloser Video-Downloader — YouTube, TikTok, Instagram | HD & 4K Qualität",
-      "description": "Laden Sie Videos von YouTube, TikTok, Instagram, Facebook, VK kostenlos und ohne Registrierung herunter. Shorts, Reels, Stories in HD und 4K Qualität. Schnell, sicher, ohne Wasserzeichen."
+      "description": "Laden Sie Videos von YouTube, TikTok, Instagram, Facebook, VK kostenlos und ohne Registrierung herunter. Shorts, Reels, Stories in HD und 4K Qualität. Schnell, sicher, ohne Wasserzeichen.",
+      "keywords": "Video-Downloader"
     },
     "about": {
       "title": "Ein Service — alle Plattformen",
@@ -46,7 +47,9 @@
     "placeholder": "Video-URL hier einfügen...",
     "download": "Herunterladen",
     "success": "Video zum Download bereit!",
-    "supported": "Unterstützte Plattformen: YouTube, TikTok, Instagram, Facebook, VK, Vimeo"
+    "supported": "Unterstützte Plattformen: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
+    "loading": "Laden...",
+    "saveFile": "Datei speichern"
   },
   "error": {
     "invalidUrl": "Ungültiger Link. Bitte versuchen Sie es erneut.",
@@ -61,8 +64,6 @@
     "title": "Häufig gestellte Fragen"
   },
   "errors": {
-    "backHome": "Zurück zur Startseite",
-    "retry": "Erneut versuchen",
     "404": {
       "title": "Seite nicht gefunden",
       "description": "Die gesuchte Seite existiert nicht oder wurde verschoben."
@@ -70,7 +71,9 @@
     "500": {
       "title": "Serverfehler",
       "description": "Etwas ist schief gelaufen. Bitte versuchen Sie es später erneut."
-    }
+    },
+    "backHome": "Zurück zur Startseite",
+    "retry": "Erneut versuchen"
   },
   "footer": {
     "description": "Kostenloses Online-Tool zum Herunterladen von Videos von beliebten Plattformen.",
