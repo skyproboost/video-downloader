@@ -5,8 +5,8 @@ from app.settings import settings
 
 
 async def notify_bot_upload(task_id: str, video_url: str) -> None:
-    """POST to the telegram bot /upload endpoint with the video URL."""
-    url = f"{settings.tg_bot_base_url}/upload"
+    """POST to the telegram bot /api/upload endpoint with the video URL."""
+    url = f"{settings.tg_bot_base_url}/api/upload"
     headers = {"X-API-Key": settings.download_api_key}
     payload = {"task_id": task_id, "url": video_url}
 

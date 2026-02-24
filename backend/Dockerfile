@@ -7,7 +7,12 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     UV_FROZEN=1 \
     UV_COMPILE_BYTECODE=1
 
-# Install ffmpeg for video/audio merging
+# Install ffmpeg and Deno (JS runtime required by yt-dlp for YouTube)
+#RUN apk update && apk add --no-cache ffmpeg curl unzip && \
+#    curl -fsSL https://github.com/denoland/deno/releases/latest/deno-x86_64-unknown-linux-musl.zip -o /tmp/deno.zip && \
+#    unzip /tmp/deno.zip -d /usr/local/bin && \
+#    rm /tmp/deno.zip && \
+#    chmod +x /usr/local/bin/deno
 RUN apk update && apk add --no-cache ffmpeg
 
 # Copying requirements of a project

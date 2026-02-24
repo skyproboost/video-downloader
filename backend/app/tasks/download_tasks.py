@@ -1,3 +1,4 @@
+import random
 from pathlib import Path
 from uuid import uuid4
 
@@ -13,7 +14,11 @@ settings.download_dir.mkdir(parents=True, exist_ok=True)
 
 
 @broker.task
-async def download_video(url: str, res: str, context: Context = TaskiqDepends()) -> str:
+async def download_video(
+    url: str,
+    res: str,
+    context: Context = TaskiqDepends(),
+) -> str:
     """Download video from URL via yt-dlp. Returns the filename (basename)."""
     try:
         filename: str = uuid4().hex
@@ -32,6 +37,20 @@ async def download_video(url: str, res: str, context: Context = TaskiqDepends())
                 },
             ],
         }
+
+        cookie_file = random.choice(list(settings.cookie_proxy_map.keys()))
+        logger.info(f"Using cookie file: {cookie_file}")
+        cookie_path = settings.cookies_dir / cookie_file
+        if cookie_path.exists():
+            ydl_opts["cookiefile"] = str(cookie_path)
+        else:
+            logger.warning(f"Cookie file not found: {cookie_path}")
+
+        proxy = settings.cookie_proxy_map.get(cookie_file)
+        if proxy:
+            ydl_opts["proxy"] = proxy
+            logger.info(f"Using proxy for {cookie_file}: {proxy}")
+
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=True)
             filepath = Path(info["requested_downloads"][-1]["filepath"])
