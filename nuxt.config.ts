@@ -148,7 +148,7 @@ export default defineNuxtConfig({
                 'style-src': ["'self'", "'nonce-{{nonce}}'"],
                 'img-src': ["'self'", 'data:', 'https:'],
                 'font-src': ["'self'"],
-                'connect-src': ["'self'", 'https://api.adownloader.org'],
+                'connect-src': ["'self'", 'https:'],
                 'object-src': ["'none'"],
                 'frame-src': ["'self'", 'https:'],
                 'worker-src': ["'self'"],
@@ -277,27 +277,6 @@ export default defineNuxtConfig({
                 },
             },
         },
-
-        '/api/download-check': {
-            security: {
-                xssValidator: false,
-                rateLimiter: {
-                    tokensPerInterval: 60,
-                    interval: 'minute',
-                },
-            },
-        },
-
-        '/api/download': {
-            security: {
-                xssValidator: false,
-                requestSizeLimiter: false,
-                rateLimiter: {
-                    tokensPerInterval: 30,
-                    interval: 'minute',
-                },
-            },
-        },
     },
 
     // ═══════════════════════════════════════════
@@ -324,24 +303,6 @@ export default defineNuxtConfig({
             },
 
             '/api/get-link': {
-                isr: false,
-                swr: false,
-                headers: {
-                    'Cache-Control': 'no-store',
-                    'X-Robots-Tag': 'noindex, nofollow',
-                },
-            },
-
-            '/api/download-check': {
-                isr: false,
-                swr: false,
-                headers: {
-                    'Cache-Control': 'no-store',
-                    'X-Robots-Tag': 'noindex, nofollow',
-                },
-            },
-
-            '/api/download': {
                 isr: false,
                 swr: false,
                 headers: {
