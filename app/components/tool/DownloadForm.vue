@@ -245,7 +245,7 @@ async function handleSave() {
 
     try {
         if (useProxy) {
-            // Прокси работает — скачиваем через скрытую ссылку
+            // Скачиваем через прокси — браузер стримит напрямую
             const a = document.createElement('a')
             a.href = downloadUrl.value
             a.download = ''
@@ -254,13 +254,18 @@ async function handleSave() {
             a.click()
             requestAnimationFrame(() => document.body.removeChild(a))
         } else {
-            // Фоллбэк — открываем прямую ссылку в новой вкладке
+            // Домен не в белом списке — открываем напрямую
             window.open(videoData.value.url, '_blank', 'noopener,noreferrer')
         }
     } catch {
-        saving.value = false
-        error.value = t('error.unknown')
-        return
+        // Сеть упала — фоллбэк на вкладку
+        if (videoData.value?.url) {
+            window.open(videoData.value.url, '_blank', 'noopener,noreferrer')
+        } else {
+            saving.value = false
+            error.value = t('error.unknown')
+            return
+        }
     }
 
     // Ждём чтобы браузер подхватил скачивание, сбрасываем к начальному
