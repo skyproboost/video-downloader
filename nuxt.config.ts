@@ -268,10 +268,9 @@ export default defineNuxtConfig({
             isr: false,
         },
 
-        '/api/download': {
+        '/api/get-link': {
             security: {
                 xssValidator: false,
-                requestSizeLimiter: false,
                 rateLimiter: {
                     tokensPerInterval: 30,
                     interval: 'minute',
@@ -284,6 +283,17 @@ export default defineNuxtConfig({
                 xssValidator: false,
                 rateLimiter: {
                     tokensPerInterval: 60,
+                    interval: 'minute',
+                },
+            },
+        },
+
+        '/api/download': {
+            security: {
+                xssValidator: false,
+                requestSizeLimiter: false,
+                rateLimiter: {
+                    tokensPerInterval: 30,
                     interval: 'minute',
                 },
             },
@@ -313,7 +323,7 @@ export default defineNuxtConfig({
                 },
             },
 
-            '/api/download': {
+            '/api/get-link': {
                 isr: false,
                 swr: false,
                 headers: {
@@ -323,6 +333,15 @@ export default defineNuxtConfig({
             },
 
             '/api/download-check': {
+                isr: false,
+                swr: false,
+                headers: {
+                    'Cache-Control': 'no-store',
+                    'X-Robots-Tag': 'noindex, nofollow',
+                },
+            },
+
+            '/api/download': {
                 isr: false,
                 swr: false,
                 headers: {
@@ -350,7 +369,7 @@ export default defineNuxtConfig({
             },
 
             '/': { prerender: true },
-            '/**': { isr: 600 }
+            '/**': { isr: 600 },
         }
     },
 

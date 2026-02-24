@@ -113,7 +113,6 @@ interface VideoResponse {
 }
 
 const { t } = useI18n()
-const config = useRuntimeConfig()
 
 const url = ref('')
 const isCooldown = ref(false)
@@ -156,13 +155,10 @@ async function releaseCooldown() {
     isCooldown.value = false
 }
 
-const apiBase = computed(() =>
-    (config.public.apiBaseUrl as string) || 'https://api.adownloader.org'
-)
-
 const isUrlValid = computed(() => validateUrl(url.value.trim()) === null)
 const isButtonDisabled = computed(() => !isUrlValid.value || isCooldown.value || loading.value)
 
+// Ссылка на серверный прокси-скачивание
 const downloadUrl = computed(() => {
     if (!videoData.value?.url) return ''
     const params = new URLSearchParams({
@@ -222,71 +218,45 @@ function resetToInitial() {
 }
 
 async function handleSave() {
-    if (saving.value || !videoData.value?.url) return
+    if (saving.value || !videoData.value?.url || !downloadUrl.value) return
 
     saving.value = true
     error.value = ''
 
-    // Проверяем через лёгкий эндпоинт — можно ли проксировать
-    let useProxy = false
-    let checkReason = ''
-
-    if (downloadUrl.value) {
-        try {
-            const check = await $fetch<{ proxy: boolean; reason?: string }>('/api/download-check', {
-                query: { url: videoData.value.url },
-            })
-            useProxy = check.proxy === true
-            if (!useProxy) checkReason = check.reason || ''
-        } catch {
-            useProxy = false
-        }
-    }
-
     try {
-        if (useProxy) {
-            // Пробуем через прокси — сначала проверяем что ответ валидный
-            const resp = await fetch(downloadUrl.value)
+        // Запрашиваем файл через прокси, проверяем Content-Type
+        const resp = await fetch(downloadUrl.value)
+        const ct = resp.headers.get('content-type') || ''
+        const isMedia = ct.startsWith('video/') || ct.startsWith('audio/') || ct === 'application/octet-stream'
 
-            const ct = resp.headers.get('content-type') || ''
-            const isMedia = ct.startsWith('video/') || ct.startsWith('audio/') || ct === 'application/octet-stream'
-
-            if (resp.ok && isMedia) {
-                // Прокси отдал медиафайл — скачиваем через blob
-                const blob = await resp.blob()
-                const blobUrl = URL.createObjectURL(blob)
-                const ext = ct.includes('audio') ? 'mp3' : 'mp4'
-                const name = videoData.value.title || 'video'
-                const a = document.createElement('a')
-                a.href = blobUrl
-                a.download = `${name}.${ext}`
-                a.style.display = 'none'
-                document.body.appendChild(a)
-                a.click()
-                requestAnimationFrame(() => {
-                    document.body.removeChild(a)
-                    URL.revokeObjectURL(blobUrl)
-                })
-            } else {
-                // Прокси вернул ошибку — фоллбэк на вкладку
-                window.open(videoData.value.url, '_blank', 'noopener,noreferrer')
-            }
+        if (resp.ok && isMedia) {
+            // Файл пришёл — скачиваем через blob
+            const blob = await resp.blob()
+            const blobUrl = URL.createObjectURL(blob)
+            const name = videoData.value.title || 'video'
+            const ext = videoData.value.ext || 'mp4'
+            const a = document.createElement('a')
+            a.href = blobUrl
+            a.download = `${name}.${ext}`
+            a.style.display = 'none'
+            document.body.appendChild(a)
+            a.click()
+            requestAnimationFrame(() => {
+                document.body.removeChild(a)
+                URL.revokeObjectURL(blobUrl)
+            })
         } else {
-            // Домен не в белом списке — открываем напрямую
-            window.open(videoData.value.url, '_blank', 'noopener,noreferrer')
-        }
-    } catch {
-        // Сеть упала — фоллбэк на вкладку
-        if (videoData.value?.url) {
-            window.open(videoData.value.url, '_blank', 'noopener,noreferrer')
-        } else {
+            // Прокси не отдал медиа — показываем ошибку
             saving.value = false
             error.value = t('error.unknown')
             return
         }
+    } catch {
+        saving.value = false
+        error.value = t('error.network')
+        return
     }
 
-    // Ждём чтобы браузер подхватил скачивание, сбрасываем к начальному
     await new Promise(r => setTimeout(r, SAVE_RESET_DELAY))
     resetToInitial()
 }
@@ -326,7 +296,10 @@ const handleDownload = async () => {
     const startTime = Date.now()
 
     try {
-        const data = await $fetch<VideoResponse>(`${apiBase.value}/api/get_download_link`, {
+        // Вызываем СВОЙ серверный эндпоинт, не внешний API напрямую.
+        // Сервер получает ссылку от api.adownloader.org — URL будет
+        // привязан к IP сервера, и download.get.ts сможет его скачать.
+        const data = await $fetch<VideoResponse>('/api/get-link', {
             method: 'GET',
             query: { url: trimmed },
         })
@@ -470,7 +443,6 @@ const handleDownload = async () => {
     text-align: center;
 }
 
-/* Карточка результата */
 .result-card {
     margin-top: var(--space-6);
     background: rgba(255, 255, 255, 0.05);
@@ -480,7 +452,6 @@ const handleDownload = async () => {
     position: relative;
 }
 
-/* Оверлей при сохранении */
 .saving-overlay {
     position: absolute;
     inset: 0;
@@ -591,54 +562,30 @@ const handleDownload = async () => {
     cursor: not-allowed;
 }
 
-/* Shimmer loader */
 .shimmer-block {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-        110deg,
-        rgba(255, 255, 255, 0.04) 30%,
-        rgba(255, 255, 255, 0.1) 50%,
-        rgba(255, 255, 255, 0.04) 70%
-    );
+    background: linear-gradient(110deg, rgba(255,255,255,0.04) 30%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.04) 70%);
     background-size: 200% 100%;
     animation: shimmer 1.5s ease-in-out infinite;
 }
 
 .shimmer-line {
     border-radius: 7px;
-    background: linear-gradient(
-        110deg,
-        rgba(255, 255, 255, 0.06) 30%,
-        rgba(255, 255, 255, 0.12) 50%,
-        rgba(255, 255, 255, 0.06) 70%
-    );
+    background: linear-gradient(110deg, rgba(255,255,255,0.06) 30%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.06) 70%);
     background-size: 200% 100%;
     animation: shimmer 1.5s ease-in-out infinite;
 }
 
-.shimmer-line.wide {
-    width: 80%;
-    height: 17px;
-    margin-bottom: var(--space-3);
-}
-.shimmer-line.narrow {
-    width: 40%;
-    height: 22px;
-    margin-bottom: var(--space-4);
-}
+.shimmer-line.wide { width: 80%; height: 17px; margin-bottom: var(--space-3); }
+.shimmer-line.narrow { width: 40%; height: 22px; margin-bottom: var(--space-4); }
 
 .shimmer-btn {
     height: 44px;
     border-radius: var(--radius-md);
-    background: linear-gradient(
-        110deg,
-        rgba(43, 165, 70, 0.2) 30%,
-        rgba(43, 165, 70, 0.35) 50%,
-        rgba(43, 165, 70, 0.2) 70%
-    );
+    background: linear-gradient(110deg, rgba(43,165,70,0.2) 30%, rgba(43,165,70,0.35) 50%, rgba(43,165,70,0.2) 70%);
     background-size: 200% 100%;
     animation: shimmer 1.5s ease-in-out infinite;
 }
@@ -648,38 +595,13 @@ const handleDownload = async () => {
     100% { background-position: -200% 0; }
 }
 
-/* Fade transition */
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity 0.3s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-    opacity: 0;
-}
+.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 
 @media (max-width: 540px) {
-    .input-wrapper {
-        flex-direction: column;
-        border-radius: var(--radius-md);
-    }
-
-    .input-icon {
-        display: none;
-    }
-
-    .url-input {
-        width: 100%;
-        padding: var(--space-4);
-        text-align: center;
-        font-size: 16px;
-        border-bottom: 1px solid var(--color-border);
-    }
-
-    .download-btn {
-        width: 100%;
-        padding: var(--space-2);
-        border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-    }
+    .input-wrapper { flex-direction: column; border-radius: var(--radius-md); }
+    .input-icon { display: none; }
+    .url-input { width: 100%; padding: var(--space-4); text-align: center; font-size: 16px; border-bottom: 1px solid var(--color-border); }
+    .download-btn { width: 100%; padding: var(--space-2); border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
 }
 </style>
