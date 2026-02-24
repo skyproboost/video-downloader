@@ -484,6 +484,7 @@ const handleDownload = async () => {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    text-align: left;
 }
 
 .result-meta {
@@ -527,6 +528,7 @@ const handleDownload = async () => {
     color: #f5c542;
     line-height: 1.4;
     margin-bottom: var(--space-3);
+    text-align: left;
 }
 
 .save-btn:hover:not(:disabled) {
