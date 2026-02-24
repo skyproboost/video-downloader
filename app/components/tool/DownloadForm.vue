@@ -499,7 +499,7 @@ const handleDownload = async () => {
     align-items: center;
     padding: 2px 10px;
     background: rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
+    border-radius: var(--radius-lg);;
     font-size: 12px;
     color: var(--color-text-inverse-muted);
     font-weight: 500;
