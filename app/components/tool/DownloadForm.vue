@@ -77,7 +77,7 @@
                                 {{ videoData.ext.toUpperCase() }}
                             </span>
                             <span v-if="videoData.main_resolution" class="meta-tag">
-                                {{ String(videoData.main_resolution).toUpperCase() + 'p' }}
+                                {{ formatResolution(videoData.main_resolution) }}
                             </span>
                         </div>
                         <button
@@ -183,9 +183,19 @@ function checkRateLimit(): string | null {
 }
 
 function formatDuration(sec: number): string {
-    const m = Math.floor(sec / 60)
-    const s = sec % 60
-    return `${m}:${s.toString().padStart(2, '0')}`
+    const total = Math.round(Math.abs(sec))
+    const h = Math.floor(total / 3600)
+    const m = Math.floor((total % 3600) / 60)
+    const s = total % 60
+    if (h > 0) {
+        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
+    }
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
+}
+
+function formatResolution(val: string | number): string {
+    const str = String(val).trim().toLowerCase().replace(/p$/, '')
+    return `${str}p`
 }
 
 function clearError() {
