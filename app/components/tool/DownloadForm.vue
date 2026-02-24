@@ -89,15 +89,18 @@
                             :disabled="saving"
                             @click="handleSave"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                 stroke-linejoin="round">
+                            <svg v-if="!saving" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                 stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                 <polyline points="7 10 12 15 17 10"/>
                                 <line x1="12" y1="15" x2="12" y2="3"/>
                             </svg>
+                            <span v-if="saving" class="spinner" />
                             {{ $t('form.saveFile') }}
                         </button>
+
+
                     </template>
                 </div>
             </div>
@@ -123,6 +126,7 @@ const isCooldown = ref(false)
 const loading = ref(false)
 const saving = ref(false)
 const showSkeleton = ref(false)
+
 const error = ref('')
 const videoData = ref<VideoResponse | null>(null)
 
@@ -212,12 +216,14 @@ function cancelSkeletonTimer() {
     }
 }
 
-function resetToInitial() {
-    videoData.value = null
-    url.value = ''
-    error.value = ''
-    saving.value = false
-    showSkeleton.value = false
+function makeSafeFilename(title: string | undefined, ext: string): string {
+    if (!title) return `video.${ext}`
+    const clean = title
+        .replace(/[<>:"/\\|?*\x00-\x1f]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 120)
+    return clean ? `${clean}.${ext}` : `video.${ext}`
 }
 
 async function handleSave() {
@@ -226,7 +232,21 @@ async function handleSave() {
     saving.value = true
     error.value = ''
 
-    window.open(videoData.value.url, '_blank', 'noopener,noreferrer')
+    const v = videoData.value
+    const ext = v.ext || 'mp4'
+    const fname = makeSafeFilename(v.title, ext)
+
+    // Пробуем <a download> — если cross-origin, браузер
+    // проигнорирует download и просто откроет ссылку (= новая вкладка)
+    const a = document.createElement('a')
+    a.href = v.url
+    a.download = fname
+    a.target = '_blank'
+    a.rel = 'noopener noreferrer'
+    a.style.display = 'none'
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
 
     await new Promise(r => setTimeout(r, 1000))
     saving.value = false
@@ -267,7 +287,6 @@ const handleDownload = async () => {
     const startTime = Date.now()
 
     try {
-        // Получаем ссылку через серверный прокси (скрывает API от клиента)
         const data = await $fetch<VideoResponse>('/api/get-link', {
             method: 'GET',
             query: { url: trimmed },
@@ -499,7 +518,7 @@ const handleDownload = async () => {
     align-items: center;
     padding: 2px 10px;
     background: rgba(255, 255, 255, 0.08);
-    border-radius: var(--radius-lg);;
+    border-radius: var(--radius-lg);
     font-size: 12px;
     color: var(--color-text-inverse-muted);
     font-weight: 500;
