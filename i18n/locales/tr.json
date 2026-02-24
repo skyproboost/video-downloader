@@ -49,7 +49,8 @@
     "success": "Video indirilmeye hazır!",
     "supported": "Desteklenen platformlar: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
     "loading": "Yükleniyor...",
-    "saveFile": "Dosyayı kaydet"
+    "saveFile": "Dosyayı kaydet",
+    "vpnHint": "Bağlantı açılmadıysa veya video oynatılmıyorsa — VPN'yi kapatıp tekrar \"Dosyayı kaydet\"e tıklayın"
   },
   "error": {
     "invalidUrl": "Geçersiz bağlantı. Lütfen tekrar deneyin.",

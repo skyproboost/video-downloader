@@ -65,6 +65,7 @@
                     <template v-if="showSkeleton">
                         <div class="shimmer-line wide" />
                         <div class="shimmer-line narrow" />
+                        <div class="shimmer-line hint" />
                         <div class="shimmer-btn" />
                     </template>
                     <template v-else-if="videoData">
@@ -80,6 +81,9 @@
                                 {{ formatResolution(videoData.main_resolution) }}
                             </span>
                         </div>
+                        <p class="vpn-hint">
+                            {{ $t('form.vpnHint') }}
+                        </p>
                         <button
                             class="save-btn"
                             :disabled="saving"
@@ -129,7 +133,6 @@ const MAX_SUBMITS = 5
 const SUBMIT_WINDOW = 60_000
 const SKELETON_DELAY = 400
 const MIN_BTN_DISABLED = 1000
-const SAVE_RESET_DELAY = 1500
 
 const URL_REGEX = /^https?:\/\/[a-zA-Z0-9]([a-zA-Z0-9\-]*[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+([\/\w\-._~:?#\[\]@!$&'()*+,;=%]*)?$/
 const BLOCKED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '[::1]']
@@ -223,13 +226,10 @@ async function handleSave() {
     saving.value = true
     error.value = ''
 
-    // Открываем прямую ссылку на видео в новой вкладке.
-    // CDN (googlevideo и др.) не поддерживают CORS —
-    // fetch из браузера невозможен, только прямой переход.
     window.open(videoData.value.url, '_blank', 'noopener,noreferrer')
 
-    await new Promise(r => setTimeout(r, SAVE_RESET_DELAY))
-    resetToInitial()
+    await new Promise(r => setTimeout(r, 1000))
+    saving.value = false
 }
 
 const handleDownload = async () => {
@@ -522,6 +522,13 @@ const handleDownload = async () => {
     text-decoration: none;
 }
 
+.vpn-hint {
+    font-size: 12px;
+    color: #f5c542;
+    line-height: 1.4;
+    margin-bottom: var(--space-3);
+}
+
 .save-btn:hover:not(:disabled) {
     background: #16ad37;
 }
@@ -550,6 +557,7 @@ const handleDownload = async () => {
 
 .shimmer-line.wide { width: 80%; height: 17px; margin-bottom: var(--space-3); }
 .shimmer-line.narrow { width: 40%; height: 22px; margin-bottom: var(--space-4); }
+.shimmer-line.hint { width: 70%; height: 17px; margin-bottom: var(--space-3); }
 
 .shimmer-btn {
     height: 44px;

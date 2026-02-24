@@ -49,7 +49,8 @@
     "success": "Ividiyo isilungele ukulanda!",
     "supported": "Amapulatifomu asekelwayo: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
     "loading": "Iyalayisha...",
-    "saveFile": "Londoloza ifayela"
+    "saveFile": "Londoloza ifayela",
+    "vpnHint": "Uma isixhumanisi singavulekanga noma ividiyo ingadlali — zama ukucisha i-VPN bese uchofoza \"Londoloza ifayela\" futhi"
   },
   "error": {
     "invalidUrl": "Isixhumanisi esingalungile. Sicela uzame futhi.",

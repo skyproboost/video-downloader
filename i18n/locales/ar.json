@@ -49,7 +49,8 @@
     "success": "فيديو جاهز للتحميل!",
     "supported": "المنصات المدعومة: YouTube وTikTok وTikTok وInstagram وFacebook وVK وVimeo",
     "loading": "جارٍ التحميل...",
-    "saveFile": "حفظ الملف"
+    "saveFile": "حفظ الملف",
+    "vpnHint": "إذا لم يفتح الرابط أو لم يعمل الفيديو — جرّب تعطيل VPN واضغط \"حفظ الملف\" مرة أخرى"
   },
   "error": {
     "invalidUrl": "الرابط غير صالح. يرجى المحاولة مرة أخرى.",

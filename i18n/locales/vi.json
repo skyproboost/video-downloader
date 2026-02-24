@@ -49,7 +49,8 @@
     "success": "Video đã sẵn sàng để tải xuống!",
     "supported": "Các nền tảng được hỗ trợ: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
     "loading": "Đang tải...",
-    "saveFile": "Lưu tệp"
+    "saveFile": "Lưu tệp",
+    "vpnHint": "Nếu liên kết không mở hoặc video không phát — hãy tắt VPN và nhấp lại \"Lưu tệp\""
   },
   "error": {
     "invalidUrl": "Liên kết không hợp lệ. Vui lòng thử lại.",

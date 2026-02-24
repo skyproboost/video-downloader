@@ -49,7 +49,8 @@
     "success": "Bidiyo ya shirya don sauke!",
     "supported": "Dandamali da ake tallafawa: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
     "loading": "Ana lodawa...",
-    "saveFile": "Ajiye fayil"
+    "saveFile": "Ajiye fayil",
+    "vpnHint": "Idan hanyar haɗin ba ta buɗe ba ko bidiyon bai yi aiki ba — gwada kashe VPN sannan ka danna \"Ajiye fayil\" sake"
   },
   "error": {
     "invalidUrl": "Haɗin ba daidai ba. Don Allah ku sake gwadawa.",

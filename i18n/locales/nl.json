@@ -49,7 +49,8 @@
     "success": "Video klaar om te downloaden!",
     "supported": "Ondersteunde platforms: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
     "loading": "Laden...",
-    "saveFile": "Bestand opslaan"
+    "saveFile": "Bestand opslaan",
+    "vpnHint": "Als de link niet opende of de video niet afspeelt — probeer je VPN uit te schakelen en klik opnieuw op \"Bestand opslaan\""
   },
   "error": {
     "invalidUrl": "Ongeldige link. Probeer het opnieuw.",

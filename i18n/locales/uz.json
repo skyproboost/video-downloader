@@ -49,7 +49,8 @@
     "success": "Video yuklab olishga tayyor!",
     "supported": "Qo'llab-quvvatlanadigan platformalar: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
     "loading": "Yuklanmoqda...",
-    "saveFile": "Faylni saqlash"
+    "saveFile": "Faylni saqlash",
+    "vpnHint": "Havola ochilmasa yoki video ishlamasa — VPN-ni o'chirib, \"Faylni saqlash\" tugmasini qayta bosing"
   },
   "error": {
     "invalidUrl": "Noto'g'ri havola. Iltimos, yana urinib ko'ring.",

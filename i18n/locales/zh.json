@@ -49,7 +49,8 @@
     "success": "视频可供下载！",
     "supported": "支持的平台：YouTube、TikTok、Instagram、Facebook、VK、Vimeo",
     "loading": "加载中...",
-    "saveFile": "保存文件"
+    "saveFile": "保存文件",
+    "vpnHint": "如果链接未打开或视频无法播放——请尝试关闭VPN后再次点击\"保存文件\""
   },
   "error": {
     "invalidUrl": "链接无效。请重试。",
