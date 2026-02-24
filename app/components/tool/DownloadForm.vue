@@ -36,9 +36,15 @@
             <p v-if="error" class="error-message">{{ error }}</p>
         </Transition>
 
-        <!-- Карточка: показываем только если запрос висит долго ИЛИ уже есть результат -->
         <Transition name="fade">
             <div v-if="showSkeleton || videoData" class="result-card">
+
+                <Transition name="fade">
+                    <div v-if="saving" class="saving-overlay">
+                        <div class="saving-spinner" />
+                    </div>
+                </Transition>
+
                 <div class="result-preview">
                     <div v-if="showSkeleton" class="shimmer-block" />
                     <img
@@ -71,14 +77,13 @@
                                 {{ videoData.ext.toUpperCase() }}
                             </span>
                             <span v-if="videoData.main_resolution" class="meta-tag">
-                                {{ videoData.main_resolution.toUpperCase() }}
+                                {{ String(videoData.main_resolution).toUpperCase() + 'p' }}
                             </span>
                         </div>
-                        <a
-                            :href="videoData.url"
-                            target="_blank"
-                            rel="noopener noreferrer"
+                        <button
                             class="save-btn"
+                            :disabled="saving"
+                            @click="handleSave"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -88,7 +93,7 @@
                                 <line x1="12" y1="15" x2="12" y2="3"/>
                             </svg>
                             {{ $t('form.saveFile') }}
-                        </a>
+                        </button>
                     </template>
                 </div>
             </div>
@@ -103,6 +108,7 @@ interface VideoResponse {
     duration?: number
     thumbnail?: string
     ext?: string
+    main_resolution?: string | number
     http_headers?: Record<string, string>
 }
 
@@ -112,6 +118,7 @@ const config = useRuntimeConfig()
 const url = ref('')
 const isCooldown = ref(false)
 const loading = ref(false)
+const saving = ref(false)
 const showSkeleton = ref(false)
 const error = ref('')
 const videoData = ref<VideoResponse | null>(null)
@@ -121,8 +128,9 @@ const URL_MAX_LENGTH = 2048
 const MIN_COOLDOWN = 2000
 const MAX_SUBMITS = 5
 const SUBMIT_WINDOW = 60_000
-const SKELETON_DELAY = 400 // показываем скелетон только если запрос висит дольше 400мс
-const MIN_BTN_DISABLED = 1000 // кнопка остаётся disabled минимум 1с
+const SKELETON_DELAY = 400
+const MIN_BTN_DISABLED = 1000
+const SAVE_RESET_DELAY = 2500
 
 const URL_REGEX = /^https?:\/\/[a-zA-Z0-9]([a-zA-Z0-9\-]*[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+([\/\w\-._~:?#\[\]@!$&'()*+,;=%]*)?$/
 const BLOCKED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '[::1]']
@@ -154,6 +162,15 @@ const apiBase = computed(() =>
 
 const isUrlValid = computed(() => validateUrl(url.value.trim()) === null)
 const isButtonDisabled = computed(() => !isUrlValid.value || isCooldown.value || loading.value)
+
+const downloadUrl = computed(() => {
+    if (!videoData.value?.url) return ''
+    const params = new URLSearchParams({
+        url: videoData.value.url,
+        filename: videoData.value.title || 'video',
+    })
+    return `/api/download?${params}`
+})
 
 function validateUrl(raw: string): string | null {
     const trimmed = raw.trim()
@@ -196,6 +213,61 @@ function cancelSkeletonTimer() {
     }
 }
 
+function resetToInitial() {
+    videoData.value = null
+    url.value = ''
+    error.value = ''
+    saving.value = false
+    showSkeleton.value = false
+}
+
+async function handleSave() {
+    if (saving.value || !videoData.value?.url) return
+
+    saving.value = true
+    error.value = ''
+
+    // Проверяем через лёгкий эндпоинт — можно ли проксировать
+    let useProxy = false
+    let checkReason = ''
+
+    if (downloadUrl.value) {
+        try {
+            const check = await $fetch<{ proxy: boolean; reason?: string }>('/api/download-check', {
+                query: { url: videoData.value.url },
+            })
+            useProxy = check.proxy === true
+            if (!useProxy) checkReason = check.reason || ''
+        } catch {
+            useProxy = false
+        }
+    }
+
+    try {
+        if (useProxy) {
+            // Прокси работает — скачиваем через скрытую ссылку
+            const a = document.createElement('a')
+            a.href = downloadUrl.value
+            a.download = ''
+            a.style.display = 'none'
+            document.body.appendChild(a)
+            a.click()
+            requestAnimationFrame(() => document.body.removeChild(a))
+        } else {
+            // Фоллбэк — открываем прямую ссылку в новой вкладке
+            window.open(videoData.value.url, '_blank', 'noopener,noreferrer')
+        }
+    } catch {
+        saving.value = false
+        error.value = t('error.unknown')
+        return
+    }
+
+    // Ждём чтобы браузер подхватил скачивание, сбрасываем к начальному
+    await new Promise(r => setTimeout(r, SAVE_RESET_DELAY))
+    resetToInitial()
+}
+
 const handleDownload = async () => {
     if (isCooldown.value || !isUrlValid.value || loading.value) return
 
@@ -219,11 +291,8 @@ const handleDownload = async () => {
     }
     await new Promise(r => setTimeout(r, 100))
 
-    // Кнопка сразу показывает спиннер
     loading.value = true
 
-    // Скелетон-карточку показываем с задержкой —
-    // если запрос отобьётся быстро (ошибка или успех), карточка не мелькнёт
     cancelSkeletonTimer()
     skeletonTimer = setTimeout(() => {
         if (loading.value) {
@@ -270,7 +339,6 @@ const handleDownload = async () => {
         return
     }
 
-    // Если скелетон успел показаться — держим минимальное время, чтобы не мелькал
     const elapsed = Date.now() - startTime
     if (showSkeleton.value) {
         const minShow = Math.max(MIN_COOLDOWN, 500)
@@ -386,6 +454,31 @@ const handleDownload = async () => {
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--radius-lg);
     overflow: hidden;
+    position: relative;
+}
+
+/* Оверлей при сохранении */
+.saving-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    border-radius: var(--radius-lg);
+}
+
+.saving-spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid rgba(255, 255, 255, 0.15);
+    border-top-color: #2ba546;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
 }
 
 .result-preview {
@@ -466,8 +559,13 @@ const handleDownload = async () => {
     text-decoration: none;
 }
 
-.save-btn:hover {
+.save-btn:hover:not(:disabled) {
     background: #16ad37;
+}
+
+.save-btn:disabled {
+    background: #4c716c;
+    cursor: not-allowed;
 }
 
 /* Shimmer loader */

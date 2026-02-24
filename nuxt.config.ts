@@ -148,7 +148,7 @@ export default defineNuxtConfig({
                 'style-src': ["'self'", "'nonce-{{nonce}}'"],
                 'img-src': ["'self'", 'data:', 'https:'],
                 'font-src': ["'self'"],
-                'connect-src': ["'self'"],
+                'connect-src': ["'self'", 'https://api.adownloader.org'],
                 'object-src': ["'none'"],
                 'frame-src': ["'self'", 'https:'],
                 'worker-src': ["'self'"],
@@ -267,6 +267,27 @@ export default defineNuxtConfig({
             security: { xssValidator: false },
             isr: false,
         },
+
+        '/api/download': {
+            security: {
+                xssValidator: false,
+                requestSizeLimiter: false,
+                rateLimiter: {
+                    tokensPerInterval: 30,
+                    interval: 'minute',
+                },
+            },
+        },
+
+        '/api/download-check': {
+            security: {
+                xssValidator: false,
+                rateLimiter: {
+                    tokensPerInterval: 60,
+                    interval: 'minute',
+                },
+            },
+        },
     },
 
     // ═══════════════════════════════════════════
@@ -276,24 +297,47 @@ export default defineNuxtConfig({
     nitro: {
         compressPublicAssets: true,
         routeRules: {
-            '/__sitemap__/**': { isr: false, headers: { 'Cache-Control': 'public, max-age=0, s-maxage=3600, stale-while-revalidate=600' } },
+            '/__sitemap__/**': {
+                isr: false,
+                headers: {
+                    'Cache-Control': 'public, max-age=0, s-maxage=3600, stale-while-revalidate=600',
+                },
+            },
 
             '/api/footer-links': {
-                isr: false,               // Никогда не кэшировать ISR'ом
-                swr: false,               // Никакого stale-while-revalidate на уровне Nitro
+                isr: false,
+                swr: false,
                 headers: {
                     'Cache-Control': 'public, max-age=60, s-maxage=300, stale-while-revalidate=600',
                     'X-Robots-Tag': 'noindex, nofollow',
                 },
             },
 
+            '/api/download': {
+                isr: false,
+                swr: false,
+                headers: {
+                    'Cache-Control': 'no-store',
+                    'X-Robots-Tag': 'noindex, nofollow',
+                },
+            },
+
+            '/api/download-check': {
+                isr: false,
+                swr: false,
+                headers: {
+                    'Cache-Control': 'no-store',
+                    'X-Robots-Tag': 'noindex, nofollow',
+                },
+            },
+
             '/api/**': {
-                headers: {'X-Robots-Tag': 'noindex, nofollow'},
+                headers: { 'X-Robots-Tag': 'noindex, nofollow' },
                 isr: false,
             },
 
-            '/_ipx/**': {headers: staticCacheHeaders, isr: false},
-            '/_nuxt/**': {headers: staticCacheHeaders, isr: false},
+            '/_ipx/**': { headers: staticCacheHeaders, isr: false },
+            '/_nuxt/**': { headers: staticCacheHeaders, isr: false },
 
             '/admin/**': {
                 prerender: false,
@@ -301,13 +345,13 @@ export default defineNuxtConfig({
                 isr: false,
                 headers: {
                     'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    'Pragma': 'no-cache'
-                }
+                    'Pragma': 'no-cache',
+                },
             },
 
-            '/': {prerender: true},
-            '/**': {isr: 600 },
-        },
+            '/': { prerender: true },
+            '/**': { isr: 600 }
+        }
     },
 
     // ═══════════════════════════════════════════
