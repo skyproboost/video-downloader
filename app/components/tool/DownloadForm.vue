@@ -490,7 +490,7 @@ const handleDownload = async () => {
 .result-meta {
     display: flex;
     gap: var(--space-2);
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-3);
     flex-wrap: wrap;
 }
 
