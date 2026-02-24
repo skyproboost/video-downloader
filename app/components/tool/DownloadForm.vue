@@ -129,7 +129,7 @@ const MAX_SUBMITS = 5
 const SUBMIT_WINDOW = 60_000
 const SKELETON_DELAY = 400
 const MIN_BTN_DISABLED = 1000
-const SAVE_RESET_DELAY = 2500
+const SAVE_RESET_DELAY = 1500
 
 const URL_REGEX = /^https?:\/\/[a-zA-Z0-9]([a-zA-Z0-9\-]*[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+([\/\w\-._~:?#\[\]@!$&'()*+,;=%]*)?$/
 const BLOCKED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '[::1]']
@@ -157,16 +157,6 @@ async function releaseCooldown() {
 
 const isUrlValid = computed(() => validateUrl(url.value.trim()) === null)
 const isButtonDisabled = computed(() => !isUrlValid.value || isCooldown.value || loading.value)
-
-// Ссылка на серверный прокси-скачивание
-const downloadUrl = computed(() => {
-    if (!videoData.value?.url) return ''
-    const params = new URLSearchParams({
-        url: videoData.value.url,
-        filename: videoData.value.title || 'video',
-    })
-    return `/api/download?${params}`
-})
 
 function validateUrl(raw: string): string | null {
     const trimmed = raw.trim()
@@ -218,44 +208,15 @@ function resetToInitial() {
 }
 
 async function handleSave() {
-    if (saving.value || !videoData.value?.url || !downloadUrl.value) return
+    if (saving.value || !videoData.value?.url) return
 
     saving.value = true
     error.value = ''
 
-    try {
-        // Запрашиваем файл через прокси, проверяем Content-Type
-        const resp = await fetch(downloadUrl.value)
-        const ct = resp.headers.get('content-type') || ''
-        const isMedia = ct.startsWith('video/') || ct.startsWith('audio/') || ct === 'application/octet-stream'
-
-        if (resp.ok && isMedia) {
-            // Файл пришёл — скачиваем через blob
-            const blob = await resp.blob()
-            const blobUrl = URL.createObjectURL(blob)
-            const name = videoData.value.title || 'video'
-            const ext = videoData.value.ext || 'mp4'
-            const a = document.createElement('a')
-            a.href = blobUrl
-            a.download = `${name}.${ext}`
-            a.style.display = 'none'
-            document.body.appendChild(a)
-            a.click()
-            requestAnimationFrame(() => {
-                document.body.removeChild(a)
-                URL.revokeObjectURL(blobUrl)
-            })
-        } else {
-            // Прокси не отдал медиа — показываем ошибку
-            saving.value = false
-            error.value = t('error.unknown')
-            return
-        }
-    } catch {
-        saving.value = false
-        error.value = t('error.network')
-        return
-    }
+    // Открываем прямую ссылку на видео в новой вкладке.
+    // CDN (googlevideo и др.) не поддерживают CORS —
+    // fetch из браузера невозможен, только прямой переход.
+    window.open(videoData.value.url, '_blank', 'noopener,noreferrer')
 
     await new Promise(r => setTimeout(r, SAVE_RESET_DELAY))
     resetToInitial()
@@ -296,9 +257,7 @@ const handleDownload = async () => {
     const startTime = Date.now()
 
     try {
-        // Вызываем СВОЙ серверный эндпоинт, не внешний API напрямую.
-        // Сервер получает ссылку от api.adownloader.org — URL будет
-        // привязан к IP сервера, и download.get.ts сможет его скачать.
+        // Получаем ссылку через серверный прокси (скрывает API от клиента)
         const data = await $fetch<VideoResponse>('/api/get-link', {
             method: 'GET',
             query: { url: trimmed },
