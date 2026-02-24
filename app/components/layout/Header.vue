@@ -256,7 +256,7 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside))
     top: calc(100% + 8px);
     right: 0;
     min-width: 220px;
-    background: var(--color-bg-dark, #1e1e2e);
+    background: #00231d;
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 14px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);

@@ -70,6 +70,9 @@
                             <span v-if="videoData.ext" class="meta-tag">
                                 {{ videoData.ext.toUpperCase() }}
                             </span>
+                            <span v-if="videoData.main_resolution" class="meta-tag">
+                                {{ videoData.main_resolution.toUpperCase() }}
+                            </span>
                         </div>
                         <a
                             :href="videoData.url"
