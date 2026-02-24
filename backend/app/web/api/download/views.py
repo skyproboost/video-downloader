@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends
 from app.utils.common import verify_api_key
 from app.services.redis.rate_limit import rate_limit_download
 from app.tasks.download_tasks import download_video as download_video_task
+from app.web.api.download.schema import DownloadRequest
 from app.settings import settings
 import yt_dlp
 from loguru import logger
@@ -94,9 +95,9 @@ async def download_video_link(url: str) -> dict:
 
 
 @router.post("/download", dependencies=[Depends(verify_api_key)])
-async def download_video(url: str, res: str) -> dict:
+async def download_video(body: DownloadRequest) -> dict:
     """Download video in up to 4K with audio merged."""
 
-    task = await download_video_task.kiq(url, res)
+    task = await download_video_task.kiq(body.url, body.res)
 
     return {"task_id": task.task_id}

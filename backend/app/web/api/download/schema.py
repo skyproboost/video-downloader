@@ -15,5 +15,4 @@ class DownloadRequest(BaseModel):
     """Download request payload."""
 
     url: str
-    format: str | None = None
-    audio_only: bool = False
+    res: str
