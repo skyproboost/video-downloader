@@ -1,11 +1,8 @@
 import { defineEventHandler, getQuery, createError } from 'h3'
-import { DL_FETCH_TIMEOUT, DL_USER_AGENT } from '../utils/allowed-hosts'
-
-// Серверный прокси для получения ссылки на скачивание.
-// Важно: вызов идёт С СЕРВЕРА, поэтому googlevideo URL
-// будет привязан к IP сервера — и download.get.ts сможет его скачать.
 
 const API_BASE = process.env.DOWNLOAD_API_BASE || 'https://api.adownloader.org'
+const FETCH_TIMEOUT = 15_000
+const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
 
 export default defineEventHandler(async (event) => {
     const { url } = getQuery(event) as { url?: string }
@@ -14,7 +11,6 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 400, statusMessage: 'Missing url parameter' })
     }
 
-    // Базовая валидация входного URL
     try {
         const parsed = new URL(url)
         if (!parsed.protocol.startsWith('http')) {
@@ -25,7 +21,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const controller = new AbortController()
-    const timer = setTimeout(() => controller.abort(), DL_FETCH_TIMEOUT)
+    const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT)
 
     try {
         const apiUrl = new URL('/api/get_download_link', API_BASE)
@@ -34,7 +30,7 @@ export default defineEventHandler(async (event) => {
         const resp = await fetch(apiUrl.toString(), {
             method: 'GET',
             signal: controller.signal,
-            headers: { 'User-Agent': DL_USER_AGENT },
+            headers: { 'User-Agent': USER_AGENT },
         })
 
         clearTimeout(timer)
@@ -46,8 +42,7 @@ export default defineEventHandler(async (event) => {
             })
         }
 
-        const data = await resp.json()
-        return data
+        return await resp.json()
     } catch (e: any) {
         clearTimeout(timer)
         if (e?.name === 'AbortError') {
