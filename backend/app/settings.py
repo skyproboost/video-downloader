@@ -77,6 +77,12 @@ class Settings(BaseSettings):
     download_dir: Path = Path("/tmp/downloads")
     video_storage_minutes: int = 60
 
+    # Cookies & proxy
+    cookies_dir: Path = Path("/app/cookies")
+    # JSON mapping of cookie filename -> socks proxy URL
+    # e.g. {"account1.txt": "socks5://user:pass@host:1080"}
+    cookie_proxy_map: dict[str, str] = {}
+
     # Telegram bot callback
     tg_bot_base_url: str
 

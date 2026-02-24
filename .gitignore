@@ -27,3 +27,4 @@ logs
 # Auto-translate динамические файлы
 public/admin/queue.json
 public/admin/status.json
+cookies/
