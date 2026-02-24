@@ -245,14 +245,32 @@ async function handleSave() {
 
     try {
         if (useProxy) {
-            // Скачиваем через прокси — браузер стримит напрямую
-            const a = document.createElement('a')
-            a.href = downloadUrl.value
-            a.download = ''
-            a.style.display = 'none'
-            document.body.appendChild(a)
-            a.click()
-            requestAnimationFrame(() => document.body.removeChild(a))
+            // Пробуем через прокси — сначала проверяем что ответ валидный
+            const resp = await fetch(downloadUrl.value)
+
+            const ct = resp.headers.get('content-type') || ''
+            const isMedia = ct.startsWith('video/') || ct.startsWith('audio/') || ct === 'application/octet-stream'
+
+            if (resp.ok && isMedia) {
+                // Прокси отдал медиафайл — скачиваем через blob
+                const blob = await resp.blob()
+                const blobUrl = URL.createObjectURL(blob)
+                const ext = ct.includes('audio') ? 'mp3' : 'mp4'
+                const name = videoData.value.title || 'video'
+                const a = document.createElement('a')
+                a.href = blobUrl
+                a.download = `${name}.${ext}`
+                a.style.display = 'none'
+                document.body.appendChild(a)
+                a.click()
+                requestAnimationFrame(() => {
+                    document.body.removeChild(a)
+                    URL.revokeObjectURL(blobUrl)
+                })
+            } else {
+                // Прокси вернул ошибку — фоллбэк на вкладку
+                window.open(videoData.value.url, '_blank', 'noopener,noreferrer')
+            }
         } else {
             // Домен не в белом списке — открываем напрямую
             window.open(videoData.value.url, '_blank', 'noopener,noreferrer')
