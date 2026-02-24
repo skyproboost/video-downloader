@@ -148,7 +148,7 @@ export default defineNuxtConfig({
                 'style-src': ["'self'", "'nonce-{{nonce}}'"],
                 'img-src': ["'self'", 'data:', 'https:'],
                 'font-src': ["'self'"],
-                'connect-src': ["'self'", 'https://api.adownloader.org'],
+                'connect-src': ["'self'", 'https:'],
                 'object-src': ["'none'"],
                 'frame-src': ["'self'", 'https:'],
                 'worker-src': ["'self'"],
