@@ -236,7 +236,7 @@ const handleDownload = async () => {
     try {
         const data = await $fetch<VideoResponse>(`${apiBase.value}/api/get_download_link`, {
             method: 'GET',
-            params: { url: trimmed },
+            query: { url: trimmed },
         })
 
         if (!data?.url) {
