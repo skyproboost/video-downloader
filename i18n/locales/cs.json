@@ -49,7 +49,8 @@
     "success": "Video je připraveno ke stažení!",
     "supported": "Podporované platformy: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
     "loading": "Načítání...",
-    "saveFile": "Uložit soubor"
+    "saveFile": "Uložit soubor",
+    "vpnHint": "Pokud se odkaz neotevřel nebo video nefunguje — zkuste vypnout VPN a klikněte na „Uložit soubor\" znovu"
   },
   "error": {
     "invalidUrl": "Neplatný odkaz. Zkuste to prosím znovu.",

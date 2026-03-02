@@ -49,7 +49,8 @@
     "success": "Video gata pentru descărcare!",
     "supported": "Platforme acceptate: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
     "loading": "Se încarcă...",
-    "saveFile": "Salvează fișierul"
+    "saveFile": "Salvează fișierul",
+    "vpnHint": "Dacă linkul nu s-a deschis sau videoclipul nu redă — încercați să dezactivați VPN-ul și faceți clic din nou pe „Salvare fișier\""
   },
   "error": {
     "invalidUrl": "Link invalid. Vă rugăm să încercați din nou.",

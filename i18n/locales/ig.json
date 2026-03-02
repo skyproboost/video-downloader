@@ -49,7 +49,8 @@
     "success": "Vidiyo dị njikere maka ibudata!",
     "supported": "Ikpo okwu a na-akwado: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
     "loading": "Na-adọnye...",
-    "saveFile": "Chekwaa faịlụ"
+    "saveFile": "Chekwaa faịlụ",
+    "vpnHint": "Ọ bụrụ na njikọ ahụ emegheghị ma ọ bụ vidiyo ahụ anaghị agba — gbanyụọ VPN wee pịa \"Chekwaa faịlụ\" ọzọ"
   },
   "error": {
     "invalidUrl": "Njikọ ezighi ezi. Biko gbalịa ọzọ.",

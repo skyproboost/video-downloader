@@ -49,7 +49,8 @@
     "success": "Video siap untuk diunduh!",
     "supported": "Platform yang didukung: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
     "loading": "Memuat...",
-    "saveFile": "Simpan file"
+    "saveFile": "Simpan file",
+    "vpnHint": "Jika tautan tidak terbuka atau video tidak diputar — coba nonaktifkan VPN dan klik \"Simpan file\" lagi"
   },
   "error": {
     "invalidUrl": "Tautan tidak valid. Silakan coba lagi.",

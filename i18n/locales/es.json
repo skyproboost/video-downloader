@@ -49,7 +49,8 @@
     "success": "¡El vídeo está listo para descargar!",
     "supported": "Plataformas compatibles: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
     "loading": "Cargando...",
-    "saveFile": "Guardar archivo"
+    "saveFile": "Guardar archivo",
+    "vpnHint": "Si el enlace no se abrió o el video no se reproduce — intenta desactivar tu VPN y haz clic en \"Guardar archivo\" de nuevo"
   },
   "error": {
     "invalidUrl": "El enlace no es válido. Inténtalo de nuevo.",

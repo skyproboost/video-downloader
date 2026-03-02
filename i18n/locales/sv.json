@@ -49,7 +49,8 @@
     "success": "Video redo för nedladdning!",
     "supported": "Plattformar som stöds: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
     "loading": "Laddar...",
-    "saveFile": "Spara fil"
+    "saveFile": "Spara fil",
+    "vpnHint": "Om länken inte öppnades eller videon inte spelas — prova att stänga av VPN och klicka på \"Spara fil\" igen"
   },
   "error": {
     "invalidUrl": "Ogiltig länk. Vänligen försök igen.",

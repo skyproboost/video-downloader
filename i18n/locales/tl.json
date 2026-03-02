@@ -49,7 +49,8 @@
     "success": "Handa nang i-download ang video!",
     "supported": "Sinusuportahang mga plataporma: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
     "loading": "Naglo-load...",
-    "saveFile": "I-save ang file"
+    "saveFile": "I-save ang file",
+    "vpnHint": "Kung hindi nabuksan ang link o hindi nag-play ang video — subukang i-off ang VPN at i-click ulit ang \"I-save ang file\""
   },
   "error": {
     "invalidUrl": "Hindi wastong link. Mangyaring subukan muli.",

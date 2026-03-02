@@ -49,7 +49,8 @@
     "success": "Videó letölthető!",
     "supported": "Támogatott platformok: YouTube, TikTok, Instagram, Facebook, VK, Vimeo.",
     "loading": "Betöltés...",
-    "saveFile": "Fájl mentése"
+    "saveFile": "Fájl mentése",
+    "vpnHint": "Ha a link nem nyílt meg vagy a videó nem játszik le — próbálja kikapcsolni a VPN-t és kattintson újra a „Fájl mentése\" gombra"
   },
   "error": {
     "invalidUrl": "Érvénytelen link. Kérjük, próbálja újra.",

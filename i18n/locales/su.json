@@ -49,7 +49,8 @@
     "success": "Video geus siap diunduh!",
     "supported": "Platform anu didukung: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
     "loading": "Ngamuat...",
-    "saveFile": "Simpen file"
+    "saveFile": "Simpen file",
+    "vpnHint": "Upami tautan teu dibuka atanapi video teu dimaénkeun — cobian pareuman VPN teras pencét \"Simpen file\" deui"
   },
   "error": {
     "invalidUrl": "Tautan teu sah. Mangga cobian deui.",

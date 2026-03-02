@@ -36,9 +36,15 @@
             <p v-if="error" class="error-message">{{ error }}</p>
         </Transition>
 
-        <!-- Карточка: показываем только если запрос висит долго ИЛИ уже есть результат -->
         <Transition name="fade">
             <div v-if="showSkeleton || videoData" class="result-card">
+
+                <Transition name="fade">
+                    <div v-if="saving" class="saving-overlay">
+                        <div class="saving-spinner" />
+                    </div>
+                </Transition>
+
                 <div class="result-preview">
                     <div v-if="showSkeleton" class="shimmer-block" />
                     <img
@@ -59,6 +65,7 @@
                     <template v-if="showSkeleton">
                         <div class="shimmer-line wide" />
                         <div class="shimmer-line narrow" />
+                        <div class="shimmer-line hint" />
                         <div class="shimmer-btn" />
                     </template>
                     <template v-else-if="videoData">
@@ -71,24 +78,29 @@
                                 {{ videoData.ext.toUpperCase() }}
                             </span>
                             <span v-if="videoData.main_resolution" class="meta-tag">
-                                {{ videoData.main_resolution.toUpperCase() }}
+                                {{ formatResolution(videoData.main_resolution) }}
                             </span>
                         </div>
-                        <a
-                            :href="videoData.url"
-                            target="_blank"
-                            rel="noopener noreferrer"
+                        <p class="vpn-hint">
+                            {{ $t('form.vpnHint') }}
+                        </p>
+                        <button
                             class="save-btn"
+                            :disabled="saving"
+                            @click="handleSave"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                 stroke-linejoin="round">
+                            <svg v-if="!saving" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                 stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                 <polyline points="7 10 12 15 17 10"/>
                                 <line x1="12" y1="15" x2="12" y2="3"/>
                             </svg>
+                            <span v-if="saving" class="spinner" />
                             {{ $t('form.saveFile') }}
-                        </a>
+                        </button>
+
+
                     </template>
                 </div>
             </div>
@@ -103,16 +115,18 @@ interface VideoResponse {
     duration?: number
     thumbnail?: string
     ext?: string
+    main_resolution?: string | number
     http_headers?: Record<string, string>
 }
 
 const { t } = useI18n()
-const config = useRuntimeConfig()
 
 const url = ref('')
 const isCooldown = ref(false)
 const loading = ref(false)
+const saving = ref(false)
 const showSkeleton = ref(false)
+
 const error = ref('')
 const videoData = ref<VideoResponse | null>(null)
 
@@ -121,8 +135,8 @@ const URL_MAX_LENGTH = 2048
 const MIN_COOLDOWN = 2000
 const MAX_SUBMITS = 5
 const SUBMIT_WINDOW = 60_000
-const SKELETON_DELAY = 400 // показываем скелетон только если запрос висит дольше 400мс
-const MIN_BTN_DISABLED = 1000 // кнопка остаётся disabled минимум 1с
+const SKELETON_DELAY = 400
+const MIN_BTN_DISABLED = 1000
 
 const URL_REGEX = /^https?:\/\/[a-zA-Z0-9]([a-zA-Z0-9\-]*[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+([\/\w\-._~:?#\[\]@!$&'()*+,;=%]*)?$/
 const BLOCKED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '[::1]']
@@ -147,10 +161,6 @@ async function releaseCooldown() {
     }
     isCooldown.value = false
 }
-
-const apiBase = computed(() =>
-    (config.public.apiBaseUrl as string) || 'https://api.adownloader.org'
-)
 
 const isUrlValid = computed(() => validateUrl(url.value.trim()) === null)
 const isButtonDisabled = computed(() => !isUrlValid.value || isCooldown.value || loading.value)
@@ -180,9 +190,19 @@ function checkRateLimit(): string | null {
 }
 
 function formatDuration(sec: number): string {
-    const m = Math.floor(sec / 60)
-    const s = sec % 60
-    return `${m}:${s.toString().padStart(2, '0')}`
+    const total = Math.round(Math.abs(sec))
+    const h = Math.floor(total / 3600)
+    const m = Math.floor((total % 3600) / 60)
+    const s = total % 60
+    if (h > 0) {
+        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
+    }
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
+}
+
+function formatResolution(val: string | number): string {
+    const str = String(val).trim().toLowerCase().replace(/p$/, '')
+    return `${str}p`
 }
 
 function clearError() {
@@ -194,6 +214,42 @@ function cancelSkeletonTimer() {
         clearTimeout(skeletonTimer)
         skeletonTimer = null
     }
+}
+
+function makeSafeFilename(title: string | undefined, ext: string): string {
+    if (!title) return `video.${ext}`
+    const clean = title
+        .replace(/[<>:"/\\|?*\x00-\x1f]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 120)
+    return clean ? `${clean}.${ext}` : `video.${ext}`
+}
+
+async function handleSave() {
+    if (saving.value || !videoData.value?.url) return
+
+    saving.value = true
+    error.value = ''
+
+    const v = videoData.value
+    const ext = v.ext || 'mp4'
+    const fname = makeSafeFilename(v.title, ext)
+
+    // Пробуем <a download> — если cross-origin, браузер
+    // проигнорирует download и просто откроет ссылку (= новая вкладка)
+    const a = document.createElement('a')
+    a.href = v.url
+    a.download = fname
+    a.target = '_blank'
+    a.rel = 'noopener noreferrer'
+    a.style.display = 'none'
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+
+    await new Promise(r => setTimeout(r, 1000))
+    saving.value = false
 }
 
 const handleDownload = async () => {
@@ -219,11 +275,8 @@ const handleDownload = async () => {
     }
     await new Promise(r => setTimeout(r, 100))
 
-    // Кнопка сразу показывает спиннер
     loading.value = true
 
-    // Скелетон-карточку показываем с задержкой —
-    // если запрос отобьётся быстро (ошибка или успех), карточка не мелькнёт
     cancelSkeletonTimer()
     skeletonTimer = setTimeout(() => {
         if (loading.value) {
@@ -234,7 +287,7 @@ const handleDownload = async () => {
     const startTime = Date.now()
 
     try {
-        const data = await $fetch<VideoResponse>(`${apiBase.value}/api/get_download_link`, {
+        const data = await $fetch<VideoResponse>('/api/get-link', {
             method: 'GET',
             query: { url: trimmed },
         })
@@ -270,7 +323,6 @@ const handleDownload = async () => {
         return
     }
 
-    // Если скелетон успел показаться — держим минимальное время, чтобы не мелькал
     const elapsed = Date.now() - startTime
     if (showSkeleton.value) {
         const minShow = Math.max(MIN_COOLDOWN, 500)
@@ -379,13 +431,36 @@ const handleDownload = async () => {
     text-align: center;
 }
 
-/* Карточка результата */
 .result-card {
     margin-top: var(--space-6);
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--radius-lg);
     overflow: hidden;
+    position: relative;
+}
+
+.saving-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    border-radius: var(--radius-lg);
+}
+
+.saving-spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid rgba(255, 255, 255, 0.15);
+    border-top-color: #2ba546;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
 }
 
 .result-preview {
@@ -428,12 +503,13 @@ const handleDownload = async () => {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    text-align: left;
 }
 
 .result-meta {
     display: flex;
     gap: var(--space-2);
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-3);
     flex-wrap: wrap;
 }
 
@@ -442,7 +518,7 @@ const handleDownload = async () => {
     align-items: center;
     padding: 2px 10px;
     background: rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
+    border-radius: var(--radius-lg);
     font-size: 12px;
     color: var(--color-text-inverse-muted);
     font-weight: 500;
@@ -466,58 +542,48 @@ const handleDownload = async () => {
     text-decoration: none;
 }
 
-.save-btn:hover {
+.vpn-hint {
+    font-size: 12px;
+    color: #f5c542;
+    line-height: 1.4;
+    margin-bottom: var(--space-3);
+    text-align: left;
+}
+
+.save-btn:hover:not(:disabled) {
     background: #16ad37;
 }
 
-/* Shimmer loader */
+.save-btn:disabled {
+    background: #4c716c;
+    cursor: not-allowed;
+}
+
 .shimmer-block {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-        110deg,
-        rgba(255, 255, 255, 0.04) 30%,
-        rgba(255, 255, 255, 0.1) 50%,
-        rgba(255, 255, 255, 0.04) 70%
-    );
+    background: linear-gradient(110deg, rgba(255,255,255,0.04) 30%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.04) 70%);
     background-size: 200% 100%;
     animation: shimmer 1.5s ease-in-out infinite;
 }
 
 .shimmer-line {
     border-radius: 7px;
-    background: linear-gradient(
-        110deg,
-        rgba(255, 255, 255, 0.06) 30%,
-        rgba(255, 255, 255, 0.12) 50%,
-        rgba(255, 255, 255, 0.06) 70%
-    );
+    background: linear-gradient(110deg, rgba(255,255,255,0.06) 30%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.06) 70%);
     background-size: 200% 100%;
     animation: shimmer 1.5s ease-in-out infinite;
 }
 
-.shimmer-line.wide {
-    width: 80%;
-    height: 17px;
-    margin-bottom: var(--space-3);
-}
-.shimmer-line.narrow {
-    width: 40%;
-    height: 22px;
-    margin-bottom: var(--space-4);
-}
+.shimmer-line.wide { width: 80%; height: 17px; margin-bottom: var(--space-3); }
+.shimmer-line.narrow { width: 40%; height: 22px; margin-bottom: var(--space-4); }
+.shimmer-line.hint { width: 70%; height: 17px; margin-bottom: var(--space-3); }
 
 .shimmer-btn {
     height: 44px;
     border-radius: var(--radius-md);
-    background: linear-gradient(
-        110deg,
-        rgba(43, 165, 70, 0.2) 30%,
-        rgba(43, 165, 70, 0.35) 50%,
-        rgba(43, 165, 70, 0.2) 70%
-    );
+    background: linear-gradient(110deg, rgba(43,165,70,0.2) 30%, rgba(43,165,70,0.35) 50%, rgba(43,165,70,0.2) 70%);
     background-size: 200% 100%;
     animation: shimmer 1.5s ease-in-out infinite;
 }
@@ -527,38 +593,13 @@ const handleDownload = async () => {
     100% { background-position: -200% 0; }
 }
 
-/* Fade transition */
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity 0.3s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-    opacity: 0;
-}
+.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 
 @media (max-width: 540px) {
-    .input-wrapper {
-        flex-direction: column;
-        border-radius: var(--radius-md);
-    }
-
-    .input-icon {
-        display: none;
-    }
-
-    .url-input {
-        width: 100%;
-        padding: var(--space-4);
-        text-align: center;
-        font-size: 16px;
-        border-bottom: 1px solid var(--color-border);
-    }
-
-    .download-btn {
-        width: 100%;
-        padding: var(--space-2);
-        border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-    }
+    .input-wrapper { flex-direction: column; border-radius: var(--radius-md); }
+    .input-icon { display: none; }
+    .url-input { width: 100%; padding: var(--space-4); text-align: center; font-size: 16px; border-bottom: 1px solid var(--color-border); }
+    .download-btn { width: 100%; padding: var(--space-2); border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
 }
 </style>

@@ -49,7 +49,8 @@
     "success": "Video wis siap kanggo diundhuh!",
     "supported": "Platform sing didhukung: YouTube, TikTok, Instagram, Facebook, VK, Vimeo",
     "loading": "Ngundhuh...",
-    "saveFile": "Simpen berkas"
+    "saveFile": "Simpen berkas",
+    "vpnHint": "Yen tautan ora mbukak utawa video ora muter — coba mateni VPN lan klik \"Simpen file\" maneh"
   },
   "error": {
     "invalidUrl": "Tautan ora sah. Mangga coba maneh.",
