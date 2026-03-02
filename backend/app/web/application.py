@@ -2,12 +2,12 @@ from importlib import metadata
 
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
-from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 
 from app.log import configure_logging
 from app.settings import settings
 from app.web.api.router import api_router
+from app.web.api.download import files_router
 from app.web.lifespan import lifespan_setup
 
 settings.download_dir.mkdir(parents=True, exist_ok=True)
@@ -44,7 +44,7 @@ def get_app() -> FastAPI:
     # Main router for the API.
     app.include_router(router=api_router, prefix="/api")
 
-    # Serve downloaded videos as static files
-    app.mount("/videos", StaticFiles(directory=settings.download_dir), name="videos")
+    # Serve downloaded videos as forced downloads (octet-stream).
+    app.include_router(router=files_router)
 
     return app

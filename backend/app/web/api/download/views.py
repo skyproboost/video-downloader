@@ -1,5 +1,6 @@
 import random
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import FileResponse
 from app.utils.common import verify_api_key
 from app.services.redis.rate_limit import rate_limit_download
 from app.tasks.download_tasks import download_video as download_video_task
@@ -9,6 +10,23 @@ import yt_dlp
 from loguru import logger
 
 router = APIRouter(tags=["download"])
+files_router = APIRouter()
+
+_download_dir = settings.download_dir.resolve()
+
+
+@files_router.get("/videos/{filename:path}")
+async def serve_video(filename: str) -> FileResponse:
+    file_path = (_download_dir / filename).resolve()
+    if not str(file_path).startswith(str(_download_dir)):
+        raise HTTPException(status_code=404)
+    if not file_path.is_file():
+        raise HTTPException(status_code=404)
+    return FileResponse(
+        path=file_path,
+        media_type="application/octet-stream",
+        headers={"Content-Disposition": f'attachment; filename="{file_path.name}"'},
+    )
 
 
 @router.get("/get_download_link", dependencies=[Depends(rate_limit_download)])
