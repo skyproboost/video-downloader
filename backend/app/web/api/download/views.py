@@ -1,6 +1,7 @@
 import random
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import FileResponse
+from redis.asyncio import ConnectionPool, Redis
 from app.utils.common import api_key_or_rate_limit
 from app.services.redis.rate_limit import rate_limit_download
 from app.tasks.download_tasks import download_video as download_video_task
@@ -112,10 +113,21 @@ async def download_video_link(url: str) -> dict:
         raise
 
 
-@router.post("/download", dependencies=[Depends(api_key_or_rate_limit)])
-async def download_video(body: DownloadRequest) -> dict:
+@router.get("/get_url")
+async def get_url(task_id: str, request: Request) -> dict:
+    """Return video URL for a completed task, or not_ready if still processing."""
+    redis_pool: ConnectionPool = request.app.state.redis_pool
+    async with Redis(connection_pool=redis_pool) as redis:
+        url = await redis.get(f"task:url:{task_id}")
+    if not url:
+        return {"status": "not_ready"}
+    return {"url": url.decode()}
+
+
+@router.post("/download")
+async def download_video(body: DownloadRequest, authenticated: bool = Depends(api_key_or_rate_limit)) -> dict:
     """Download video in up to 4K with audio merged."""
 
-    task = await download_video_task.kiq(body.url, body.res)
+    task = await download_video_task.kiq(body.url, body.res, notify=authenticated)
 
     return {"task_id": task.task_id}

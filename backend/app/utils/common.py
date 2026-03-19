@@ -16,10 +16,14 @@ async def verify_api_key(api_key: str = Security(api_key_header)) -> str:
 async def api_key_or_rate_limit(
     request: Request,
     api_key: str = Security(api_key_header),
-) -> None:
-    """Allow requests with a valid API key; otherwise apply rate limiting."""
+) -> bool:
+    """Allow requests with a valid API key; otherwise apply rate limiting.
+
+    Returns True if authenticated via API key, False if rate-limited guest.
+    """
     if api_key and api_key == settings.download_api_key:
-        return
+        return True
 
     from app.services.redis.rate_limit import check_rate_limit, DOWNLOAD_LIMIT
     await check_rate_limit(request, DOWNLOAD_LIMIT)
+    return False

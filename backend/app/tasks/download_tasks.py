@@ -4,6 +4,7 @@ from uuid import uuid4
 
 import yt_dlp
 from loguru import logger
+from redis.asyncio import Redis
 from taskiq import Context, TaskiqDepends
 
 from app.settings import settings
@@ -17,6 +18,7 @@ settings.download_dir.mkdir(parents=True, exist_ok=True)
 async def download_video(
     url: str,
     res: str,
+    notify: bool = False,
     context: Context = TaskiqDepends(),
 ) -> str:
     """Download video from URL via yt-dlp. Returns the filename (basename)."""
@@ -58,7 +60,14 @@ async def download_video(
             logger.info(f"Downloaded video: {basename}")
 
         task_id = context.message.task_id
-        await notify_bot_upload(task_id, f"{settings.video_base_url}/{basename}")
+        video_url = f"{settings.video_base_url}/{basename}"
+        ttl = settings.video_storage_minutes * 60
+
+        async with Redis.from_url(str(settings.redis_url)) as redis:
+            await redis.set(f"task:url:{task_id}", video_url, ex=ttl)
+
+        if notify:
+            await notify_bot_upload(task_id, video_url)
     except Exception as exc:
         logger.error(f"Failed to download video: {exc}")
         raise
